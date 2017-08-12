@@ -12,6 +12,8 @@
 
     <link rel="stylesheet" href="css/style_okonst.css">
     <link rel="stylesheet" href="css/style_orange.css">
+    <link rel="stylesheet" href="css/slider.css">
+    <link rel="stylesheet" href="css/sliderSkinFlat.css">
 </head>
 <body>
 
@@ -38,7 +40,19 @@
 	<!-- НАЧАЛО КОНТЕНТА СТРАНИЦЫ -->
 	<div class="container">
         <div class="form-group qa-form">
-            <label class="form-label" for="comment">Описание</label>
+            <div id="player"></div>
+            <div class="range-slider">
+                <input type="text" class="js-range-slider" value="" />
+            </div>
+            <div class="extra-controls row">
+                <div class="col-sm-6">
+                    <input type="text" class="js-input-from" value="0" />
+                </div>
+                <div class="col-sm-6">
+                    <input type="text" class="js-input-to pull-right" value="0" />
+                </div>
+            </div>
+            <label class="form-label" for="tagInput">Описание</label>
             <textarea class="form-control qa-area" rows="5" id="tagInput"></textarea>
             <br>
             <div class="text-center">
@@ -56,11 +70,109 @@
 	<!-- Bootstrap JS -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <script src="js/bootstrap-tagsinput.js"></script>
+        <script src="js/slider.min.js"></script>
 
         <script>
             $('#tagInput').tagsinput({
                 allowDuplicates: true
             });
+
+            var $range = $(".js-range-slider"),
+                $inputFrom = $(".js-input-from"),
+                $inputTo = $(".js-input-to"),
+                instance,
+                min = 0,
+                max = 1000,
+                from = 0,
+                to = 0;
+
+            $range.ionRangeSlider({
+                type: "double",
+                min: min,
+                max: max,
+                from: 200,
+                to: 800,
+                onStart: updateInputs,
+                onChange: updateInputs
+            });
+            instance = $range.data("ionRangeSlider");
+
+            function updateInputs (data) {
+            	from = data.from;
+                to = data.to;
+
+                $inputFrom.prop("value", from);
+                $inputTo.prop("value", to);
+            }
+
+            $inputFrom.on("input", function () {
+                var val = $(this).prop("value");
+
+                // validate
+                if (val < min) {
+                    val = min;
+                } else if (val > to) {
+                    val = to;
+                }
+
+                instance.update({
+                    from: val
+                });
+            });
+
+            $inputTo.on("input", function () {
+                var val = $(this).prop("value");
+
+                // validate
+                if (val < from) {
+                    val = from;
+                } else if (val > max) {
+                    val = max;
+                }
+
+                instance.update({
+                    to: val
+                });
+            });
+            
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+            // 3. This function creates an <iframe> (and YouTube player)
+            //    after the API code downloads.
+            var player;
+            function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '360',
+                width: '500',
+                videoId: 'M7lc1UVf-VE',
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+            }
+
+            // 4. The API will call this function when the video player is ready.
+            function onPlayerReady(event) {
+            event.target.playVideo();
+            }
+
+            // 5. The API calls this function when the player's state changes.
+            //    The function indicates that when playing a video (state=1),
+            //    the player should play for six seconds and then stop.
+            var done = false;
+            function onPlayerStateChange(event) {
+                if (event.data == YT.PlayerState.PLAYING && !done) {
+                    setTimeout(stopVideo, 6000);
+                    done = true;
+                }
+            }
+            function stopVideo() {
+                player.stopVideo();
+            }
         </script>
 
 </body>
