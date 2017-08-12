@@ -1,0 +1,207 @@
+/*
+Copyright 2017 Merkulov Alexey
+
+The MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+//--------SIZES-------------
+@app-width: 1000px;
+@right-column-width: 230px;
+@between-columns-separator: 20px;
+@left-column-width: @app-width - (@right-column-width + @between-columns-separator);
+
+//--------COLORS------------
+@link-color: rgb(0, 0, 200);
+@text-color: rgb(30, 30, 30);
+@background-color: rgb(255, 255, 255);
+@main-menu-coor: rgb(200, 200, 200);
+@pannel-color: rgb(50, 50, 50);
+@judge-selected-color: #585;
+@mouse-over-button-color: rgb(150, 150, 150);
+@voted-question-color: rgb(150, 255, 150);
+@complained-question-color: rgb(255, 150, 150);
+
+
+@borders-color: rgb(0, 0, 100);
+@question-color: rgb(230, 230, 255);
+@answered-question-color: rgb(230, 255, 255);
+@banned-question-color: rgb(255, 230, 255);
+@answer-color: rgb(255, 255, 150);
+@choosed-answer-color: rgb(150, 255, 150);
+
+@error-color :rgb(200, 50, 50);
+
+//--------STYLES------------
+
+a {
+    color: @link-color;
+    text-decoration: none;
+}
+
+table, th, td {
+    border: 0px;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+li {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: @background-color;
+    color: @text-color;
+    margin: 0;
+    padding: 0;
+}
+
+.App {
+    margin: auto;
+    width: @app-width;
+}
+
+.mainMenu {
+    background: @main-menu-coor;
+    margin-bottom: 8px;
+}
+
+.infoRectangle {
+    border-color: @borders-color;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.questionInList {
+    background: @question-color;
+    .infoRectangle;
+}
+
+.answeredQuestion {
+    background: @answered-question-color;
+    .infoRectangle;
+}
+
+
+.bannedQuestion {
+    background: @banned-question-color;
+    .infoRectangle;
+}
+
+
+.answerInList {
+    background: @answer-color;
+    .infoRectangle;
+}
+
+.choosedAnswer {
+    background: @choosed-answer-color;
+    .infoRectangle;
+}
+
+
+.questionContent {
+    margin: 8px;
+}
+
+.noSelectStyle {
+    user-select: none;
+}
+
+.selectableItem {
+    cursor: pointer;
+    .noSelectStyle;
+}
+
+.selectedItem {
+    background: @judge-selected-color;
+    .selectableItem;
+}
+
+.linkButtonStyle {
+    color: @link-color;
+    padding: 4px 4px 4px 4px;
+    cursor: pointer;
+    .noSelectStyle;
+}
+
+.votedQuestion {
+    background: @voted-question-color;
+    .linkButtonStyle;
+}
+
+.complainedQuestion {
+    background: @complained-question-color;
+    .linkButtonStyle;
+}
+
+.linkButtonStyleMouse {
+    background: @mouse-over-button-color;
+    .linkButtonStyle;
+}
+
+.clearStyle {
+    clear: both;
+}
+
+
+.errorText {
+    color: @error-color;
+}
+
+.imageOverAnother {
+    display: inline-block;
+    position: absolute;
+}
+
+.tooltip {
+    position: relative;
+    color: yellow;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
