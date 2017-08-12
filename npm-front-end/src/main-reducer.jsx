@@ -129,6 +129,14 @@ function questionsReducer(state=questionsDefault, action) {
         case 'RESET_QUESTIONS_LAST_LOADING':
             return {...state, last_status : LOADING_IN_PROCESS};
 
+        case 'ADD_QUESTIONS':
+            var questions = { ...sdef(state.questions) };
+            for (var i = 0; i < action.questions.length; i++) {
+                var q = action.questions[i];
+                questions[q.id] = q;
+            }
+            return fld(state, 'questions', questions);
+
         case 'SET_QUESTION_LAST':
             var res = { ...state };
             if (action.result.data) {

@@ -325,7 +325,17 @@ def post_api(request):
         send_object({'type':'UPDATE_QUESTION', 'question': qdict})
     return JsonResponse({ 'success' : True })
 
+# TODO: Could be slow! Every time we return all found questions.
+def search_api(request):
+    text = request.GET.get('text', '')
+    if text == '':
+        return JsonResponse({ 'success' : False, 'diagnostic' : 'text is empty!' })
+    questions = Question.objects.filter(text_str__icontains=text)
+    found=[]
+    for q in questions:
+        found.append(obj_to_dict(q))
 
+    return JsonResponse({ 'success' : True, 'found' : found })
 
 def registration(request):
     pass_raise_dbg_filter_or_exception(request)

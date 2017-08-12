@@ -40,6 +40,13 @@ import { ConnectedLastQuestionsPage } from './last-questions-page.jsx';
 import { connectedQuestionsListTemplate } from './questions-list-template.jsx';
 import { ConnectedQuestionPage } from './question-page.jsx';
 
+import { queryStringEncoding } from './utils.jsx';
+const $ = require('jquery');
+import { Question } from './question.jsx';
+import { getSubmitFunction } from './utils.jsx';
+
+import { ConnectedSearchPage } from './search.jsx'
+
 import './global-init.jsx';
 
 import './styles.less';
@@ -79,6 +86,7 @@ class TodoPage extends React.Component {
         </div>;
     }
 }
+
 
 const modalCustomStyles = {
   content : {
@@ -130,6 +138,7 @@ ReactDOM.render(
                 <Route path='/banned' component={ConnectedBannedQuestionsPage} />
                 <Route path='/ask' component={ConnectedQuestionForm} />
                 <Route path='/todo' component={TodoPage} />
+                <Route path='/search' component={ConnectedSearchPage} />
                 <Route path='/questions/:id' component={ConnectedQuestionPage} />
             </Route>
             <Route path='*' component={NotFound} />

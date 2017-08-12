@@ -60,6 +60,7 @@ class AppMenu extends React.Component {
             <LinkButtonLI to={'/answered'}>Отвеченные</LinkButtonLI>
             <LinkButtonLI to={'/banned'}>Забаненные</LinkButtonLI>
             {logged_in && <LinkButtonLI to={'/ask'}>Новый вопрос</LinkButtonLI> }
+            <LinkButtonLI to={'/search'}>Поиск</LinkButtonLI>
             <LinkButtonLI to={'/todo'}>todo</LinkButtonLI>
         </div></div>;
     }

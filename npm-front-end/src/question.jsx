@@ -27,7 +27,7 @@ import Linkify from 'react-linkify';
 
 import { LinkButton, SimpleButton, RefButton, SimpleButtonLI, LinkButtonLI } from './buttons.jsx';
 
-class Question extends React.Component {
+export class Question extends React.Component {
     button(action, confirm_action, name, style_field) {
         const id = this.props.data.id;
         return <SimpleButtonLI

@@ -80,3 +80,12 @@ export function getSubmitFunction(state) {
         (data) => data.success ? ( callback && callback(data) ) : console.log('Bad answer from post-api', data));
     //return (action, data) => state.webSocket.send(JSON.stringify({action : action, ...data}));
 }
+
+export function queryStringEncoding(obj) {
+  var str = [];
+  for(var p in obj)
+    if (obj.hasOwnProperty(p)) {
+      str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+    }
+  return str.join("&");
+}
