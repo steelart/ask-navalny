@@ -26,6 +26,7 @@ cp django-backend/askp_site/*.py server-dist/askp_site/
 
 cp django-backend/*.py server-dist/
 cp django-backend/*.sh server-dist/
+cp django-backend/*.txt server-dist/
 
 tar -zcvf server-dist-$(date +"%Y%m%d%H%M").tar.gz server-dist
 rm -rf server-dist
