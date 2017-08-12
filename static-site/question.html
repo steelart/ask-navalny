@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,800&amp;subset=cyrillic" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style_okonst.css">
+</head>
+<body>
+	<div class="hello">Навальный ответит</div>
+	
+
+	<!-- СТРАНИЦА ВОПРОСА -->
+	<!-- НАЧАЛО КОНТЕНТА СТРАНИЦЫ -->
+	<div class="container">
+		<div class="">
+			<!-- Вопрос -->
+			<div class="question form-group has-feedback">
+				<input type="text" class="form-control" id="question" aria-describedby="inputSuccess2Status" placeholder="Спроси Навального" value="Когда уже начнем?" data-toggle="dropdown">
+				<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+				<!-- выпадающее окно -->
+				<div class="questions_found dropdown-menu">
+					<div class="one">
+						<a href="">
+							<p class="title">Политическая программа Навального</p>
+							<p class="subtitle">
+								<span class="number">22</span>ответа / <span class="minutes">31</span>минута
+							</p>
+						</a>
+						<span class="new_label"></span>
+					</div>
+					<div class="one">
+						<a href="">
+							<p class="title">Политическая программа Навального</p>
+							<p class="subtitle">
+								<span class="number">22</span>ответа / <span class="minutes">31</span>минута
+							</p>
+						</a>
+						<span class="new_label"></span>
+					</div>
+					<div class="one">
+						<a href="">
+							<p class="title">Политическая программа Навального</p>
+							<p class="subtitle">
+								<span class="number">22</span>ответа / <span class="minutes">31</span>минута
+							</p>
+						</a>
+						<span class="new_label"></span>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<!-- СЛАЙДЕР С ОТВЕТАМИ (BOOTSTRAP) -->
+		<div class="slider_holder">
+			<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+			  <!-- Indicators 
+			  <ol class="carousel-indicators">
+			    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+			    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+			    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+			  </ol>-->
+
+			  <!-- Wrapper for slides -->
+			  <div class="carousel-inner" role="listbox">
+			    <div class="item active">
+			      <iframe width="100%" height="400" src="https://www.youtube.com/embed/W_UIJMArq4g" frameborder="0" allowfullscreen></iframe>
+			      <div class="carousel-caption">
+			        <p>Текст текст текст текст</p>
+			      </div>
+			    </div>
+			    <div class="item">
+			      <iframe width="100%" height="400" src="https://www.youtube.com/embed/42nOFV1rXlA" frameborder="0" allowfullscreen></iframe>
+			      <div class="carousel-caption">
+			        <p>Текст текст текст <a href="#">ссылка</a></p>
+			      </div>
+			    </div>
+			    <div class="item">
+			      <div class="text-slide">
+			      	<h3>Заголовок ответа</h3>
+			      	<p>В современном мире встречается много новых терминов, которые непонятны людям. Что такое хакатон? Это мероприятие, которое стало очень распространенным не только в других странах, но и в России. Поэтому нужно знать, как проводят хакатон, что это такое, что для него необходимо. Также есть правила успешной организации этого мероприятия.</p>
+			      	<p class="source">Источник: <a href="">статья в Коммерсанте от 12.05.2016</a></p>
+			      </div>
+			      <div class="carousel-caption">
+			        <p>Текст текст текст текст</p>
+			      </div>
+			    </div>
+			    <div class="item">
+			      <iframe width="100%" height="400" src="https://www.youtube.com/embed/42nOFV1rXlA" frameborder="0" allowfullscreen></iframe>
+			      <div class="carousel-caption">
+			        <p>Текст текст текст текст</p>
+			      </div>
+			    </div>
+			    <div class="item">
+			      <div class="last-slide">
+			      	<h3>Знаешь где Алексей еще отвечал<br> на этот же вопрос?</h3>
+			      	<a class="btn btn-default btn-lg" href="#" role="button">Добавить ответ</a>
+			      </div>
+			    </div>
+			    
+			  </div>
+
+			  <!-- Controls -->
+			  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+			    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+			    <span class="sr-only">Previous</span>
+			  </a>
+			  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+			    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+			    <span class="sr-only">Next</span>
+			  </a>
+			</div>
+		</div>
+
+
+	<!-- КОНЕЦ КОНТЕНТА СТРАНИЦЫ -->
+
+	<div style="height: 100px; margin-top: 100px;">Footer</div>
+
+
+	<!-- JAVASCRIPT -->
+      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<!-- Bootstrap JS -->
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+	  <script src="js/js_okonst.js"></script>
+
+	
+</body>
+</html>

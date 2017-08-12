@@ -3,7 +3,18 @@
 body{
 	font-family: 'Open Sans', sans-serif;
 }
-
+.bg_holder{
+	background-image: url('../img/bg-photo.jpg');
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 550px;
+	padding-top: 50px;
+	margin-bottom: 15px;
+	@media (max-width: 750px){height: 450px;}
+	@media (max-width: 550px){height: 350px;}
+	@media (max-width: 400px){height: 280px;}
+}
 // Вопрос
 .question.has-feedback {
 	.form-control{
@@ -28,7 +39,7 @@ body{
 }
 .sort-panel{
 	text-transform: uppercase;
-	a{
+	a.btn{
 		font-weight: bold;
 		color: #007fa3;
 		border-color: #007fa3;
@@ -39,6 +50,13 @@ body{
 		&:hover{
 			background: #007fa3;
 			color: #fff;
+		}
+		@media (max-width: 750px){
+			width: 100%;
+			float: none;
+			display: block;
+			border-radius: 4px !important;
+			margin-bottom: 10px;
 		}
 	}
 }
@@ -90,9 +108,125 @@ body{
 }
 
 
+/*	СТРАНИЦА ОТВЕТОВ
+------------------------------------------------*/
+// Слайдер с ответами
+.slider_holder{
+	padding: 0;
+	margin-top: 25px;
+	margin-bottom: 100px;
+	@media (min-width: 550px){
+		padding: 0 10%;
+	}
+	@media (min-width: 750px){
+		padding: 0 13%;
+	}
+	@media (min-width: 1000px){
+		padding: 0 20%;
+	}
+	iframe, .last-slide, .text-slide{
+		height: 350px;
+		@media (min-width: 550px){
+			height: 380px;
+		}
+		@media (min-width: 1000px){
+			height: 400px;
+		}
+	}
+	#carousel-example-generic{
+		height: 400px;
+		@media (min-width: 550px){
+			height: 430px;
+		}
+		@media (min-width: 1000px){
+			height: 450px;
+		}
+	}
+	.carousel-caption{
+		position: initial;
+		bottom: -50px;
+		left: 0;
+		right: 0;
+		width: 100%;
+		height: 50px;
+		padding: 10px 0;
+		z-index: 1000;
+		background: #fff;
+		h3, p{
+			color: #000;
+			text-shadow: none;
+			margin-top: 0;
+		}
+	}
+	.carousel-control.left, .carousel-control.right{
+		background-image: none;
+	}
+	.last-slide{
+		width: 100%;
+		background: #ff3300;
+		color: #fff;
+		text-align: center;
+		vertical-align: middle;
+		padding: 30% 35px;
+		h3{
+			font-size: 18px;
+		}
+		@media (min-width: 400px){
+			padding: 25% 45px;
+		}
+		@media (min-width: 550px){
+			h3{
+				font-size: 20px;
+			}
+		}
+		@media (min-width: 1000px){
+			padding: 150px 50px;
+			h3{
+				font-size: 24px;
+			}
+		}
+		.btn-default{
+			color: #ff3300;
+			text-transform: uppercase;
+			font-weight: bold;
+			font-size: 14px;
+		}
+	}
+	.text-slide{
+		padding: 15px 5%;
+		background: #007fa3;
+		color: #fff;
+		overflow-y: auto;
+		@media (min-width: 400px){
+			padding: 20px 10%;
+		}
+		@media (min-width: 550px){
+			padding: 25px 15%;
+		}
+		@media (min-width: 1000px){
+			padding: 25px 100px;
+		}
+		p{
+			font-size: 16px;
+			&.source{
+				font-size: 12px;
+			}
+		}
+		a{
+			color: #fff;
+			text-decoration: underline;
+		}
+	}
+}
 
 
-
+/*
+ЦВЕТА:
+-------
+#ff3300
+#007fa3
+#3b838d
+*/
 .test1{
 	color: #ff3300; // КРАСНЫЙ
 }
@@ -102,15 +236,4 @@ body{
 .test3{
 	color: #3b838d; // СЕРЫЙ
 }
-/*
-#ff3300
-#007fa3
-#3b838d
-*/
 
-.hello{
-	color: red;
-	.one{
-		background: yellow;
-	}
-}
