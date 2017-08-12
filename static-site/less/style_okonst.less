@@ -1,0 +1,124 @@
+// Стили Константин
+
+body{
+	font-family: 'Open Sans', sans-serif;
+}
+.bg_holder{
+	background-image: url('../img/bg-photo.jpg');
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 550px;
+	padding-top: 50px;
+	margin-bottom: 15px;
+}
+// Вопрос
+.question.has-feedback {
+	.form-control{
+		border: 1px solid #007fa3;
+		font-size: 22px;
+		height: 50px;
+		color: #000;
+	}
+	.form-control-feedback{
+		height: 50px;
+		width: 50px;
+		line-height: 50px;
+		color: #007fa3;
+		&:hover{
+			cursor: pointer;
+		}
+	}
+}
+// Сортировка
+.sort_holder{
+	padding: 0 20%;
+}
+.sort-panel{
+	text-transform: uppercase;
+	a{
+		font-weight: bold;
+		color: #007fa3;
+		border-color: #007fa3;
+		&.active, &.active:hover{
+			background: #007fa3;
+			color: #fff;
+		}
+		&:hover{
+			background: #007fa3;
+			color: #fff;
+		}
+	}
+}
+// Найденные ответы
+.questions_found{
+	width: 100%;
+	padding: 0;
+	border: 1px solid #007fa3;
+	.one{
+		.questions_list .one;
+		&:first-child{
+			border-top: none;
+		}
+	}
+}
+
+ // Ответы
+.questions_list{
+	margin-top: 25px;
+	.one{
+		border-bottom: 1px #cdcdcd solid;
+		padding: 10px 5px;
+		&:first-child{
+			border-top: 1px #cdcdcd solid;
+		}
+		&:hover{
+			background: #007fa3;
+			color: #fff;
+			.title, .subtitle, a{
+				color: #fff;
+				text-decoration: none;
+			}
+		}
+		.title{
+			font-size: 20px;
+			font-weight: bold;
+			color: #000;
+			margin-bottom: 0;
+		}
+		.subtitle{
+			font-size: 12px;
+			color: #3b838d;
+			margin-bottom: 0;
+			.number, .minutes{
+				padding-right: 3px;
+			}
+		}
+	}
+}
+
+
+
+
+
+.test1{
+	color: #ff3300; // КРАСНЫЙ
+}
+.test2{
+	color: #007fa3; // СИНИЙ
+}
+.test3{
+	color: #3b838d; // СЕРЫЙ
+}
+/*
+#ff3300
+#007fa3
+#3b838d
+*/
+
+.hello{
+	color: red;
+	.one{
+		background: yellow;
+	}
+}
