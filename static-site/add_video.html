@@ -134,7 +134,7 @@
                     to: val
                 });
             });
-            
+
             var tag = document.createElement('script');
             tag.src = "https://www.youtube.com/iframe_api";
             var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -147,7 +147,9 @@
             player = new YT.Player('player', {
                 height: '360',
                 width: '500',
-                videoId: 'M7lc1UVf-VE',
+                videoId: 'GbnM0bNBfO4',
+                startSeconds: Number($(".js-input-from").value),
+                endSeconds: Number($(".js-input-to").value),
                 events: {
                     'onReady': onPlayerReady,
                     'onStateChange': onPlayerStateChange
