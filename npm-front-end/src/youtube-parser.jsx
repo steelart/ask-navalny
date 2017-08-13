@@ -26,6 +26,16 @@ import React from 'react';
 import YouTube from 'react-youtube';
 
 export default class YouTubeParser extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            player : null,
+            full_len : 0,
+            end : 0,
+            start : 0
+        };
+    }
+
     render() {
         const video = this.search_youtube();
         return (
@@ -75,6 +85,9 @@ export default class YouTubeParser extends React.Component {
                 minutes = minutes*10 + (c - '0');
             }
         }
+        if (text.charAt(i) == 's') {
+            return minutes;
+        }
         if (text.charAt(i) != 'm')
             return 0;
         i++;
@@ -93,15 +106,63 @@ export default class YouTubeParser extends React.Component {
     }
 
     render_youtube(video) {
+        const url_start = this.parse_time();
         const opts = {
             height: '390',
             width: '640',
             playerVars: { // https://developers.google.com/youtube/player_parameters
-                start : this.parse_time(),
+                start : url_start,
                 autoplay: 0
             }
         };
 
-        return <YouTube videoId={video} opts={opts} />;
+        return <div>
+            <br/>
+            <YouTube
+                videoId={video}
+                opts={opts}
+                onReady={(e) => {
+                    this.setState({ player : e.target });
+                    if (this.state.full_len == 0) {
+                        const duration = e.target.getDuration();
+                        this.setState({ full_len : duration, end : duration })
+                    }
+                }}
+            />
+            <br/>
+            <span>С</span>
+            <input
+                type='text'
+                value={this.state.start}
+                onChange={(e) => {
+                    const new_val = e.target.value;
+                    this.setState({start : new_val})
+                    const p = {
+                        videoId : video,
+                        startSeconds : new_val,
+                        endSeconds : this.state.end
+                    };
+                    console.log('yp', p);
+                    this.state.player.loadVideoById(p);
+                }}
+            />
+            <span>секунды по</span>
+            <input
+                type='text'
+                value={this.state.end}
+                onChange={(e) => {
+                    const new_val = e.target.value;
+                    this.setState({end : new_val})
+                    const p = {
+                        videoId : video,
+                        startSeconds : this.state.start,
+                        endSeconds : new_val
+                    };
+                    console.log('yp', p);
+                    this.state.player.loadVideoById(p);
+                }}
+            />
+            <span>секунду</span>
+        </div>;
     }
 }

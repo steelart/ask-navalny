@@ -51,7 +51,6 @@ import './global-init.jsx';
 
 import './styles.less';
 
-
 const ConnectedTopQuestionsPage = connectedQuestionsListTemplate('top');
 const ConnectedAnsweredQuestionsPage = connectedQuestionsListTemplate('answered');
 const ConnectedBannedQuestionsPage = connectedQuestionsListTemplate('banned');
