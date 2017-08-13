@@ -32,6 +32,8 @@ import { place_question } from './question.jsx';
 import { api_connect, loadData } from './loading-api.jsx';
 import { sdef, getSubmitFunction, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SUCCESSED } from './utils.jsx';
 
+import { resetModalMode, dispatchModalMode } from './main-reducer.jsx'
+
 import YouTubeParser from './youtube-parser.jsx';
 
 class Answer extends React.Component {
