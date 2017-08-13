@@ -58,11 +58,11 @@ class Answer extends React.Component {
             { this.button('DISLIKE_ANSWER', data.dislike_number + '-', 'dislike', 'complainedQuestion') }
             <span>{data.submit_date}</span>
             { this.props.idInfo.permissions.choose_answer && this.button('CHOOSE_ANSWER', 'Выбрать ответ') }
-            <Linkify> <p className='questionContent'>{text_str}</p> </Linkify>
             { text_str && <YouTubeParser text={text_str}/> }
         </div>;
     }
 }
+//<Linkify> <p className='questionContent'>{text_str}</p> </Linkify>
 
 class AnswersList extends React.Component {
     render() {
@@ -116,11 +116,13 @@ class AnswerForm extends React.Component {
         const answerText = this.props.answerText;
         return <div>
             <h2>Предложите ваш ответ</h2>
-            <textarea
-                cols="30" rows="10"
+            <input
+                type="text"
+                placeholder="youtube url"
                 onChange={(event) => this.setAnswerText(event.target.value)}
                 value={answerText}
             />
+            <br/>
             <button onClick={() =>
                 this.props.submit(
                     'new_answer',
