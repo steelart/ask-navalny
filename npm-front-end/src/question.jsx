@@ -27,6 +27,10 @@ import Linkify from 'react-linkify';
 
 import { LinkButton, SimpleButton, RefButton, SimpleButtonLI, LinkButtonLI } from './buttons.jsx';
 
+import { Grid, Nav, Navbar, NavItem } from 'react-bootstrap';
+import './bootstrap.css';
+import './style_okonst.css';
+
 export class Question extends React.Component {
     button(action, confirm_action, name, style_field) {
         const id = this.props.data.id;
@@ -44,17 +48,26 @@ export class Question extends React.Component {
 
     render() {
         const data = this.props.data;
-        return <div className={data.banned ? 'bannedQuestion' : (data.official_answer ? 'answeredQuestion' : 'questionInList')}>
-            { this.button('vote', 'SET_VOTED', data.votes_number + '+', 'voted') }
-            { this.button('COMPLAIN_ON_QUESTION', 'SET_COMPLAINED', data.complains + 'Пожаловаться', 'complained') }
-            <span>{data.submit_date}</span>
-            { this.props.idInfo.permissions.ban_question && ( data.banned
-                ? this.button('UNBAN_QUESTION', null, 'Разбанить')
-                : this.button('BAN_QUESTION', null, 'Забанить')
-            )}
-            { this.props.short && <LinkButtonLI to={'/questions/' + data.id}>Подробнее</LinkButtonLI> }
-            <Linkify> <p className='questionContent'>{data.text_str}</p> </Linkify>
-        </div>;
+        return (
+            <div>
+
+            <div className="questions_list">
+            <div className={data.banned ? 'bannedQuestion' : (data.official_answer ? 'answeredQuestion one' : ' one')}>
+                <Linkify> <p className='title'>{data.text_str}</p> </Linkify>
+                { this.button('vote', 'SET_VOTED', data.votes_number + '+', 'voted') }
+                { this.button('COMPLAIN_ON_QUESTION', 'SET_COMPLAINED', data.complains + ' Пожаловаться', 'complained') }
+                <span className="subtitle">{data.submit_date}</span>
+                { this.props.idInfo.permissions.ban_question && ( data.banned
+                    ? this.button('UNBAN_QUESTION', null, 'Разбанить')
+                    : this.button('BAN_QUESTION', null, 'Забанить')
+                )}
+                { this.props.short && <LinkButtonLI to={'/questions/' + data.id}>Подробнее</LinkButtonLI> }
+
+            </div>
+            </div>
+        </div>
+        )
+
     }
 }
 

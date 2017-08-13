@@ -47,6 +47,11 @@ import { getSubmitFunction } from './utils.jsx';
 
 import { ConnectedSearchPage } from './search.jsx'
 
+// react-bootstrap
+import Grid from 'react-bootstrap/lib/Grid'
+import ButtonGroup from 'react-bootstrap/lib/ButtonGroup'
+import Form from 'react-bootstrap/lib/Form'
+
 import './global-init.jsx';
 
 import './styles.less';
@@ -63,7 +68,6 @@ class NotFound extends React.Component {
         </div>;
     }
 }
-
 
 class TodoPage extends React.Component {
     render() {
@@ -130,6 +134,7 @@ ReactDOM.render(
       <Provider store={ mainStore }>
         <Router history={browserHistory}>
             <Redirect from='/' to='/last' />
+
             <Route path='/' component={ConnectedApp}>
                 <Route path='/last' component={ConnectedLastQuestionsPage} />
                 <Route path='/top' component={ConnectedTopQuestionsPage} />

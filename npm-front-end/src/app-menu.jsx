@@ -32,6 +32,8 @@ import { post_api } from './loading-api.jsx';
 
 import { ConnectedLoginPage } from './login-page.jsx';
 
+import { Grid, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
+import './bootstrap.css';
 
 class AppMenu extends React.Component {
     logout() {
@@ -50,7 +52,49 @@ class AppMenu extends React.Component {
     render() {
         const logged_in = this.props.idInfo.logged_in;
         const personaname = this.props.idInfo.personaname;
-        return <div className='mainMenu'> <div className='App'>
+        return<div> <Navbar>
+            <Navbar.Header>
+                <Navbar.Brand>
+                    <span>Навальный 20!8</span>
+                </Navbar.Brand>
+                <Navbar.Toggle />
+            </Navbar.Header>
+            <Navbar.Collapse>
+                <Nav navbar>
+                    <NavItem><LinkButtonLI to={'/last'}>Последние</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/top'}>Популярные</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/answered'}>Отвеченные</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/banned'}>Забаненные</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/todo'}>todo</LinkButtonLI></NavItem>
+                    <NavItem>{logged_in && <LinkButtonLI to={'/ask'}>Новый вопрос</LinkButtonLI> }</NavItem>
+                    { logged_in
+                        ? <NavItem onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</NavItem>
+                        : <NavItem onClick={() => dispatchModalMode(this, ConnectedLoginPage)}>Войти</NavItem>
+                    }
+                </Nav>
+            </Navbar.Collapse>
+            </Navbar>
+            <div className="container">
+            <div className="bg_holder">
+
+                <div className="question form-group has-feedback">
+                <span className=" form-control-feedback" aria-hidden="true"></span>
+                <div className="question form-group has-feedback">
+				<FormControl type="text" className="form-control" id="question" aria-describedby="inputSuccess2Status" placeholder="Спроси Навального" data-toggle="dropdown"/>
+				<span className="form-control-feedback" aria-hidden="true"></span>
+
+		        </div>
+
+
+            </div>
+
+        </div>
+
+		</div>
+
+				</div>;
+    }
+        /*<div className='mainMenu'> <div className='App'>
             { logged_in
                 ? <SimpleButtonLI onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</SimpleButtonLI>
                 : <SimpleButtonLI onClick={() => dispatchModalMode(this, ConnectedLoginPage)}>Войти</SimpleButtonLI>
@@ -62,9 +106,9 @@ class AppMenu extends React.Component {
             {logged_in && <LinkButtonLI to={'/ask'}>Новый вопрос</LinkButtonLI> }
             <LinkButtonLI to={'/search'}>Поиск</LinkButtonLI>
             <LinkButtonLI to={'/todo'}>todo</LinkButtonLI>
-        </div></div>;
+        </div></div>;*/
     }
-}
+
 
 export const ConnectedAppMenu = connect(
     (state) => ({

@@ -21,6 +21,7 @@
     "less": "*",
     "moment": "*",
     "react": "*",
+    "react-bootstrap": "*",
     "react-dom": "*",
     "react-linkify" : "*",
     "react-modal": "*",
