@@ -1,0 +1,75 @@
+.button{
+  display: inline-block;
+  box-sizing: border-box;
+  padding: 17px 15px 16px;
+
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+  font-family: 'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+  text-align: center;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.button.button--blue {
+    color: #0d7fa3;
+    text-transform: uppercase;
+    text-decoration: none;
+    background-color: transparent;
+    border: 1px solid #0d7fa3;
+    margin:0px 5px 0px 5px;
+}
+
+.button.button--blue:active, .button.button--blue:hover {
+    color: #fff;
+    background-color: #0d7fa3;
+    transition-duration: .2s;
+}
+
+.button.button--orange{
+  background-color: #f30;
+  border: 1px solid #f30;
+  margin:0px 5px 0px 5px;
+}
+.button.button--orange:active, .button.button--orange:hover {
+  color: #fff;
+
+  background-color: #ee1c00;
+  border-color: #ee1c00;
+
+  transition-duration: .2s;
+}
+
+.bootstrap-tagsinput {
+    width:100%;
+    min-height: 200px;
+    margin-bottom: 10px;
+}
+
+.form-label {
+    color:rgb(125, 125, 125);
+}
+
+.qa-form {
+   margin-left: auto;
+   margin-right: auto;
+   display: block;
+   max-width: 500px;
+}
+.qa-btn-block {
+    max-width: 400px;
+}
+.range-slider{
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+.extra-controls{
+    margin-bottom:10px;
+}
