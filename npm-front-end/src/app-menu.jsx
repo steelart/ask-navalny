@@ -65,6 +65,7 @@ class AppMenu extends React.Component {
                     <NavItem><LinkButtonLI to={'/top'}>Популярные</LinkButtonLI></NavItem>
                     <NavItem><LinkButtonLI to={'/answered'}>Отвеченные</LinkButtonLI></NavItem>
                     <NavItem><LinkButtonLI to={'/banned'}>Забаненные</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/search'}>Поиск</LinkButtonLI></NavItem>
                     <NavItem><LinkButtonLI to={'/todo'}>todo</LinkButtonLI></NavItem>
                     <NavItem>{logged_in && <LinkButtonLI to={'/ask'}>Новый вопрос</LinkButtonLI> }</NavItem>
                     { logged_in
