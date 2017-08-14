@@ -252,7 +252,7 @@ def post_api(request):
         send_object({'type':'NEW_QUESTION', 'question': qdict})
         return JsonResponse({ 'success' : True, 'id' : q.id})
 
-    if action == 'vote':
+    if action == 'VOTE_FOR_QUESTION':
         def updater(q): #TODO: make atomic BD operation
             exists = QuestionVoteList.objects.filter(question=q,user=user).exists()
             if exists:
@@ -262,7 +262,7 @@ def post_api(request):
             return True
         return update_question(data, updater)
 
-    if action == 'COMPLAIN_ON_QUESTION':
+    if action == 'COMPLAIN_ABOUT_QUESTION':
         def updater(q): #TODO: make atomic BD operation
             exists = QuestionVoteList.objects.filter(question=q,user=user).exists()
             if exists:
