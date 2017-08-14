@@ -8,7 +8,7 @@ body {
 }
 
 .bg_holder {
-    background-image: url(bg-photo.jpg);
+    background-image: url(/static/askp/images/bg-photo.jpg);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
