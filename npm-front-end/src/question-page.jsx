@@ -65,50 +65,14 @@ class Answer extends React.Component {
         </div>;
     }
 }
-//<Linkify> <p className='questionContent'>{text_str}</p> </Linkify>
-
-class AnswersList extends React.Component {
-    render() {
-        const question_id = this.props.question_id;
-        const questionsInfo = this.props.questionsInfo;
-        const question = questionsInfo.questions[question_id];
-        const answers = questionsInfo.answers_map[question_id];
-        if (!answers) {
-            //loadData('/api/answers/' + question_id, 'SET_ANSWERS', this.props.dispatch, {question_id : question_id});
-
-            return <div>
-                <p> Идёт загрузка ответов </p>
-            </div>;
-        } else {
-            const official_answer = question.official_answer;
-            //tmp className='questionContent'
-            return <div className='questionContent'>
-                { official_answer && <Answer
-                    submit={this.props.submit}
-                    idInfo={this.props.idInfo}
-                    data={answers[official_answer]}
-                    dispatch={this.props.dispatch}
-                    choosedAnswer={true}
-                />}
-                { Object.keys(answers).map((aid) => aid != official_answer &&
-                    <Answer submit={this.props.submit}
-                        idInfo={this.props.idInfo}
-                        data={{
-                            ...answers[aid],
-                            like : questionsInfo.liked_answers_list[aid],
-                            dislike : questionsInfo.disliked_answers_list[aid]
-                        }}
-                        dispatch={this.props.dispatch}
-                        choosedAnswer={official_answer == answers[aid].id}
-                        key={answers[aid].id} /> )
-                }
-            </div>;
-        }
-    }
-}
-
 
 class QuestionPage extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            answer_num : 0
+        };
+    }
     render() {
         const question_id = this.props.params.id;
         const questionsInfo = this.props.questionsInfo;
@@ -127,18 +91,28 @@ class QuestionPage extends React.Component {
                 <p> Идёт загрузка ответов </p>
             </div>;
         } else {
+            const official_answer = question.official_answer;
+            const asfn = (n) => answers[Object.keys(answers)[n]];
+            const cur_num = this.state.answer_num;
+            const answer = asfn(cur_num);
             return <div>
                 { place_question(this.props, questionsInfo.questions, question_id, false) }
                 <button onClick={() => this.props.idInfo.logged_in
                     ? dispatchModalMode(this, ConnectedAnswerForm)
                     : setLoginModalMode(this)
                 }>Предложить ответ</button>
-                <AnswersList
-                    idInfo={this.props.idInfo}
-                    questionsInfo={questionsInfo}
-                    question_id={question_id}
+                <br/>
+                <button onClick={() => asfn(cur_num - 1) && this.setState({answer_num : cur_num - 1})}>{'<'}</button>
+                { answers != {} && <span>Ответ {cur_num+1}/{Object.keys(answers).length}</span>}
+                <button onClick={() => asfn(cur_num + 1) && this.setState({answer_num : cur_num + 1})}>{'>'}</button>
+                { answer && <Answer
                     submit={this.props.submit}
-                    dispatch={this.props.dispatch}/>
+                    idInfo={this.props.idInfo}
+                    data={answer}
+                    dispatch={this.props.dispatch}
+                    choosedAnswer={answer == official_answer}
+                /> }
+                { answers == {} && <p>Ещё нет ни одного ответа</p>}
             </div>;
         }
     }
