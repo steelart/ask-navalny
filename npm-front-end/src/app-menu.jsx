@@ -30,7 +30,7 @@ import { LinkButton, SimpleButton, RefButton, LinkButtonLI, SimpleButtonLI, RefB
 
 import { post_api } from './loading-api.jsx';
 
-import { ConnectedLoginPage } from './login-page.jsx';
+import { setLoginModalMode } from './login-page.jsx';
 
 import { Grid, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
 import './bootstrap.css';
@@ -70,7 +70,7 @@ class AppMenu extends React.Component {
                     <NavItem>{logged_in && <LinkButtonLI to={'/ask'}>Новый вопрос</LinkButtonLI> }</NavItem>
                     { logged_in
                         ? <NavItem onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</NavItem>
-                        : <NavItem onClick={() => dispatchModalMode(this, ConnectedLoginPage)}>Войти</NavItem>
+                        : <NavItem onClick={() => setLoginModalMode(this)}>Войти</NavItem>
                     }
                 </Nav>
             </Navbar.Collapse>
@@ -95,20 +95,8 @@ class AppMenu extends React.Component {
 
 				</div>;
     }
-        /*<div className='mainMenu'> <div className='App'>
-            { logged_in
-                ? <SimpleButtonLI onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</SimpleButtonLI>
-                : <SimpleButtonLI onClick={() => dispatchModalMode(this, ConnectedLoginPage)}>Войти</SimpleButtonLI>
-            }
-            <LinkButtonLI to={'/last'}>Последние</LinkButtonLI>
-            <LinkButtonLI to={'/top'}>Популярные</LinkButtonLI>
-            <LinkButtonLI to={'/answered'}>Отвеченные</LinkButtonLI>
-            <LinkButtonLI to={'/banned'}>Забаненные</LinkButtonLI>
-            {logged_in && <LinkButtonLI to={'/ask'}>Новый вопрос</LinkButtonLI> }
-            <LinkButtonLI to={'/search'}>Поиск</LinkButtonLI>
-            <LinkButtonLI to={'/todo'}>todo</LinkButtonLI>
-        </div></div>;*/
-    }
+
+}
 
 
 export const ConnectedAppMenu = connect(

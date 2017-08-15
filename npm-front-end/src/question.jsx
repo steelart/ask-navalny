@@ -27,6 +27,8 @@ import Linkify from 'react-linkify';
 
 import { LinkButton, SimpleButton, RefButton, SimpleButtonLI, LinkButtonLI } from './buttons.jsx';
 
+import { setLoginModalMode } from './login-page.jsx';
+
 import { Grid, Nav, Navbar, NavItem } from 'react-bootstrap';
 import './bootstrap.css';
 import './style_okonst.css';
