@@ -37,7 +37,7 @@ import { setLoginModalMode } from './login-page.jsx';
 
 import { AnswerForm } from './answer-form.jsx';
 
-import YouTubeParser from './youtube-parser.jsx';
+import YouTube from 'react-youtube';
 
 class Answer extends React.Component {
     button(action, name, field, choosedStyle) {
@@ -55,13 +55,25 @@ class Answer extends React.Component {
 
     render() {
         const data = this.props.data;
-        const text_str = data.text_str;
+
+        const opts = {
+            height: '390',
+            width: '640',
+            playerVars: { // https://developers.google.com/youtube/player_parameters
+                start : data.start,
+                end : data.end,
+                autoplay: 0
+            }
+        };
         return <div className={this.props.choosedAnswer ? 'choosedAnswer' : 'answerInList'}>
             { this.button('LIKE_ANSWER', data.like_number + '+', 'like', 'votedQuestion') }
             { this.button('DISLIKE_ANSWER', data.dislike_number + '-', 'dislike', 'complainedQuestion') }
             <span>{data.submit_date}</span>
             { this.props.idInfo.permissions.choose_answer && this.button('CHOOSE_ANSWER', 'Выбрать ответ') }
-            { text_str && <YouTubeParser text={text_str}/> }
+            <YouTube
+                videoId={data.video_id}
+                opts={opts}
+            />
         </div>;
     }
 }
@@ -95,6 +107,7 @@ class QuestionPage extends React.Component {
             const asfn = (n) => answers[Object.keys(answers)[n]];
             const cur_num = this.state.answer_num;
             const answer = asfn(cur_num);
+            const answers_size = Object.keys(answers).length;
             return <div>
                 { place_question(this.props, questionsInfo.questions, question_id, false) }
                 <button onClick={() => this.props.idInfo.logged_in
@@ -102,9 +115,9 @@ class QuestionPage extends React.Component {
                     : setLoginModalMode(this)
                 }>Предложить ответ</button>
                 <br/>
-                <button onClick={() => asfn(cur_num - 1) && this.setState({answer_num : cur_num - 1})}>{'<'}</button>
-                { answers != {} && <span>Ответ {cur_num+1}/{Object.keys(answers).length}</span>}
-                <button onClick={() => asfn(cur_num + 1) && this.setState({answer_num : cur_num + 1})}>{'>'}</button>
+                { answers_size != 0 && <button onClick={() => asfn(cur_num - 1) && this.setState({answer_num : cur_num - 1})}>{'<'}</button> }
+                { answers_size != 0 && <span>Ответ {cur_num+1}/{answers_size}</span>}
+                { answers_size != 0 && <button onClick={() => asfn(cur_num + 1) && this.setState({answer_num : cur_num + 1})}>{'>'}</button> }
                 { answer && <Answer
                     submit={this.props.submit}
                     idInfo={this.props.idInfo}
@@ -112,7 +125,7 @@ class QuestionPage extends React.Component {
                     dispatch={this.props.dispatch}
                     choosedAnswer={answer == official_answer}
                 /> }
-                { answers == {} && <p>Ещё нет ни одного ответа</p>}
+                { answers_size == 0 && <p>Ещё нет ни одного ответа</p>}
             </div>;
         }
     }

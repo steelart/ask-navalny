@@ -49,13 +49,17 @@ from .models import Question
 from .models import Answer
 from .models import QuestionVoteList
 from .models import AnswerVoteList
+from .models import YoutubeVideo
 from .models import obj_to_dict
+from .models import answer_to_dict
 from .models import add_new_question
 
 from .models import VOTED
 from .models import COMPLAIN
 from .models import LIKE
 from .models import DISLIKE
+
+from .models import YOUTUBE
 
 try:
     # Python 3
@@ -143,7 +147,7 @@ def answers(request, question_id):
     pass_raise_dbg_filter_or_exception(request)
     adict = {}
     for a in Answer.objects.filter(question=question_id):
-        adict[a.id] = obj_to_dict(a)
+        adict[a.id] = answer_to_dict(a)
         #print(a.text_str)
     question = Question.objects.get(id=question_id)
     qdict = obj_to_dict(question)
@@ -231,7 +235,7 @@ def update_answer(data, updater):
     if res != None and res == False:
         return JsonResponse({ 'success' : False, 'diagnostic' : 'could not change state of question' })
     answer.save()
-    adict = obj_to_dict(answer)
+    adict = answer_to_dict(answer)
     send_object({'type':'SET_ANSWER_DATA', 'answer': adict})
     return JsonResponse({ 'success' : True })
 
@@ -284,13 +288,17 @@ def post_api(request):
         def updater(q): q.banned = False
         return update_question(data, updater)
 
-    if action == 'new_answer':
-        text_message = data['text']
-        question_id = data['question']
+    if action == 'NEW_YOUTUBE_ANSWER':
+        question_id = data['question_id']
+        video_id = data['video_id']
+        start = data['start']
+        end = data['end']
+        #TODO: add video validations (for existance and time)
         question = Question.objects.get(id=question_id)
 
-        a = Answer.objects.create(text_str=text_message, question=question)
-        adict = obj_to_dict(a)
+        video = YoutubeVideo.objects.create(video_id=video_id, start=start, end=end)
+        a = Answer.objects.create(question=question, answer_type=YOUTUBE, data_key=video.id)
+        adict = answer_to_dict(a)
         send_object({'type':'SET_ANSWER_DATA', 'question_id': question_id, 'answer': adict})
 
     if action == 'LIKE_ANSWER':
