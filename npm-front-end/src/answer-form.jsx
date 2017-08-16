@@ -20,7 +20,7 @@ export class AnswerForm extends React.Component {
             full_len : 0,
             start : this.parse_time(this.props.answerText),
             end : 0,
-            cur_time : 100,
+            cur_time : 0,
             timer : null
         };
     }
@@ -64,25 +64,25 @@ export class AnswerForm extends React.Component {
     }
 
     update_start_time(video, new_val) {
-        this.setState({start : new_val});
+        this.state.timer && clearTimeout(this.state.timer);
+        this.setState({start : new_val, timer : null});
         const p = {
             videoId : video,
             startSeconds : new_val,
             endSeconds : this.state.end
         };
         this.state.player.loadVideoById(p);
-        clearTimeout(this.state.timer);
     }
 
     update_end_time(video, new_val) {
-        this.setState({end : new_val});
+        this.state.timer && clearTimeout(this.state.timer);
+        this.setState({end : new_val, timer : null});
         const p = {
             videoId : video,
             startSeconds : this.state.start,
             endSeconds : new_val
         };
         this.state.player.loadVideoById(p);
-        clearTimeout(this.state.timer);
     }
 
     render_youtube(video) {
@@ -112,9 +112,13 @@ export class AnswerForm extends React.Component {
                     this.setState({ cur_time : e.target.getCurrentTime() });
                     this.setState({ timer : setInterval(() => this.update_time(e.target), 1000) });
                 }}
+                onPause={(e) => {
+                    this.state.timer && clearTimeout(this.state.timer);
+                    this.setState({ timer : null });
+                }}
             />
             <br/>
-            <table border={0}>
+            <table>
               <tr>
                 <th></th>
                 <th><button onClick={() => this.update_start_time(video, this.state.cur_time)}>{this.state.cur_time}</button></th>
