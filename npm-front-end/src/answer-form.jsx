@@ -19,7 +19,9 @@ export class AnswerForm extends React.Component {
             player : null,
             full_len : 0,
             start : this.parse_time(this.props.answerText),
-            end : 0
+            end : 0,
+            cur_time : 100,
+            timer : null
         };
     }
     setAnswerText(text) {
@@ -57,6 +59,32 @@ export class AnswerForm extends React.Component {
         </div>;
     }
 
+    update_time(player) {
+        this.setState({cur_time : player.getCurrentTime()});
+    }
+
+    update_start_time(video, new_val) {
+        this.setState({start : new_val});
+        const p = {
+            videoId : video,
+            startSeconds : new_val,
+            endSeconds : this.state.end
+        };
+        this.state.player.loadVideoById(p);
+        clearTimeout(this.state.timer);
+    }
+
+    update_end_time(video, new_val) {
+        this.setState({end : new_val});
+        const p = {
+            videoId : video,
+            startSeconds : this.state.start,
+            endSeconds : new_val
+        };
+        this.state.player.loadVideoById(p);
+        clearTimeout(this.state.timer);
+    }
+
     render_youtube(video) {
         const url_start = this.parse_time(this.props.answerText);
         const opts = {
@@ -80,39 +108,35 @@ export class AnswerForm extends React.Component {
                         this.setState({ full_len : duration, end : duration })
                     }
                 }}
+                onPlay={(e) => {
+                    this.setState({ cur_time : e.target.getCurrentTime() });
+                    this.setState({ timer : setInterval(() => this.update_time(e.target), 1000) });
+                }}
             />
             <br/>
-            <span>С</span>
-            <input
-                type='text'
-                value={this.state.start}
-                onChange={(e) => {
-                    const new_val = e.target.value;
-                    this.setState({start : new_val})
-                    const p = {
-                        videoId : video,
-                        startSeconds : new_val,
-                        endSeconds : this.state.end
-                    };
-                    this.state.player.loadVideoById(p);
-                }}
-            />
-            <span>секунды по</span>
-            <input
-                type='text'
-                value={this.state.end}
-                onChange={(e) => {
-                    const new_val = e.target.value;
-                    this.setState({end : new_val})
-                    const p = {
-                        videoId : video,
-                        startSeconds : this.state.start,
-                        endSeconds : new_val
-                    };
-                    this.state.player.loadVideoById(p);
-                }}
-            />
-            <span>секунду</span>
+            <table border={0}>
+              <tr>
+                <th></th>
+                <th><button onClick={() => this.update_start_time(video, this.state.cur_time)}>{this.state.cur_time}</button></th>
+                <th></th>
+                <th><button onClick={() => this.update_end_time(video, this.state.cur_time)}>{this.state.cur_time}</button></th>
+              </tr>
+              <tr>
+                <th>С</th>
+                <th><input
+                    type='text'
+                    value={this.state.start}
+                    onChange={(e) => this.update_start_time(video, e.target.value)}
+                /></th>
+                <th>секунды по</th>
+                <th><input
+                    type='text'
+                    value={this.state.end}
+                    onChange={(e) => this.update_end_time(video, e.target.value)}
+                /></th>
+                <th>секунду</th>
+              </tr>
+            </table>
         </div>;
     }
 
