@@ -34,13 +34,8 @@ import Modal from 'react-modal';
 import { mainStore, resetModalMode, dispatchModalMode } from './main-reducer.jsx';
 
 import { ConnectedQuestionForm } from './ask-question-page.jsx';
-<<<<<<< HEAD
 import { ConnectedAppMenu, setLoginModalMode } from './app-menu.jsx';
 import { ConnectedHeader } from './app-header.jsx';
-=======
-import { ConnectedAppMenu } from './app-menu.jsx';
-import { setLoginModalMode } from './login-page.jsx';
->>>>>>> 9f8dbcd2aec2b7339b273494cd84b19b5d67f796
 
 import { ConnectedLastQuestionsPage } from './last-questions-page.jsx';
 import { connectedQuestionsListTemplate } from './questions-list-template.jsx';
