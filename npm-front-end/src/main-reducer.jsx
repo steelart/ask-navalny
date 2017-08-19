@@ -262,10 +262,10 @@ function questionsReducer(state=questionsDefault, action) {
             return s;
         }
 
-        case 'VOTE_FOR_QUESTION': {
+        case 'SET_VOTED': {
             return fld(state, ['voted_list', action.question], true);
         }
-        case 'COMPLAIN_ABOUT_QUESTION': {
+        case 'SET_COMPLAINED': {
             return fld(state, ['complained_list', action.question], true);
         }
 

@@ -25,8 +25,18 @@ SOFTWARE.
 import React from 'react';
 import { connect } from 'react-redux';
 import Linkify from 'react-linkify';
+import { Jumbotron, Container, InputGroup, InputGroupAddon, Input, Form, FormGroup } from 'reactstrap';
+import { Button, ButtonGroup, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, Row } from 'reactstrap';
 
-import { LinkButton, SimpleButton, RefButton, SimpleButtonLI, LinkButtonLI } from './buttons.jsx';
+import {
+            LinkButton,
+            SimpleButton,
+            RefButton,
+            SimpleButtonLI,
+            LinkButtonLI
+
+} from './buttons.jsx';
+
 import { place_question } from './question.jsx';
 
 import { api_connect, loadData } from './loading-api.jsx';
@@ -67,13 +77,30 @@ class LastQuestionsPage extends React.Component {
         const voted_list = questionsInfo.voted_list;
         //console.log('voted_list', voted_list);
         //{new_ids.length == 0 && <button> заменить на пустое место того же размера </button> }
-        return <div>
-            {new_ids.length != 0 && <button onClick={() => this.show_new_questions()} > { 'Показать новый вопросы, их всего ' + new_ids.length } </button> }
-            { ids.map((qid) => place_question(this.props, qs, qid, true) ) }
-            {status == LOADING_IN_PROCESS && <p> Идёт загрузка вопросов </p> }
-            {status == LOADING_FAILED     && <button onClick={() => this.reload()}>Ошибка, повторить!</button> }
-            {status == LOADING_SUCCESSED  && <button onClick={() => this.reload()}>Показать ещё!</button> }
-        </div>;
+        return (
+            <div>
+                <div className="">
+                    <div className="sort_holder text-center">
+            			<div className="sort-panel btn-group btn-group-justified" role="group" aria-label="...">
+            				<a href="/top" className="btn btn-default active" role="button">Популярное</a>
+            				<a href="/#" className="btn btn-default" role="button">Новое</a>
+            				<a href="/#" className="btn btn-default" role="button">Неотвеченное</a>
+            			</div>
+            		</div>
+           		</div>
+                <div className="questions_list">
+                    {new_ids.length != 0 && <button onClick={() => this.show_new_questions()} > { 'Показать новый вопросы, их всего ' + new_ids.length } </button> }
+                    { ids.map((qid) => place_question(this.props, qs, qid, true) ) }
+                    <br />
+                    <div className="text-center">
+                        {status == LOADING_IN_PROCESS && <p> Идёт загрузка вопросов </p> }
+                        {status == LOADING_FAILED     && <Button outline color="danger" onClick={() => this.reload()}>Ошибка, повторить</Button>}
+                        {status == LOADING_SUCCESSED  && <Button outline color="primary" onClick={() => this.reload()}>Показать ещё</Button>}
+                    </div>
+                    <br />
+                </div>
+            </div>
+        );
     }
 }
 

@@ -80,7 +80,7 @@ body {
         width: 100%;
         float: none;
         display: block;
-        border-radius: 4px!important;
+        border-radius: 4px;
         margin-bottom: 10px
     }
 }
