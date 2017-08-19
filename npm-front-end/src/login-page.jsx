@@ -116,3 +116,8 @@ class LoginPage extends React.Component {
 }
 
 export const ConnectedLoginPage = connect((state) => ({}))(LoginPage);
+
+export function setLoginModalMode(connectedReactComp) {
+    dispatchModalMode(connectedReactComp, ConnectedLoginPage);
+}
+

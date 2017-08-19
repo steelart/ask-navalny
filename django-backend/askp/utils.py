@@ -22,18 +22,42 @@
 
 __author__      = "Merkulov Alexey"
 
-from django.http import HttpResponse
-from django.template import loader
+import urllib2
 
-from .utils import check_dbg_filter
-from .utils import pass_raise_dbg_filter_or_exception
+try:
+    # Python 3
+    from urllib.parse import urlparse, parse_qs, urlencode
+except ImportError:
+    # Python 2
+    from urlparse import urlparse, parse_qs
+    from urllib import urlencode
+
+try:
+    from .local_config import *
+except ImportError:
+    pass
 
 
-def reactindex(request):
-    index = 'askp/reactindex.html'
+def check_dbg_filter(request):
+    if not 'DEBUG_FILTER_CODE' in globals():
+        return True
+    dbgcode = request.COOKIES.get('dbgcode', '')
+    if dbgcode != DEBUG_FILTER_CODE:
+        return False
+    return True
+
+def pass_raise_dbg_filter_or_exception(request):
     if not check_dbg_filter(request):
-        index = 'askp/filter.html'
-    template = loader.get_template(index)
-    context = {}
-    return HttpResponse(template.render(context, request))
+        raise Http404("You need to pass debug filter")
 
+
+def get_domain(uri):
+    parsed_uri = urlparse(uri)
+    domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+    return domain
+
+
+def getJsonObj(url):
+    #print 'getJsonObj: ' + str(url)
+    f = urllib2.urlopen(url)
+    return json.load(f)

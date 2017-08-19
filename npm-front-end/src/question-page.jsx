@@ -33,8 +33,11 @@ import { api_connect, loadData } from './loading-api.jsx';
 import { sdef, getSubmitFunction, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SUCCESSED } from './utils.jsx';
 
 import { resetModalMode, dispatchModalMode } from './main-reducer.jsx'
+import { setLoginModalMode } from './login-page.jsx';
 
-import YouTubeParser from './youtube-parser.jsx';
+import { AnswerForm } from './answer-form.jsx';
+
+import YouTube from 'react-youtube';
 
 class Answer extends React.Component {
     button(action, name, field, choosedStyle) {
@@ -52,101 +55,36 @@ class Answer extends React.Component {
 
     render() {
         const data = this.props.data;
-        const text_str = data.text_str;
+
+        const opts = {
+            height: '390',
+            width: '640',
+            playerVars: { // https://developers.google.com/youtube/player_parameters
+                start : data.start,
+                end : data.end,
+                autoplay: 0
+            }
+        };
         return <div className={this.props.choosedAnswer ? 'choosedAnswer' : 'answerInList'}>
             { this.button('LIKE_ANSWER', data.like_number + '+', 'like', 'votedQuestion') }
             { this.button('DISLIKE_ANSWER', data.dislike_number + '-', 'dislike', 'complainedQuestion') }
             <span>{data.submit_date}</span>
             { this.props.idInfo.permissions.choose_answer && this.button('CHOOSE_ANSWER', 'Выбрать ответ') }
-            { text_str && <YouTubeParser text={text_str}/> }
-        </div>;
-    }
-}
-//<Linkify> <p className='questionContent'>{text_str}</p> </Linkify>
-
-class AnswersList extends React.Component {
-    render() {
-        const question_id = this.props.question_id;
-        const questionsInfo = this.props.questionsInfo;
-        const question = questionsInfo.questions[question_id];
-        const answers = questionsInfo.answers_map[question_id];
-        if (!answers) {
-            //loadData('/api/answers/' + question_id, 'SET_ANSWERS', this.props.dispatch, {question_id : question_id});
-
-            return <div>
-                <p> Идёт загрузка ответов </p>
-            </div>;
-        } else {
-            const official_answer = question.official_answer;
-            //tmp className='questionContent'
-            return <div className='questionContent'>
-                { official_answer && <Answer
-                    submit={this.props.submit}
-                    idInfo={this.props.idInfo}
-                    data={answers[official_answer]}
-                    dispatch={this.props.dispatch}
-                    choosedAnswer={true}
-                />}
-                { Object.keys(answers).map((aid) => aid != official_answer &&
-                    <Answer submit={this.props.submit}
-                        idInfo={this.props.idInfo}
-                        data={{
-                            ...answers[aid],
-                            like : questionsInfo.liked_answers_list[aid],
-                            dislike : questionsInfo.disliked_answers_list[aid]
-                        }}
-                        dispatch={this.props.dispatch}
-                        choosedAnswer={official_answer == answers[aid].id}
-                        key={answers[aid].id} /> )
-                }
-            </div>;
-        }
-    }
-}
-
-class AnswerForm extends React.Component {
-    setAnswerText(text) {
-        this.props.dispatch({
-            type: 'SET_ANSWER_TEXT',
-            text: text
-        });
-    }
-    render() {
-        const question_id = this.props.question_id;
-        const answerText = this.props.answerText;
-        return <div>
-            <h2>Предложите ваш ответ</h2>
-            <input
-                type="text"
-                placeholder="youtube url"
-                onChange={(event) => this.setAnswerText(event.target.value)}
-                value={answerText}
+            <YouTube
+                videoId={data.video_id}
+                opts={opts}
             />
-            <br/>
-            <button onClick={() =>
-                this.props.submit(
-                    'new_answer',
-                    { text : answerText, question: question_id },
-                    () => { this.setAnswerText(''); resetModalMode(this); }
-                )
-            }>Предложить ответ</button>
-            {answerText && <Answer
-                idInfo={this.props.idInfo}
-                submit={() => {}}
-                data={{
-                    submit_date : '<<тут будет время>>',
-                    like_number : 0,
-                    dislike_number : 0,
-                    text_str : answerText
-                }}
-                choosedAnswer={false}
-            />}
-            <button onClick={() => resetModalMode(this)}>отмена</button>
         </div>;
     }
 }
 
 class QuestionPage extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            answer_num : 0
+        };
+    }
     render() {
         const question_id = this.props.params.id;
         const questionsInfo = this.props.questionsInfo;
@@ -165,18 +103,29 @@ class QuestionPage extends React.Component {
                 <p> Идёт загрузка ответов </p>
             </div>;
         } else {
+            const official_answer = question.official_answer;
+            const asfn = (n) => answers[Object.keys(answers)[n]];
+            const cur_num = this.state.answer_num;
+            const answer = asfn(cur_num);
+            const answers_size = Object.keys(answers).length;
             return <div>
                 { place_question(this.props, questionsInfo.questions, question_id, false) }
                 <button onClick={() => this.props.idInfo.logged_in
                     ? dispatchModalMode(this, ConnectedAnswerForm)
                     : setLoginModalMode(this)
                 }>Предложить ответ</button>
-                <AnswersList
-                    idInfo={this.props.idInfo}
-                    questionsInfo={questionsInfo}
-                    question_id={question_id}
+                <br/>
+                { answers_size != 0 && <button onClick={() => asfn(cur_num - 1) && this.setState({answer_num : cur_num - 1})}>{'<'}</button> }
+                { answers_size != 0 && <span>Ответ {cur_num+1}/{answers_size}</span>}
+                { answers_size != 0 && <button onClick={() => asfn(cur_num + 1) && this.setState({answer_num : cur_num + 1})}>{'>'}</button> }
+                { answer && <Answer
                     submit={this.props.submit}
-                    dispatch={this.props.dispatch}/>
+                    idInfo={this.props.idInfo}
+                    data={answer}
+                    dispatch={this.props.dispatch}
+                    choosedAnswer={answer == official_answer}
+                /> }
+                { answers_size == 0 && <p>Ещё нет ни одного ответа</p>}
             </div>;
         }
     }

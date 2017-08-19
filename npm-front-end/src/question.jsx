@@ -27,6 +27,15 @@ import Linkify from 'react-linkify';
 
 import { LinkButton, SimpleButton, RefButton, SimpleButtonLI, LinkButtonLI } from './buttons.jsx';
 
+<<<<<<< HEAD
+=======
+import { setLoginModalMode } from './login-page.jsx';
+
+import { Grid, Nav, Navbar, NavItem } from 'react-bootstrap';
+import './bootstrap.css';
+import './style_okonst.css';
+
+>>>>>>> 9f8dbcd2aec2b7339b273494cd84b19b5d67f796
 export class Question extends React.Component {
     button(action, confirm_action, name, style_field) {
         const id = this.props.data.id;

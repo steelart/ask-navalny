@@ -31,7 +31,7 @@ import logo from './img/logo.svg';
 
 import { post_api } from './loading-api.jsx';
 
-import { ConnectedLoginPage } from './login-page.jsx';
+import { setLoginModalMode } from './login-page.jsx';
 
 class AppMenu extends React.Component {
     constructor(props) {
@@ -93,6 +93,7 @@ class AppMenu extends React.Component {
     render() {
         const logged_in = this.props.idInfo.logged_in;
         const personaname = this.props.idInfo.personaname;
+<<<<<<< HEAD
         return <div className='mainMenu'> <div className='App'>
             { logged_in
                 ? <SimpleButtonLI onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</SimpleButtonLI>
@@ -108,6 +109,54 @@ class AppMenu extends React.Component {
         </div></div>;
     }
 }*/
+=======
+        return<div> <Navbar>
+            <Navbar.Header>
+                <Navbar.Brand>
+                    <span>Навальный 20!8</span>
+                </Navbar.Brand>
+                <Navbar.Toggle />
+            </Navbar.Header>
+            <Navbar.Collapse>
+                <Nav navbar>
+                    <NavItem><LinkButtonLI to={'/last'}>Последние</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/top'}>Популярные</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/answered'}>Отвеченные</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/banned'}>Забаненные</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/search'}>Поиск</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/todo'}>todo</LinkButtonLI></NavItem>
+                    <NavItem>{logged_in && <LinkButtonLI to={'/ask'}>Новый вопрос</LinkButtonLI> }</NavItem>
+                    { logged_in
+                        ? <NavItem onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</NavItem>
+                        : <NavItem onClick={() => setLoginModalMode(this)}>Войти</NavItem>
+                    }
+                </Nav>
+            </Navbar.Collapse>
+            </Navbar>
+            <div className="container">
+            <div className="bg_holder">
+
+                <div className="question form-group has-feedback">
+                <span className=" form-control-feedback" aria-hidden="true"></span>
+                <div className="question form-group has-feedback">
+				<FormControl type="text" className="form-control" id="question" aria-describedby="inputSuccess2Status" placeholder="Спроси Навального" data-toggle="dropdown"/>
+				<span className="form-control-feedback" aria-hidden="true"></span>
+
+		        </div>
+
+
+            </div>
+
+        </div>
+
+		</div>
+
+				</div>;
+    }
+
+}
+
+>>>>>>> 9f8dbcd2aec2b7339b273494cd84b19b5d67f796
 
 export const ConnectedAppMenu = connect(
     (state) => ({
