@@ -27,14 +27,19 @@ import Linkify from 'react-linkify';
 
 import { LinkButton, SimpleButton, RefButton, SimpleButtonLI, LinkButtonLI } from './buttons.jsx';
 
+import { Grid, Nav, Navbar, NavItem } from 'react-bootstrap';
+import './bootstrap.css';
+import './style_okonst.css';
+
 export class Question extends React.Component {
-    button(action, confirm_action, name, style_field) {
+    button(action, name, style_field) {
         const id = this.props.data.id;
+        // style_field is used also as style prefix
         return <SimpleButtonLI
                 baseStyle={this.props[style_field] ? (style_field+'Question') : 'linkButtonStyle'}
                 onClick={() => { this.props.idInfo.logged_in
                     ? this.props.submit(action, {'id' : id}, () =>
-                        confirm_action && this.props.dispatch({type : confirm_action, question : id})
+                        this.props.dispatch({type : action, question : id})
                       )
                     : setLoginModalMode(this)
                 }}>
@@ -45,16 +50,24 @@ export class Question extends React.Component {
     render() {
         const data = this.props.data;
         return (
-            <div className="one">
-                <a href="">
-                    <p className="title">{data.text_str}</p>
-                    <p className="subtitle">
-                        <span className="minutes">{data.submit_date}</span>
-                    </p>
-                </a>
-                <span className="new_label"></span>
+            <div>
+
+            <div className="questions_list">
+            <div className={data.banned ? 'bannedQuestion' : (data.official_answer ? 'answeredQuestion one' : ' one')}>
+                <Linkify> <p className='title'>{data.text_str}</p> </Linkify>
+                { this.button('VOTE_FOR_QUESTION', data.votes_number + '+', 'voted') }
+                { this.button('COMPLAIN_ABOUT_QUESTION', data.complains + ' Пожаловаться', 'complained') }
+                <span className="subtitle">{data.submit_date}</span>
+                { this.props.idInfo.permissions.ban_question && ( data.banned
+                    ? this.button('UNBAN_QUESTION', 'Разбанить')
+                    : this.button('BAN_QUESTION', 'Забанить')
+                )}
+                { this.props.short && <LinkButtonLI to={'/questions/' + data.id}>Подробнее</LinkButtonLI> }
+
             </div>
-        );
+            </div>
+        </div>
+        )
 
     }
 }

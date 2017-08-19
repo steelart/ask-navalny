@@ -26,56 +26,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { NOT_LOGINED_ID_INFO, dispatchModalMode } from './main-reducer.jsx';
 
-import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, Media} from 'reactstrap';
-import logo from './img/logo.svg';
+import { LinkButton, SimpleButton, RefButton, LinkButtonLI, SimpleButtonLI, RefButtonLI } from './buttons.jsx';
 
 import { post_api } from './loading-api.jsx';
 
 import { ConnectedLoginPage } from './login-page.jsx';
 
-class AppMenu extends React.Component {
-    constructor(props) {
-        super(props);
+import { Grid, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
+import './bootstrap.css';
 
-        this.toggleNavbar = this.toggleNavbar.bind(this);
-        this.state = {
-            collapsed: true
-        };
-    }
-
-    toggleNavbar() {
-        this.setState({
-            collapsed: !this.state.collapsed
-        });
-    }
-
-	render() {
-		return (
-            <Navbar color="transparent" light>
-                <NavbarToggler left onClick={this.toggleNavbar} />
-                <NavbarBrand href="/" >
-                    <div className="navbar-header">
-                        <img src={logo} className="" alt="НАВАЛЬНЫЙ 20!8" width={300} />
-                    </div>
-                </NavbarBrand>
-                <Collapse className="navbar-toggleable-md" isOpen={!this.state.collapsed}>
-                    <Nav className="ml-auto" vertical>
-                        <NavItem>
-                            <NavLink href="/last/">Все ответы</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink href="/#/">Предложить ответ</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink href="/ask/">Спросить</NavLink>
-                        </NavItem>
-                    </Nav>
-                </Collapse>
-            </Navbar>
-		);
-	}
-}
-/*      OLD NAV
 class AppMenu extends React.Component {
     logout() {
         post_api('/api/logout', this.state, (data) => this.logout_answer(data));
@@ -93,7 +52,50 @@ class AppMenu extends React.Component {
     render() {
         const logged_in = this.props.idInfo.logged_in;
         const personaname = this.props.idInfo.personaname;
-        return <div className='mainMenu'> <div className='App'>
+        return<div> <Navbar>
+            <Navbar.Header>
+                <Navbar.Brand>
+                    <span>Навальный 20!8</span>
+                </Navbar.Brand>
+                <Navbar.Toggle />
+            </Navbar.Header>
+            <Navbar.Collapse>
+                <Nav navbar>
+                    <NavItem><LinkButtonLI to={'/last'}>Последние</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/top'}>Популярные</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/answered'}>Отвеченные</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/banned'}>Забаненные</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/search'}>Поиск</LinkButtonLI></NavItem>
+                    <NavItem><LinkButtonLI to={'/todo'}>todo</LinkButtonLI></NavItem>
+                    <NavItem>{logged_in && <LinkButtonLI to={'/ask'}>Новый вопрос</LinkButtonLI> }</NavItem>
+                    { logged_in
+                        ? <NavItem onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</NavItem>
+                        : <NavItem onClick={() => dispatchModalMode(this, ConnectedLoginPage)}>Войти</NavItem>
+                    }
+                </Nav>
+            </Navbar.Collapse>
+            </Navbar>
+            <div className="container">
+            <div className="bg_holder">
+
+                <div className="question form-group has-feedback">
+                <span className=" form-control-feedback" aria-hidden="true"></span>
+                <div className="question form-group has-feedback">
+				<FormControl type="text" className="form-control" id="question" aria-describedby="inputSuccess2Status" placeholder="Спроси Навального" data-toggle="dropdown"/>
+				<span className="form-control-feedback" aria-hidden="true"></span>
+
+		        </div>
+
+
+            </div>
+
+        </div>
+
+		</div>
+
+				</div>;
+    }
+        /*<div className='mainMenu'> <div className='App'>
             { logged_in
                 ? <SimpleButtonLI onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</SimpleButtonLI>
                 : <SimpleButtonLI onClick={() => dispatchModalMode(this, ConnectedLoginPage)}>Войти</SimpleButtonLI>
@@ -105,9 +107,9 @@ class AppMenu extends React.Component {
             {logged_in && <LinkButtonLI to={'/ask'}>Новый вопрос</LinkButtonLI> }
             <LinkButtonLI to={'/search'}>Поиск</LinkButtonLI>
             <LinkButtonLI to={'/todo'}>todo</LinkButtonLI>
-        </div></div>;
+        </div></div>;*/
     }
-}*/
+
 
 export const ConnectedAppMenu = connect(
     (state) => ({

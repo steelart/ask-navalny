@@ -35,7 +35,6 @@ import { mainStore, resetModalMode, dispatchModalMode } from './main-reducer.jsx
 
 import { ConnectedQuestionForm } from './ask-question-page.jsx';
 import { ConnectedAppMenu, setLoginModalMode } from './app-menu.jsx';
-import { ConnectedHeader } from './app-header.jsx';
 
 import { ConnectedLastQuestionsPage } from './last-questions-page.jsx';
 import { connectedQuestionsListTemplate } from './questions-list-template.jsx';
@@ -48,18 +47,19 @@ import { getSubmitFunction } from './utils.jsx';
 
 import { ConnectedSearchPage } from './search.jsx'
 
+// react-bootstrap
+import Grid from 'react-bootstrap/lib/Grid'
+import ButtonGroup from 'react-bootstrap/lib/ButtonGroup'
+import Form from 'react-bootstrap/lib/Form'
+
 import './global-init.jsx';
 
-import './style_okonst.css';
-import './bootstrap/css/bootstrap.css';
-import './bootstrap/css/bootstrap-reboot.css';
-import './bootstrap/css/bootstrap-grid.css';
 import './styles.less';
-import './style_orange.css';
 
 const ConnectedTopQuestionsPage = connectedQuestionsListTemplate('top');
 const ConnectedAnsweredQuestionsPage = connectedQuestionsListTemplate('answered');
 const ConnectedBannedQuestionsPage = connectedQuestionsListTemplate('banned');
+
 
 class NotFound extends React.Component {
     render() {
@@ -68,7 +68,6 @@ class NotFound extends React.Component {
         </div>;
     }
 }
-
 
 class TodoPage extends React.Component {
     render() {
@@ -117,19 +116,13 @@ class App extends React.Component {
             </Modal>;
     }
     render() {
-        return (
-            <div>
-                { this.login_modal() }
-                <div className='page-header'>
-                    <ConnectedAppMenu/>
-                </div>
-
-                <div className='container'>
-                    <ConnectedHeader/>
-                    {this.props.children}
-                </div>
+        return <div>
+            { this.login_modal() }
+            <ConnectedAppMenu/>
+            <div className='App'>
+                {this.props.children}
             </div>
-        );
+        </div>;
     }
 }
 
@@ -138,9 +131,10 @@ const ConnectedApp = connect((state, props) => ({
     }))(App);
 
 ReactDOM.render(
-      <Provider store={mainStore}>
+      <Provider store={ mainStore }>
         <Router history={browserHistory}>
             <Redirect from='/' to='/last' />
+
             <Route path='/' component={ConnectedApp}>
                 <Route path='/last' component={ConnectedLastQuestionsPage} />
                 <Route path='/top' component={ConnectedTopQuestionsPage} />

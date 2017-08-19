@@ -24,9 +24,11 @@ SOFTWARE.
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 
 import { getSubmitFunction } from './utils.jsx';
+import './bootstrap.css';
+import './style_okonst.css';
+import './style_orange.css';
 
 class QuestionForm extends React.Component {
     setQTextAC(text) {
@@ -43,22 +45,22 @@ class QuestionForm extends React.Component {
     }
     render() {
         return (
-            <div>
-                <Form>
-                    <FormGroup>
-                        <Label for="exampleText">Задать вопрос</Label>
-                        <Input type="textarea" name="text" id="exampleText"
-                            rows="15"
-                            value={this.props.questionText}
-                            onChange={(e) => this.setQTextAC(e.target.value)} />
-                    </FormGroup>
-                    <div className="text-center">
-                        <a className="button button--blue">Отменить</a>
-                        <a className="button button--orange" onClick={() => this.submitQuestion()}>Отправить</a>
+            <div className="container">
+                <div className="pagination-centered">
+                    <div className="form-group qa-form">
+                        <label className="form-label" for="comment">Задать вопрос</label>
+                        <textarea className="form-control qa-area" rows="5" id="comment"
+                            onChange={(e) => this.setQTextAC(e.target.value)}
+                            value={this.props.questionText}/>
+                        <br/>
+                        <div className="text-center">
+                            <a className="button button--blue">Отменить</a>
+                            <a className="button button--orange" onClick={() => this.submitQuestion()} >Отправить</a>
+                        </div>
                     </div>
-                </Form>
-                <br/>
-            </div>
+                </div>
+		</div>
+
         );
     }
 }
