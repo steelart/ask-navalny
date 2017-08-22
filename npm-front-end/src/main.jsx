@@ -66,6 +66,7 @@ class NotFound extends React.Component {
     render() {
         return <div>
             <p> Страница не найдена </p>
+            <Link to='/'>Главная</Link>
         </div>;
     }
 }

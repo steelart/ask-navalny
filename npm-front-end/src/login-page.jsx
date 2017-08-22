@@ -67,9 +67,12 @@ class LoginPage extends React.Component {
         const error_text = this.error_text();
         //placeholder='••••••••••'
         //<RefButton href='/steamlogin'>Войти через steam</RefButton>
+        // TODO: save hostname for debug!
         return <div>
             <br/>
             <SimpleButtonLI onClick={() => dispatchModalMode(this, ConnectedRegistrationPage)}>Зарегистрироваться</SimpleButtonLI>
+            <br/>
+            <RefButton href={'/accounts/google/login/?next=' + encodeURIComponent(window.location.pathname)}>Войти через google</RefButton>
             <p>В тестовой версии безопасность передачи и хранение пароля не проработаны! Не используйте реальные пароли!</p>
             <form >
                 <input

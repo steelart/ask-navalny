@@ -22,6 +22,7 @@
 
 __author__      = "Merkulov Alexey"
 
+from django.conf.urls import include
 from django.conf.urls import url
 from django.contrib import admin
 
@@ -32,7 +33,7 @@ from . import query_api
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^admin', admin.site.urls),
+    url(r'^accounts/', include('allauth.urls')),
 
     url(r'api/search$', query_api.search_api, name='search_api'),
     url(r'api/search/$', query_api.search_api, name='search_api'),
@@ -62,3 +63,4 @@ urlpatterns = [
 
     url(r'^', views.reactindex, name='reactindex'),
 ]
+

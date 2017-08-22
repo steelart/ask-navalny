@@ -79,7 +79,7 @@ var app = express();
 //## proxy the request for static assets
 app.use('/static/askp/js', proxy(url.parse(WebpackDevServerURL + '/static/askp/js')));
 app.use('/api', proxy(url.parse('http://localhost:8000/api')));
-app.use('/steamlogin', proxy(url.parse('http://localhost:8000/steamlogin')));
+app.use('/accounts', proxy(url.parse('http://localhost:8000/accounts')));
 
 app.use('/', httpproxy({target: 'ws://localhost:8000', changeOrigin: true, ws : true}));
 
