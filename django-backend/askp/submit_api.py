@@ -40,13 +40,12 @@ from .models import YoutubeVideo
 from .models import obj_to_dict
 from .models import answer_to_dict
 from .models import add_new_question
+from .models import add_new_youtube_answer
 
 from .models import VOTED
 from .models import COMPLAIN
 from .models import LIKE
 from .models import DISLIKE
-
-from .models import YOUTUBE
 
 from .utils import check_dbg_filter
 from .utils import pass_raise_dbg_filter_or_exception
@@ -133,8 +132,7 @@ def post_api(request):
         #TODO: add video validations (for existance and time)
         question = Question.objects.get(id=question_id)
 
-        video = YoutubeVideo.objects.create(video_id=video_id, start=start, end=end)
-        a = Answer.objects.create(question=question, answer_type=YOUTUBE, data_key=video.id)
+        a = add_new_youtube_answer(author=user, question=question, video_id=video_id, start=start, end=end)
         adict = answer_to_dict(a)
         send_object({'type':'SET_ANSWER_DATA', 'question_id': question_id, 'answer': adict})
 

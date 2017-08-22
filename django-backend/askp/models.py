@@ -67,6 +67,7 @@ class Answer(models.Model):
         (YOUTUBE, 'Youtube'),
         (TEXT, 'text')
     )
+    author = models.ForeignKey(User)
     question = models.ForeignKey(Question)
     answer_type = models.CharField(max_length=1, choices=AnswerTypes)
     data_key = models.IntegerField()
@@ -113,4 +114,9 @@ def add_new_question(text_str, author):
     q = Question.objects.create(text_str=text_str, author=author)
     QuestionVoteList.objects.create(question=q,user=author,state=VOTED)
     return q
+
+def add_new_youtube_answer(author, question, video_id, start, end):
+    video = YoutubeVideo.objects.create(video_id=video_id, start=start, end=end)
+    a = Answer.objects.create(author=author, question=question, answer_type=YOUTUBE, data_key=video.id)
+    return a
 

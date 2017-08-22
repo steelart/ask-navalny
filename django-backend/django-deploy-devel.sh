@@ -7,6 +7,6 @@ python manage.py migrate
 
 python manage.py shell < init-askp.py
 
-#python manage.py shell < create-dbg-data.py
+python manage.py shell < create-dbg-data.py
 
 #python manage.py createsuperuser --username superadmin
