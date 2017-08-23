@@ -89,6 +89,7 @@ class QuestionPage extends React.Component {
         const question_id = this.props.params.id;
         const questionsInfo = this.props.questionsInfo;
         const answers = questionsInfo.answers_map[question_id];
+        const question = questionsInfo.questions[question_id];
 
         const ConnectedAnswerForm = connect((state, props) => ({
                 question_id : question_id,
@@ -103,7 +104,7 @@ class QuestionPage extends React.Component {
                 <p> Идёт загрузка ответов </p>
             </div>;
         } else {
-            const official_answer = question.official_answer;
+            const official_answer_id = question.official_answer;
             const asfn = (n) => answers[Object.keys(answers)[n]];
             const cur_num = this.state.answer_num;
             const answer = asfn(cur_num);
@@ -123,7 +124,7 @@ class QuestionPage extends React.Component {
                     idInfo={this.props.idInfo}
                     data={answer}
                     dispatch={this.props.dispatch}
-                    choosedAnswer={answer == official_answer}
+                    choosedAnswer={answer.id == official_answer_id}
                 /> }
                 { answers_size == 0 && <p>Ещё нет ни одного ответа</p>}
             </div>;
