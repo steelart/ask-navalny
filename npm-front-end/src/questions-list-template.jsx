@@ -26,6 +26,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Linkify from 'react-linkify';
 
+import { Badge } from 'reactstrap';
+
 import { LinkButton, SimpleButton, RefButton, SimpleButtonLI, LinkButtonLI } from './buttons.jsx';
 import { place_question } from './question.jsx';
 
@@ -66,9 +68,11 @@ function questionsListTemplate(templ_param) { return class extends React.Compone
 
         return <div>
             { ids.slice(0, loaded_num).map((qid) => place_question(this.props, qs, qid, true) ) }
-            {status == LOADING_IN_PROCESS && <p> Идёт загрузка вопросов </p> }
-            {status == LOADING_FAILED     && <button onClick={() => this.next()}>Ошибка, повторить!</button> }
-            {(status == LOADING_SUCCESSED && loaded_num < ids.length)  && <button onClick={() => this.next()}>Показать ещё!</button> }
+            <div className="text-center"><br/>
+                {status == LOADING_IN_PROCESS && <Badge color="info">Идёт загрузка вопросов</Badge> }
+                {status == LOADING_FAILED     && <a className="button button--orange" onClick={() => this.next()} >Ошибка, повторить!</a> }
+                {(status == LOADING_SUCCESSED  && loaded_num < ids.length) && <a className="button button--blue" onClick={() => this.next()} >Показать еще</a> }
+            </div><br/>
         </div>;
     }
 }}

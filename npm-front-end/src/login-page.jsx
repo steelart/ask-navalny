@@ -99,6 +99,7 @@ class LoginPage extends React.Component {
             <button onClick={()=>this.submit()}>Войти</button>
             <button onClick={()=>resetModalMode(this)}>отмена</button>
         </div>;
+            
     }
 
     submit() {
@@ -123,4 +124,3 @@ export const ConnectedLoginPage = connect((state) => ({}))(LoginPage);
 export function setLoginModalMode(connectedReactComp) {
     dispatchModalMode(connectedReactComp, ConnectedLoginPage);
 }
-

@@ -26,8 +26,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Linkify from 'react-linkify';
 
+import { ConnectedAppHeader } from './app-header.jsx';
 import { LinkButton, SimpleButton, RefButton, SimpleButtonLI, LinkButtonLI } from './buttons.jsx';
 import { place_question } from './question.jsx';
+import { Badge } from 'reactstrap';
 
 import { api_connect, loadData } from './loading-api.jsx';
 import { sdef, getSubmitFunction, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SUCCESSED } from './utils.jsx';
@@ -67,13 +69,18 @@ class LastQuestionsPage extends React.Component {
         const voted_list = questionsInfo.voted_list;
         //console.log('voted_list', voted_list);
         //{new_ids.length == 0 && <button> заменить на пустое место того же размера </button> }
-        return <div>
-            {new_ids.length != 0 && <button onClick={() => this.show_new_questions()} > { 'Показать новый вопросы, их всего ' + new_ids.length } </button> }
-            { ids.map((qid) => place_question(this.props, qs, qid, true) ) }
-            {status == LOADING_IN_PROCESS && <p> Идёт загрузка вопросов </p> }
-            {status == LOADING_FAILED     && <button onClick={() => this.reload()}>Ошибка, повторить!</button> }
-            {status == LOADING_SUCCESSED  && <button onClick={() => this.reload()}>Показать ещё!</button> }
-        </div>;
+        return (
+            <div>
+                <ConnectedAppHeader/>
+                {new_ids.length != 0 && <button onClick={() => this.show_new_questions()} > { 'Показать новый вопросы, их всего ' + new_ids.length } </button> }
+                { ids.map((qid) => place_question(this.props, qs, qid, true) ) }
+                <div className="text-center"><br/>
+                    {status == LOADING_IN_PROCESS && <Badge color="info">Идёт загрузка вопросов</Badge> }
+                    {status == LOADING_FAILED     && <a className="button button--orange" onClick={() => this.reload()} >Ошибка, повторить!</a> }
+                    {status == LOADING_SUCCESSED  && <a className="button button--blue" onClick={() => this.reload()} >Показать еще</a> }
+                </div><br/>
+            </div>
+        );;
     }
 }
 

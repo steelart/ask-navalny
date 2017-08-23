@@ -25,8 +25,9 @@ SOFTWARE.
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { ConnectedAppHeader } from './app-header.jsx';
+
 import { getSubmitFunction } from './utils.jsx';
-import './bootstrap.css';
 import './style_okonst.css';
 import './style_orange.css';
 
@@ -59,8 +60,7 @@ class QuestionForm extends React.Component {
                         </div>
                     </div>
                 </div>
-		</div>
-
+            </div>
         );
     }
 }
