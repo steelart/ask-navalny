@@ -35,6 +35,7 @@ import { mainStore, resetModalMode, dispatchModalMode } from './main-reducer.jsx
 
 import { ConnectedQuestionForm } from './ask-question-page.jsx';
 import { ConnectedAppMenu } from './app-menu.jsx';
+
 import { setLoginModalMode } from './login-page.jsx';
 
 import { ConnectedLastQuestionsPage } from './last-questions-page.jsx';
@@ -48,14 +49,10 @@ import { getSubmitFunction } from './utils.jsx';
 
 import { ConnectedSearchPage } from './search.jsx'
 
-// react-bootstrap
-import Grid from 'react-bootstrap/lib/Grid'
-import ButtonGroup from 'react-bootstrap/lib/ButtonGroup'
-import Form from 'react-bootstrap/lib/Form'
-
+import './bootstrap/css/bootstrap.css';
+import './style_okonst.css';
+import './style_orange.css';
 import './global-init.jsx';
-
-import './styles.less';
 
 const ConnectedTopQuestionsPage = connectedQuestionsListTemplate('top');
 const ConnectedAnsweredQuestionsPage = connectedQuestionsListTemplate('answered');
@@ -118,13 +115,18 @@ class App extends React.Component {
             </Modal>;
     }
     render() {
-        return <div>
-            { this.login_modal() }
-            <ConnectedAppMenu/>
-            <div className='App'>
-                {this.props.children}
+        return (
+            <div>
+                { this.login_modal() }
+                <div className="page-header">
+                    <ConnectedAppMenu/>
+                </div>
+                <div className='container'>
+
+                    {this.props.children}
+                </div>
             </div>
-        </div>;
+        );
     }
 }
 

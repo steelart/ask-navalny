@@ -7,8 +7,8 @@ body {
     font-family: 'Open Sans', sans-serif
 }
 
-.bg_holder {
-    background-image: url(/static/askp/images/bg-photo.jpg);
+.bg-holder {
+    background-image: url('/static/askp/images/bg-photo.jpg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -104,10 +104,14 @@ body {
 }
 
 .questions_found .one .title {
-    font-size: 20px;
+    font-size: 26px;
     font-weight: 700;
     color: #000;
-    margin-bottom: 0
+    margin-bottom: 0;
+}
+
+.title a {
+    color: #3c4245;
 }
 
 .questions_found .one .subtitle {
@@ -147,7 +151,7 @@ body {
 }
 
 .questions_list .one .title {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 700;
     color: #000;
     margin-bottom: 0

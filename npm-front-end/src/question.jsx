@@ -25,19 +25,20 @@ SOFTWARE.
 import React from 'react';
 import Linkify from 'react-linkify';
 
+import { ConnectedAppHeader } from './app-header.jsx';
+
 import { LinkButton, SimpleButton, RefButton, SimpleButtonLI, LinkButtonLI } from './buttons.jsx';
 
 import { setLoginModalMode } from './login-page.jsx';
 
 import { Grid, Nav, Navbar, NavItem } from 'react-bootstrap';
-import './bootstrap.css';
 import './style_okonst.css';
 
 export class Question extends React.Component {
     button(action, name, style_field) {
         const id = this.props.data.id;
         // style_field is used also as style prefix
-        return <SimpleButtonLI
+        return (    <SimpleButtonLI
                 baseStyle={this.props[style_field] ? (style_field+'Question') : 'linkButtonStyle'}
                 onClick={() => { this.props.idInfo.logged_in
                     ? this.props.submit(action, {'id' : id}, () =>
@@ -46,31 +47,27 @@ export class Question extends React.Component {
                     : setLoginModalMode(this)
                 }}>
                     {name}
-                </SimpleButtonLI>;
+                </SimpleButtonLI>);
     }
 
     render() {
         const data = this.props.data;
         return (
             <div>
-
-            <div className="questions_list">
-            <div className={data.banned ? 'bannedQuestion' : (data.official_answer ? 'answeredQuestion one' : ' one')}>
-                <Linkify> <p className='title'>{data.text_str}</p> </Linkify>
-                { this.button('VOTE_FOR_QUESTION', data.votes_number + '+', 'voted') }
-                { this.button('COMPLAIN_ABOUT_QUESTION', data.complains + ' Пожаловаться', 'complained') }
-                <span className="subtitle">{data.submit_date}</span>
-                { this.props.idInfo.permissions.ban_question && ( data.banned
-                    ? this.button('UNBAN_QUESTION', 'Разбанить')
-                    : this.button('BAN_QUESTION', 'Забанить')
-                )}
-                { this.props.short && <LinkButtonLI to={'/questions/' + data.id}>Подробнее</LinkButtonLI> }
-
+                <div className="questions_list">
+                <div className={data.banned ? 'bannedQuestion' : (data.official_answer ? 'answeredQuestion one' : ' one')}>
+                    <Linkify> <p className='title'><a href={'/questions/' + data.id}>{data.text_str}</a></p> </Linkify>
+                    { this.button('VOTE_FOR_QUESTION', data.votes_number + '+', 'voted') }
+                    { this.button('COMPLAIN_ABOUT_QUESTION', data.complains + ' Пожаловаться', 'complained') }
+                    <span className="subtitle">{data.submit_date}</span>
+                    { this.props.idInfo.permissions.ban_question && ( data.banned
+                        ? this.button('UNBAN_QUESTION', 'Разбанить')
+                        : this.button('BAN_QUESTION', 'Забанить')
+                    )}
+                </div>
+                </div>
             </div>
-            </div>
-        </div>
-        )
-
+        );
     }
 }
 

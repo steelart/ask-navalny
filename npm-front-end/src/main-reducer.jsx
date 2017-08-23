@@ -25,6 +25,7 @@ SOFTWARE.
 import { createStore, combineReducers } from 'redux';
 
 import {sdef, fld, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SUCCESSED} from './utils.jsx';
+import { Button, Form, FormGroup, Label, Input, FormText, Modal, Alert } from 'reactstrap';
 
 var questionReducer = function (state = '', action) {
     switch (action.type) {
