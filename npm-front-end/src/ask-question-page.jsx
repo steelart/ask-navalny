@@ -49,7 +49,7 @@ class QuestionForm extends React.Component {
             <div className="container">
                 <div className="pagination-centered">
                     <div className="form-group qa-form">
-                        <label className="form-label" for="comment">Задать вопрос</label>
+                        <label className="form-label" htmlFor="comment">Задать вопрос</label>
                         <textarea className="form-control qa-area" rows="5" id="comment"
                             onChange={(e) => this.setQTextAC(e.target.value)}
                             value={this.props.questionText}/>
