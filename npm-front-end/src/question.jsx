@@ -31,7 +31,6 @@ import { Button } from 'reactstrap';
 
 import { setLoginModalMode } from './login-page.jsx';
 
-import { Grid, Nav, Navbar, NavItem } from 'react-bootstrap';
 import './style_okonst.css';
 
 export class Question extends React.Component {
