@@ -26,8 +26,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Linkify from 'react-linkify';
 
-import { LinkButton, SimpleButton, RefButton, SimpleButtonLI, LinkButtonLI } from './buttons.jsx';
 import { place_question } from './question.jsx';
+
+import { Button } from 'reactstrap';
 
 import { api_connect, loadData } from './loading-api.jsx';
 import { sdef, getSubmitFunction, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SUCCESSED } from './utils.jsx';
@@ -42,15 +43,16 @@ import YouTube from 'react-youtube';
 class Answer extends React.Component {
     button(action, name, field, choosedStyle) {
         const data = this.props.data;
-        return <SimpleButtonLI
-                baseStyle={data[field] ? choosedStyle : 'linkButtonStyle'}
+        return (
+            <Button outline color="primary" size='lg'
                 onClick={() => this.props.idInfo.logged_in
                     ? this.props.submit(action, {'id' : data.id}, () =>
                         this.props.dispatch({type : action, answer: data.id}))
                     : setLoginModalMode(this)
                 }>
-            {name}
-        </SimpleButtonLI>;
+                {name}
+            </Button>
+        );
     }
 
     render() {
@@ -109,12 +111,19 @@ class QuestionPage extends React.Component {
             const cur_num = this.state.answer_num;
             const answer = asfn(cur_num);
             const answers_size = Object.keys(answers).length;
-            return <div>
+            return (
+                <div>
                 { place_question(this.props, questionsInfo.questions, question_id, false) }
-                <button onClick={() => this.props.idInfo.logged_in
-                    ? dispatchModalMode(this, ConnectedAnswerForm)
-                    : setLoginModalMode(this)
-                }>Предложить ответ</button>
+                <br/>
+                <div className="flex-center">
+                    <Button outline color="primary"
+                        onClick={() => this.props.idInfo.logged_in
+                            ? dispatchModalMode(this, ConnectedAnswerForm)
+                            : setLoginModalMode(this)
+                        }>
+                        Предложить ответ
+                    </Button>
+                </div>
                 <br/>
                 { answers_size != 0 && <button onClick={() => asfn(cur_num - 1) && this.setState({answer_num : cur_num - 1})}>{'<'}</button> }
                 { answers_size != 0 && <span>Ответ {cur_num+1}/{answers_size}</span>}
@@ -127,7 +136,8 @@ class QuestionPage extends React.Component {
                     choosedAnswer={answer.id == official_answer_id}
                 /> }
                 { answers_size == 0 && <p>Ещё нет ни одного ответа</p>}
-            </div>;
+                </div>
+            );
         }
     }
 }

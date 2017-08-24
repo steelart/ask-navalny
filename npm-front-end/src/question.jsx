@@ -27,7 +27,7 @@ import Linkify from 'react-linkify';
 
 import { ConnectedAppHeader } from './app-header.jsx';
 
-import { LinkButton, SimpleButton, RefButton, SimpleButtonLI, LinkButtonLI } from './buttons.jsx';
+import { Button } from 'reactstrap';
 
 import { setLoginModalMode } from './login-page.jsx';
 
@@ -38,16 +38,17 @@ export class Question extends React.Component {
     button(action, name, style_field) {
         const id = this.props.data.id;
         // style_field is used also as style prefix
-        return (    <SimpleButtonLI
-                baseStyle={this.props[style_field] ? (style_field+'Question') : 'linkButtonStyle'}
+        return (
+            <Button outline color="primary" size='lg'
                 onClick={() => { this.props.idInfo.logged_in
                     ? this.props.submit(action, {'id' : id}, () =>
                         this.props.dispatch({type : action, question : id})
                       )
                     : setLoginModalMode(this)
                 }}>
-                    {name}
-                </SimpleButtonLI>);
+                {name}
+            </Button>
+        );
     }
 
     render() {
@@ -56,10 +57,16 @@ export class Question extends React.Component {
             <div>
                 <div className="questions_list">
                 <div className={data.banned ? 'bannedQuestion' : (data.official_answer ? 'answeredQuestion one' : ' one')}>
-                    <Linkify> <p className='title'><a href={'/questions/' + data.id}>{data.text_str}</a></p> </Linkify>
-                    { this.button('VOTE_FOR_QUESTION', data.votes_number + '+', 'voted') }
-                    { this.button('COMPLAIN_ABOUT_QUESTION', data.complains + ' Пожаловаться', 'complained') }
-                    <span className="subtitle">{data.submit_date}</span>
+                    <div className="question-pos">
+                        <div className="question-pos-l">
+                            <p className='title'>
+                                <a href={'/questions/' + data.id}>{data.text_str}</a>
+                            </p>
+                            <span className="subtitle">{data.submit_date}</span>
+                        </div>
+                        { this.button('VOTE_FOR_QUESTION', '+' + data.votes_number, 'voted') }
+                        {/* this.button('COMPLAIN_ABOUT_QUESTION', data.complains + ' Пожаловаться', 'complained')*/ }
+                    </div>
                     { this.props.idInfo.permissions.ban_question && ( data.banned
                         ? this.button('UNBAN_QUESTION', 'Разбанить')
                         : this.button('BAN_QUESTION', 'Забанить')
