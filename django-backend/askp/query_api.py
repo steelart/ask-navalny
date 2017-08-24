@@ -79,7 +79,7 @@ def banned_questions(request):
 
 def answered_questions(request):
     pass_raise_dbg_filter_or_exception(request)
-    return extract_questions_list(request, Question.objects.filter(official_answer__isnull=False))
+    return extract_questions_list(request, Question.objects.filter(official_answer__isnull=False).order_by('-votes_number'))
 
 def answers(request, question_id):
     pass_raise_dbg_filter_or_exception(request)

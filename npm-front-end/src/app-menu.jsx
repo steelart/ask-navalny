@@ -85,10 +85,19 @@ class AppMenu extends React.Component {
                     <Collapse className="navbar-toggleable-md" isOpen={!this.state.collapsed}>
                         <Nav vertical>
                             <NavItem>
-                                <NavLink href="/last/">Последнее</NavLink>
+                                <NavLink href="/last/">Последнее неотвеченные</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink href="/top/">Популярные</NavLink>
+                                <NavLink href="/top/">Популярные неотвеченные</NavLink>
+                            </NavItem>
+                            <NavItem>
+                                <NavLink href="/answered/">Популярные отвеченные</NavLink>
+                            </NavItem>
+                            <NavItem>
+                                <NavLink href="/banned/">Забаненные</NavLink>
+                            </NavItem>
+                            <NavItem>
+                                <NavLink href="/search/">Заглушка поиска</NavLink>
                             </NavItem>
                             <NavItem>
                                 <NavLink href="/ask/">Спросить</NavLink>
