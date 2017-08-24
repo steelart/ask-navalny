@@ -20,13 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-__author__      = "Merkulov Alexey"
+__author__ = 'Merkulov Alexey'
 
 from django.http import HttpResponse
 from django.template import loader
 
 from .utils import check_dbg_filter
-from .utils import pass_raise_dbg_filter_or_exception
 
 
 def reactindex(request):
@@ -36,4 +35,3 @@ def reactindex(request):
     template = loader.get_template(index)
     context = {}
     return HttpResponse(template.render(context, request))
-

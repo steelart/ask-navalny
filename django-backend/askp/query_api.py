@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-__author__      = "Merkulov Alexey"
+__author__ = 'Merkulov Alexey'
 
 from django.http import JsonResponse
 
@@ -30,7 +30,6 @@ from .models import Answer
 from .models import obj_to_dict
 from .models import answer_to_dict
 
-from .utils import check_dbg_filter
 from .utils import pass_raise_dbg_filter_or_exception
 
 
@@ -41,24 +40,27 @@ def query_questions(request):
     for qid in numbers:
         q = Question.objects.get(id=qid)
         res.append(obj_to_dict(q))
-    return JsonResponse({ 'questions' : res })
+    return JsonResponse({'questions': res})
+
 
 def last_questions(request, start_id):
     pass_raise_dbg_filter_or_exception(request)
     res = []
-    start_filter = Question.objects.filter(banned=False).filter(official_answer__isnull=True)
-    if str(start_id) == '0': #TODO!!
+    start_filter = Question.objects.filter(
+        banned=False).filter(
+        official_answer__isnull=True)
+    if str(start_id) == '0':  # TODO!!
         from_filter = start_filter
     else:
         from_filter = start_filter.filter(id__lt=start_id)
 
     for q in from_filter.order_by('-id')[:3]:
         res.append(obj_to_dict(q))
-    return JsonResponse({ 'questions' : res })
+    return JsonResponse({'questions': res})
 
 
 def extract_questions_list(request, questions_filter):
-    #TODO: optimize it!
+    # TODO: optimize it!
     qarr = []
     idarr = []
     num = 0
@@ -67,40 +69,49 @@ def extract_questions_list(request, questions_filter):
             qarr.append(obj_to_dict(q))
         idarr.append(q.id)
         num = num + 1
-    return JsonResponse({ 'questions' : qarr, 'id_list' : idarr })
+    return JsonResponse({'questions': qarr, 'id_list': idarr})
+
 
 def top_questions(request):
     pass_raise_dbg_filter_or_exception(request)
-    return extract_questions_list(request, Question.objects.filter(banned=False).filter(official_answer__isnull=True).order_by('-votes_number'))
+    query = Question.objects.filter(banned=False)
+    query = query.filter(official_answer__isnull=True)
+    query = query.order_by('-votes_number')
+    return extract_questions_list(request, query)
+
 
 def banned_questions(request):
     pass_raise_dbg_filter_or_exception(request)
-    return extract_questions_list(request, Question.objects.filter(banned=True))
+    query = Question.objects.filter(banned=True)
+    return extract_questions_list(request, query)
+
 
 def answered_questions(request):
     pass_raise_dbg_filter_or_exception(request)
-    return extract_questions_list(request, Question.objects.filter(official_answer__isnull=False).order_by('-votes_number'))
+    query = Question.objects.filter(official_answer__isnull=False)
+    query = query.order_by('-votes_number')
+    return extract_questions_list(request, query)
+
 
 def answers(request, question_id):
     pass_raise_dbg_filter_or_exception(request)
     adict = {}
     for a in Answer.objects.filter(question=question_id):
         adict[a.id] = answer_to_dict(a)
-        #print(a.text_str)
+        # print(a.text_str)
     question = Question.objects.get(id=question_id)
     qdict = obj_to_dict(question)
-    return JsonResponse({ 'question' : qdict, 'answers' : adict })
-
+    return JsonResponse({'question': qdict, 'answers': adict})
 
 
 # TODO: Could be slow! Every time we return all found questions.
 def search_api(request):
     text = request.GET.get('text', '')
     if text == '':
-        return JsonResponse({ 'success' : False, 'diagnostic' : 'text is empty!' })
+        return JsonResponse({'success': False, 'diagnostic': 'text is empty!'})
     questions = Question.objects.filter(text_str__icontains=text)
-    found=[]
+    found = []
     for q in questions:
         found.append(obj_to_dict(q))
 
-    return JsonResponse({ 'success' : True, 'found' : found })
+    return JsonResponse({'success': True, 'found': found})

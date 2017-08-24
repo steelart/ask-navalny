@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-__author__      = "Merkulov Alexey"
+__author__ = 'Merkulov Alexey'
 
 from django.conf.urls import include
 from django.conf.urls import url
@@ -35,32 +35,31 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
 
-    url(r'api/search$', query_api.search_api, name='search_api'),
-    url(r'api/search/$', query_api.search_api, name='search_api'),
-    url(r'api/query-questions$', query_api.query_questions, name='query_questions'),
-    url(r'api/last-questions/(?P<start_id>[0-9]+)$', query_api.last_questions, name='last_questions'),
-    url(r'api/last-questions/(?P<start_id>[0-9]+)/$', query_api.last_questions, name='last_questions'),
-    url(r'api/answers/(?P<question_id>[0-9]+)$', query_api.answers, name='answers'),
-    url(r'api/answers/(?P<question_id>[0-9]+)/$', query_api.answers, name='answers'),
-    url(r'api/top-questions$', query_api.top_questions, name='top_questions'),
-    url(r'api/top-questions/$', query_api.top_questions, name='top_questions'),
-    url(r'api/answered-questions$', query_api.answered_questions, name='answered_questions'),
-    url(r'api/answered-questions/$', query_api.answered_questions, name='answered_questions'),
-    url(r'api/banned-questions$', query_api.banned_questions, name='banned_questions'),
-    url(r'api/banned-questions/$', query_api.banned_questions, name='banned_questions'),
+    url(r'api/search$', query_api.search_api),
+    url(r'api/search/$', query_api.search_api),
+    url(r'api/query-questions$', query_api.query_questions),
+    url(r'api/last-questions/(?P<start_id>[0-9]+)$', query_api.last_questions),
+    url(r'api/last-questions/(?P<start_id>[0-9]+)/$', query_api.last_questions),
+    url(r'api/answers/(?P<question_id>[0-9]+)$', query_api.answers),
+    url(r'api/answers/(?P<question_id>[0-9]+)/$', query_api.answers),
+    url(r'api/top-questions$', query_api.top_questions),
+    url(r'api/top-questions/$', query_api.top_questions),
+    url(r'api/answered-questions$', query_api.answered_questions),
+    url(r'api/answered-questions/$', query_api.answered_questions),
+    url(r'api/banned-questions$', query_api.banned_questions),
+    url(r'api/banned-questions/$', query_api.banned_questions),
 
-    url(r'api/post-api$', submit_api.post_api, name='post_api'),
-    url(r'api/post-api/$', submit_api.post_api, name='post_api'),
+    url(r'api/post-api$', submit_api.post_api),
+    url(r'api/post-api/$', submit_api.post_api),
 
-    url(r'api/logout$', login_api.logout_ajax, name='logout_ajax'),
-    url(r'api/logout/$', login_api.logout_ajax, name='logout_ajax'),
-    url(r'api/check-logined$', login_api.check_logined, name='check_logined'),
-    url(r'api/check-logined/$', login_api.check_logined, name='check_logined'),
-    url(r'api/simple-login$', login_api.simple_login, name='simple_login'),
-    url(r'api/simple-login/$', login_api.simple_login, name='simple_login'),
-    url(r'api/registration$', login_api.registration, name='registration'),
-    url(r'api/registration/$', login_api.registration, name='registration'),
+    url(r'api/logout$', login_api.logout_ajax),
+    url(r'api/logout/$', login_api.logout_ajax),
+    url(r'api/check-logined$', login_api.check_logined),
+    url(r'api/check-logined/$', login_api.check_logined),
+    url(r'api/simple-login$', login_api.simple_login),
+    url(r'api/simple-login/$', login_api.simple_login),
+    url(r'api/registration$', login_api.registration),
+    url(r'api/registration/$', login_api.registration),
 
-    url(r'^', views.reactindex, name='reactindex'),
+    url(r'^', views.reactindex),
 ]
-

@@ -20,16 +20,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-__author__      = "Merkulov Alexey"
+__author__ = 'Merkulov Alexey'
 
 import json
 from channels.channel import Group
 
 
 def ws_connect(message):
-    obj={'type':'CONNECT_HANDSHAKE'}
+    obj = {'type': 'CONNECT_HANDSHAKE'}
     message.reply_channel.send({'text': json.dumps(obj)})
     Group('all').add(message.reply_channel)
+
 
 def ws_message(message):
     print('Now there should not be input messages!')

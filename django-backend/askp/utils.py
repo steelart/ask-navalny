@@ -20,17 +20,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-__author__      = "Merkulov Alexey"
+__author__ = 'Merkulov Alexey'
 
 import urllib2
 
+from django.http import JsonResponse
+
 try:
     # Python 3
-    from urllib.parse import urlparse, parse_qs, urlencode
+    from urllib.parse import urlparse
 except ImportError:
     # Python 2
-    from urlparse import urlparse, parse_qs
-    from urllib import urlencode
+    from urlparse import urlparse
 
 try:
     from .local_config import *
@@ -46,9 +47,14 @@ def check_dbg_filter(request):
         return False
     return True
 
+
 def pass_raise_dbg_filter_or_exception(request):
     if not check_dbg_filter(request):
-        raise Http404("You need to pass debug filter")
+        raise Http404('You need to pass debug filter')
+
+
+def fail_json_response(diagnostic):
+    return JsonResponse({'success': False, 'diagnostic': diagnostic})
 
 
 def get_domain(uri):
@@ -58,6 +64,6 @@ def get_domain(uri):
 
 
 def getJsonObj(url):
-    #print 'getJsonObj: ' + str(url)
+    # print 'getJsonObj: ' + str(url)
     f = urllib2.urlopen(url)
     return json.load(f)
