@@ -24,6 +24,7 @@ SOFTWARE.
 
 import React from 'react';
 import Linkify from 'react-linkify';
+import { Link } from 'react-router';
 
 import { ConnectedAppHeader } from './app-header.jsx';
 
@@ -59,7 +60,7 @@ export class Question extends React.Component {
                     <div className="question-pos">
                         <div className="question-pos-l">
                             <p className='title'>
-                                <a href={'/questions/' + data.id}>{data.text_str}</a>
+                                <Link to={'/questions/' + data.id}>{data.text_str}</Link>
                             </p>
                             <span className="subtitle">{data.submit_date}</span>
                         </div>

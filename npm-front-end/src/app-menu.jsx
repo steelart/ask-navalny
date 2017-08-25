@@ -24,6 +24,7 @@ SOFTWARE.
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import { NOT_LOGINED_ID_INFO, dispatchModalMode } from './main-reducer.jsx';
 
 import { LinkButton, SimpleButton, RefButton, LinkButtonLI, SimpleButtonLI, RefButtonLI } from './buttons.jsx';
@@ -85,22 +86,22 @@ class AppMenu extends React.Component {
                     <Collapse className="navbar-toggleable-md" isOpen={!this.state.collapsed}>
                         <Nav vertical>
                             <NavItem>
-                                <NavLink href="/last/">Последнее неотвеченные</NavLink>
+                                <Link to="/last" className="nav-link">Последнее неотвеченные</Link>
                             </NavItem>
                             <NavItem>
-                                <NavLink href="/top/">Популярные неотвеченные</NavLink>
+                                <Link to="/top" className="nav-link">Популярные неотвеченные</Link>
                             </NavItem>
                             <NavItem>
-                                <NavLink href="/answered/">Популярные отвеченные</NavLink>
+                                <Link to="/answered" className="nav-link">Популярные отвеченные</Link>
                             </NavItem>
                             <NavItem>
-                                <NavLink href="/banned/">Забаненные</NavLink>
+                                <Link to="/banned/" className="nav-link">Забаненные</Link>
                             </NavItem>
                             <NavItem>
-                                <NavLink href="/search/">Заглушка поиска</NavLink>
+                                <Link to="/search/" className="nav-link">Заглушка поиска</Link>
                             </NavItem>
                             <NavItem>
-                                <NavLink href="/ask/">Спросить</NavLink>
+                                <Link to="/ask/" className="nav-link">Спросить</Link>
                             </NavItem>
                             { logged_in
                                 ? <NavItem><NavLink onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</NavLink></NavItem>
