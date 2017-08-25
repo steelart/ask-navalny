@@ -1,0 +1,50 @@
+
+	<div class="container">
+		<div class="bg_holder">
+			<!-- Вопрос -->
+			<div class="question form-group">
+				<input [(ngModel)]="searchQuery" type="text" class="form-control" id="question" placeholder="Спроси Навального">
+				<!-- выпадающее окно -->
+				<div *ngIf="searchQuery" class="questions_found">
+					<div *ngFor="let question of questions | questionByTitle: searchQuery" class="one">
+						<a routerLink="/question/{{question.id}}">
+							<p class="title">{{question.title}}</p>
+							<p class="subtitle">
+								<span class="number">{{question.answers}}</span>ответов / <span class="views">{{question.views}}</span>просмотров
+							</p>
+						</a>
+						<span class="new_label"></span>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+		
+		
+
+		<!-- Сортировка -->
+		<div class="sort_holder">
+			<div class="sort-panel btn-group btn-group-justified" role="group" aria-label="...">
+				<a href="#" (click)="sortByRating()" class="btn btn-default" [ngClass]="{active: sort == 'rating'}" role="button">Популярное</a>
+				<a href="#" (click)="sortByDate()" class="btn btn-default" [ngClass]="{active: sort == 'date'}" role="button">Новое</a>
+				<a href="#" (click)="sortUnanswered()" class="btn btn-default" [ngClass]="{active: sort == 'unanswered'}" role="button">Неотвеченное</a>
+			</div>
+		</div>
+
+		<!-- Ответы -->
+		<div class="questions_list">
+			<div *ngFor="let question of questionsSorted " class="one">
+				<a routerLink="/question/{{question.id}}">
+					<p class="title">{{question.title}}</p>
+					<p class="subtitle">
+						<span class="number">{{question.answers}}</span>ответов / <span class="views">{{question.views}}</span>просмотров
+						<span class="pull-right">{{question.date | date:'dd.M.y'}}</span>
+					</p>
+				</a>
+				<span class="new_label"></span>
+			</div>
+		</div>
+
+	</div>
+	<!-- КОНЕЦ КОНТЕНТА СТРАНИЦЫ -->

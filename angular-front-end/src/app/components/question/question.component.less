@@ -1,0 +1,64 @@
+h1{
+	text-align: center;
+	margin-top: 35px;
+	margin-bottom: 25px;
+}
+.video-block{
+	width: 100%;
+	@media (min-width: 650px){
+		width: 650px;
+	}
+	h3{
+		text-align: center;
+		margin-bottom: 15px;
+	}
+	.buttons{
+		text-align: center;
+	}
+	.no-answer{
+		margin-top: 50px;
+		text-align: center;
+		font-size: 22px;
+		color: #656565;
+		.line2{
+			margin: 15px 0 25px;
+		}
+	}
+	.add-answer{
+		text-align: center;
+		margin-top: 50px;
+		margin-bottom: 50px;
+		h5{
+			font-size: 20px;
+			color: #656565;
+			font-weight: normal;
+			margin: 30px 0 20px;
+		}
+	}
+	.all-answers{
+		margin-bottom: 50px;
+		h5{
+			font-size: 20px;
+			color: #000;
+			font-weight: normal;
+			text-transform: uppercase;
+			text-align: center;
+		}
+		ul {
+			list-style: none;
+			padding-left: 0;
+			li{
+				padding: 15px;
+				font-size: 18px;
+				border-bottom: 1px #e2e2e2 solid;
+				&:first-child{
+					border-top: 1px #e2e2e2 solid;
+				}
+				&.active{
+					background: #f2f2f2;
+				}
+			}
+		}
+		
+	}
+}

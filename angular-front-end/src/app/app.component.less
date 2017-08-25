@@ -1,0 +1,180 @@
+// Стили Константин
+
+body{
+	font-family: 'Open Sans', sans-serif;
+}
+.bg_holder{
+	background-image: url('/assets/img/bg-photo.jpg');
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 550px;
+	padding-top: 50px;
+	margin-bottom: 15px;
+	@media (max-width: 750px){height: 450px;}
+	@media (max-width: 550px){height: 350px;}
+	@media (max-width: 400px){height: 280px;}
+}
+// Вопрос
+.question {
+	.form-control{
+		border: 1px solid #007fa3;
+		font-size: 22px;
+		height: 60px;
+		color: #000;
+	}
+	.form-control-feedback{
+		height: 50px;
+		width: 50px;
+		line-height: 50px;
+		color: #007fa3;
+		&:hover{
+			cursor: pointer;
+		}
+	}
+}
+// Сортировка
+.sort_holder{
+	padding: 0 20%;
+}
+.sort-panel{
+	text-transform: uppercase;
+	a.btn{
+		font-weight: bold;
+		color: #007fa3;
+		border-color: #007fa3;
+		&.active, &.active:hover{
+			background: #007fa3;
+			color: #fff;
+		}
+		&:hover{
+			background: #007fa3;
+			color: #fff;
+		}
+		@media (max-width: 750px){
+			width: 100%;
+			float: none;
+			display: block;
+			border-radius: 4px !important;
+			margin-bottom: 10px;
+		}
+	}
+}
+// Найденные ответы
+.questions_found{
+	width: 100%;
+	padding: 0;
+	border: 1px solid #007fa3;
+	background: #fff;
+	z-index: 100;
+	position: absolute;
+	.one{
+		.questions_list .one;
+		&:first-child{
+			border-top: none;
+		}
+	}
+}
+
+ // Ответы
+.questions_list{
+	margin-top: 25px;
+	margin-bottom: 50px;
+	.one{
+		border-bottom: 1px #cdcdcd solid;
+		padding: 10px 5px;
+		&:first-child{
+			border-top: 1px #cdcdcd solid;
+		}
+		&:hover{
+			background: #007fa3;
+			color: #fff;
+			.title, .subtitle, a{
+				color: #fff;
+				text-decoration: none;
+			}
+		}
+		.title{
+			font-size: 20px;
+			font-weight: bold;
+			color: #000;
+			margin-bottom: 0;
+		}
+		.subtitle{
+			font-size: 12px;
+			color: #3b838d;
+			margin-bottom: 0;
+			.number, .views{
+				padding-right: 3px;
+			}
+		}
+	}
+}
+
+
+/*	КНОПКИ
+------------------------------------------------*/
+.btn{
+	&.btn-primary, .btn.btn-primary:focus{
+		background: #ff3300;
+		text-transform: uppercase;
+		border-radius: 3px;
+		border-color: #ff3300;
+		text-shadow: none;
+		&:hover{
+			background: lighten(#ff3300, 10%);
+		}
+	}
+	&.btn-info{
+		color: #0d7fa3;
+	    text-transform: uppercase;
+	    text-decoration: none;
+	    background: transparent;
+	    border-color: #0d7fa3;
+	    border-radius: 3px;
+	    text-shadow: none;
+		&:hover{
+			color: #fff;
+			background: #0d7fa3;
+			border-color: #0d7fa3;
+		}
+	}
+	&.btn-lg{
+		padding: 15px 50px;
+	}
+}
+/* Навигация 
+----------------------------------------*/
+.navbar-default .navbar-nav>li>a.active{
+    background-image: -webkit-linear-gradient(top,#dbdbdb 0,#e2e2e2 100%);
+    background-image: -o-linear-gradient(top,#dbdbdb 0,#e2e2e2 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#dbdbdb),to(#e2e2e2));
+    background-image: linear-gradient(to bottom,#dbdbdb 0,#e2e2e2 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffdbdbdb', endColorstr='#ffe2e2e2', GradientType=0);
+    background-repeat: repeat-x;
+    -webkit-box-shadow: inset 0 3px 9px rgba(0,0,0,.075);
+    box-shadow: inset 0 3px 9px rgba(0,0,0,.075);
+    color: #555;
+    background-color: #e7e7e7;
+}
+
+
+
+
+/*
+ЦВЕТА:
+-------
+#ff3300
+#007fa3
+#3b838d
+*/
+.test1{
+	color: #ff3300; // КРАСНЫЙ
+}
+.test2{
+	color: #007fa3; // СИНИЙ
+}
+.test3{
+	color: #3b838d; // СЕРЫЙ
+}
+

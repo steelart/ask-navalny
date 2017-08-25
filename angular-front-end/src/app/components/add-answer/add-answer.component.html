@@ -1,0 +1,45 @@
+<div class="container">
+
+	<!-- <slider max='150' (changeRange)="onChangeRange($event)"></slider> -->
+
+		<!-- Вопрос -->
+		<h1>{{ question.title }}</h1>
+		<div class="add-answer-block center-block">
+			<form #form1="ngForm" name="form1" action="" (submit)="onNextStep(videoLink.valid)" *ngIf="step==1">
+				<div class="question form-group has-feedback">
+					<label for="">Укажи ссылку на видеоответ Алексея в YouTube</label>
+					<input [(ngModel)]="form.videoLink" #videoLink="ngModel" type="url" name="videoLink" id="videoLink" class="form-control" placeholder="Укажите ссылку на видео в YouTube" required pattern=".*youtube\.com.*">
+					<div [hidden]="videoLink.valid || videoLink.pristine && !form1.submitted" class="alert alert-danger">Необходимо указать ссылку</div>
+					<!-- {{videoLink.errors | json}} -->
+				</div>
+				<div class="buttons">
+					<button (click)="onCancel()" type="button" class="btn btn-lg btn-info">Назад</button>
+					<button type="submit" class="btn btn-lg btn-primary">Далее</button>
+				</div>
+			</form>
+			<!-- youtube iframe -->
+			<div *ngIf="step==2" class="label-video">Отметь нужный видеофрагмент</div>
+			<div id="yt-iframe-api"></div>
+			<form #form2="ngForm" name="form2" action="" (submit)="addAnswer()" *ngIf="step==2">
+				<div *ngIf="videoParams.duration" class="slider">
+					<slider max='{{videoParams.duration}}' (changeRange)="onChangeRange($event)"></slider>
+				</div>
+				<div class="form-group">
+					<label for="">Описание</label>
+					<textarea [(ngModel)]="form.description" #description="ngModel" name="description" class="form-control description" rows="3" placeholder="Укажите описание этого видео" required></textarea>
+					<div [hidden]="description.valid || description.pristine && !form2.submitted" class="alert alert-danger">Введите описание</div>
+				</div>
+				<div class="buttons">
+					<button (click)="onBackStep()" type="button" class="btn btn-lg btn-info">Назад</button>
+					<button type="submit" class="btn btn-lg btn-primary">Готово</button>
+				</div>
+			</form>
+
+		</div>
+</div>
+
+
+
+
+
+

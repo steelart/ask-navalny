@@ -1,0 +1,12 @@
+<div class="form-group">
+	<label for="from">C: </label><input #from type="number" [(ngModel)]="leftH.value" (change)="onChangeLeft(from.value)" name="from" class="form-control">
+	<label for="to">ПО: </label><input #to type="number" [(ngModel)]="rightH.value" (change)="onChangeRight(to.value)" name="to" class="form-control">
+</div>
+<div #range id="slider" class="slider">
+	<div #right on-mousedown="onMousedown($event)"
+		on-touchstart="onTouchStart($event)"
+		class="thumb handle-right"></div>
+	<div #left on-mousedown="onMousedown($event)"
+		on-touchstart="onTouchStart($event)"
+		class="thumb handle-left"></div>
+</div>

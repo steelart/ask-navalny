@@ -1,0 +1,15 @@
+<div class="container">
+	<div class="add-question-block center-block">
+		<h1>Задать новый вопрос</h1>
+		<form #form1="ngForm" action="" (submit)="onSubmit()">
+			<div class="form-group">
+				<textarea [(ngModel)]="form.questionText" #question_text="ngModel" name="question_text" class="form-control" rows="3" placeholder="Задать новый вопрос" required></textarea>
+				<div [hidden]="question_text.valid || question_text.pristine && !form1.submitted" class="alert alert-danger">Введите вопрос</div>
+			</div>
+			<div class="buttons">
+				<button (click)="onBackStep()" type="button" class="btn btn-info btn-lg">ОТМЕНИТЬ</button>
+				<button type="submit" class="btn btn-primary btn-lg">ОТПРАВИТЬ</button>
+			</div>
+		</form>
+	</div>
+</div>

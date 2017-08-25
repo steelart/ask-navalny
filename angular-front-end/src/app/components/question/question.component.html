@@ -1,0 +1,54 @@
+	<div class="container">
+		<div class="">
+			<!-- {{questionId}}{{question | json}} {{answers | json}} -->
+			<!-- Вопрос -->
+			<div class="question form-group">
+				<input [(ngModel)]="searchQuery" value="{{question.title}}" type="text" class="form-control" id="question" placeholder="Спроси Навального">
+				<!-- выпадающее окно -->
+				<div *ngIf="searchQuery" class="questions_found">
+					<div *ngFor="let question of questionsAll | questionByTitle: searchQuery" class="one">
+						<a routerLink="/question/{{question.id}}" (click)="beforeLeave()">
+							<p class="title">{{question.title}}</p>
+							<p class="subtitle">
+								<span class="number">{{question.answers}}</span>ответов / <span class="views">{{question.views}}</span>просмотров
+							</p>
+						</a>
+						<span class="new_label"></span>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+		<h1>{{question.title}}</h1>
+		<div class="center-block video-block">			
+			<!-- No answers -->
+			<div *ngIf="answers.length == 0" class="no-answer"> 
+				<div class="line1">ОТВЕТА НА ЭТОТ ВОПРОС КАЖЕТСЯ НЕТ.</div>
+				<div class="line2">Знаешь, где Алексей уже ответил?</div>
+				<button (click)="addAnswer()" class="btn btn-primary btn-lg">ДОБАВИТЬ ВИДЕООТВЕТ</button>
+			</div>
+			<!-- Video answers -->
+			<div id="yt-iframe-api"></div>
+			<div *ngIf="answers.length && currentVideo != null">
+				<h3>Фрагмент видео: {{answers[currentVideo].sourceTitle}}</h3>
+				<div class="buttons">
+					<button (click)="previousVideo()" type="button" class="btn btn-info">Предыдущее</button>
+					<button (click)="nextVideo()" type="button" class="btn btn-info">Следующее</button>
+				</div>
+				<div class="add-answer">
+					<h5>Знаешь где Алексей еще отвечал на этот же вопрос?</h5>
+					<button (click)="addAnswer()" type="button" class="btn btn-primary btn-lg">Добавить ответ</button>
+				</div>
+			</div>
+			<div *ngIf="answers.length" class="all-answers">
+				<h5>Все ответы:</h5>
+				<ul>
+					<li *ngFor="let answer of answers; let i = 'index'" [ngClass]="{active: i==currentVideo}" >{{i+1}}: {{answer.sourceTitle}}</li>
+				</ul>
+			</div>
+
+		</div>
+		
+		<!-- <button (click)="getAllAnswers()" class="btn btn-default">Все ответы</button> -->
+	</div>
