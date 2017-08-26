@@ -24,12 +24,17 @@ SOFTWARE.
 
 import React from 'react';
 import { connect } from 'react-redux';
+
+import { APP_CONFIG } from './config.jsx';
+
 import { mainStore, resetModalMode, dispatchModalMode } from './main-reducer.jsx';
 
 import { LinkButton, SimpleButton, RefButton, LinkButtonLI, SimpleButtonLI, RefButtonLI } from './buttons.jsx';
 
 import { post_api } from './loading-api.jsx';
 import { ConnectedRegistrationPage } from './registration-page.jsx';
+
+import { sdef } from './utils.jsx';
 
 
 function login_actions(dispatch, data) {
@@ -47,8 +52,30 @@ post_api('/api/check-logined', {}, (data) => {
         login_actions(mainStore.dispatch, data);
 });
 
+class LoginViaSocialNets extends React.Component {
+    render() {
+        const google = sdef(APP_CONFIG.social_auth).google;
+        return <div>
+            { google && <RefButton href={'/accounts/google/login/?next=' + encodeURIComponent(window.location.pathname)}>Войти через google</RefButton> }
+        </div>;
+    }
+}
 
-class LoginPage extends React.Component {
+
+class LoginViaSocialNetsPage extends React.Component {
+    render() {
+        return <div>
+            <LoginViaSocialNets/>
+            <button onClick={()=>resetModalMode(this)}>отмена</button>
+        </div>;
+    }
+}
+
+export const ConnectedLoginViaSocialNetsPage =
+    connect((state) => ({}))(LoginViaSocialNetsPage);
+
+
+class LocalLoginPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -72,7 +99,7 @@ class LoginPage extends React.Component {
             <br/>
             <SimpleButtonLI onClick={() => dispatchModalMode(this, ConnectedRegistrationPage)}>Зарегистрироваться</SimpleButtonLI>
             <br/>
-            <RefButton href={'/accounts/google/login/?next=' + encodeURIComponent(window.location.pathname)}>Войти через google</RefButton>
+            <LoginViaSocialNets/>
             <p>В тестовой версии безопасность передачи и хранение пароля не проработаны! Не используйте реальные пароли!</p>
             <form >
                 <input
@@ -116,6 +143,16 @@ class LoginPage extends React.Component {
         } else {
             this.setState({incorrect_login : true});
         }
+    }
+}
+
+export const ConnectedLocalLoginPage = connect((state) => ({}))(LocalLoginPage);
+
+class LoginPage extends React.Component {
+    render() {
+        return APP_CONFIG.local_users
+            ? <ConnectedLocalLoginPage/>
+            : <ConnectedLoginViaSocialNetsPage/>;
     }
 }
 

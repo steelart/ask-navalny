@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+from config.config import *
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,12 +22,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')x2@*8)x6dx0(00mynl%xj5lp*y66(zm-v61)i(6q8vwk$7b@2'
+SECRET_KEY = SERVER_CONFIG['secret_key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = COMMON_APP_CONFIG['debug']
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = SERVER_CONFIG['allowed_hosts']
 
 
 # Application definition
@@ -38,19 +40,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'channels',
-
-    'django.contrib.sites',
-
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-
-    'allauth.socialaccount.providers.google',
 ]
+if COMMON_APP_CONFIG['web_sockets']:
+    INSTALLED_APPS.append('channels')
+if COMMON_APP_CONFIG['social_auth'] is not None:
+    INSTALLED_APPS.extend([
+        'django.contrib.sites',
+        'allauth',
+        'allauth.account',
+        'allauth.socialaccount',
+    ])
+    if COMMON_APP_CONFIG['social_auth']['google']:
+        INSTALLED_APPS.append('allauth.socialaccount.providers.google')
 
-SITE_ID = 2
+
+SITE_ID = SERVER_CONFIG['site_id']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -106,24 +110,24 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME':
-        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME':
-        'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME':
-        'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME':
-        'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+#AUTH_PASSWORD_VALIDATORS = [
+#    {
+#        'NAME':
+#        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+#    },
+#    {
+#        'NAME':
+#        'django.contrib.auth.password_validation.MinimumLengthValidator',
+#    },
+#    {
+#        'NAME':
+#        'django.contrib.auth.password_validation.CommonPasswordValidator',
+#    },
+#    {
+#        'NAME':
+#        'django.contrib.auth.password_validation.NumericPasswordValidator',
+#    },
+#]
 
 
 # Internationalization

@@ -49,7 +49,8 @@ from .utils import fail_json_response
 
 
 def send_object(obj):
-    Group('all').send({'text': json.dumps(obj)})
+    if COMMON_APP_CONFIG['web_sockets']:
+        Group('all').send({'text': json.dumps(obj)})
 
 
 def update_question(data, updater):

@@ -23,6 +23,7 @@
 __author__ = 'Merkulov Alexey'
 
 from django.http import JsonResponse
+from django.http import Http404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
@@ -38,6 +39,7 @@ from .models import COMPLAIN
 from .models import LIKE
 from .models import DISLIKE
 
+from .utils import COMMON_APP_CONFIG
 from .utils import pass_raise_dbg_filter_or_exception
 from .utils import fail_json_response
 
@@ -90,6 +92,9 @@ def check_logined(request):
 
 def simple_login(request):
     pass_raise_dbg_filter_or_exception(request)
+    if COMMON_APP_CONFIG['local_users'] is None:
+        raise Http404('Simple login is not configured')
+
     username = request.POST['username']
     password = request.POST['password']
     if password == '':
@@ -104,12 +109,16 @@ def simple_login(request):
 
 def registration(request):
     pass_raise_dbg_filter_or_exception(request)
-    # request.POST.get("title", "")7
+    if COMMON_APP_CONFIG['local_users'] is None:
+        raise Http404('Simple login is not configured')
+
     username = request.POST['username']
     password = request.POST['password']
     admin = (request.POST['admin'] == 'true')
-    print('registration:', username, admin)
-    print (admin)
+
+    if admin and not COMMON_APP_CONFIG['local_users']['admin_registration']:
+        raise Http404('Admin registration is not allowed')
+
     if password == '':
         return fail_json_response('empty password')
     if User.objects.filter(username=username).exists():

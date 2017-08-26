@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import { APP_CONFIG } from './config.jsx';
+
 import { mainStore } from './main-reducer.jsx';
 
 const $ = require('jquery');
@@ -65,5 +67,6 @@ function connectWebSocket() {
 }
 
 $(document).ready(function(){
-    connectWebSocket();
+    if (APP_CONFIG.web_sockets)
+        connectWebSocket();
 });

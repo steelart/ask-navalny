@@ -24,6 +24,9 @@ SOFTWARE.
 
 import React from 'react';
 import { connect } from 'react-redux';
+
+import { APP_CONFIG } from './config.jsx';
+
 import { resetModalMode, dispatchModalMode } from './main-reducer.jsx';
 
 import { LinkButton, SimpleButton, RefButton, LinkButtonLI, SimpleButtonLI, RefButtonLI } from './buttons.jsx';
@@ -103,10 +106,12 @@ class RegistrationPage extends React.Component {
                     spellCheck='false'
                 />
                 <br/>
-                <input type="checkbox" checked={this.state.admin} readOnly={true} onChange={(event) => {
-                    this.setState({admin : event.target.checked});
-                }}/>
-                <span>В тестовой версии буду админом!</span>
+                { APP_CONFIG.local_users.admin_registration && <div>
+                    <input type="checkbox" checked={this.state.admin} readOnly={true} onChange={(event) => {
+                        this.setState({admin : event.target.checked});
+                    }}/>
+                    <span>В тестовой версии буду админом!</span>
+                </div> }
             </form>
             { error_text
                 ? <p className={'errorText'}>{error_text}</p>

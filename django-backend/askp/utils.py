@@ -25,6 +25,7 @@ __author__ = 'Merkulov Alexey'
 import urllib2
 
 from django.http import JsonResponse
+from django.http import Http404
 
 try:
     # Python 3
@@ -33,17 +34,14 @@ except ImportError:
     # Python 2
     from urlparse import urlparse
 
-try:
-    from .local_config import *
-except ImportError:
-    pass
+from config.config import *
 
 
 def check_dbg_filter(request):
-    if not 'DEBUG_FILTER_CODE' in globals():
+    if SERVER_CONFIG['debug_filter'] is None:
         return True
     dbgcode = request.COOKIES.get('dbgcode', '')
-    if dbgcode != DEBUG_FILTER_CODE:
+    if dbgcode != SERVER_CONFIG['debug_filter']:
         return False
     return True
 

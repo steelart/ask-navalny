@@ -31,6 +31,8 @@ import { Provider, connect } from 'react-redux';
 
 import Modal from 'react-modal';
 
+import { APP_CONFIG } from './config.jsx';
+
 import { mainStore, resetModalMode, dispatchModalMode } from './main-reducer.jsx';
 
 import { ConnectedQuestionForm } from './ask-question-page.jsx';
@@ -133,6 +135,15 @@ class App extends React.Component {
 const ConnectedApp = connect((state, props) => ({
         appConfig : state.appConfig
     }))(App);
+
+
+if (APP_CONFIG.debug) {
+    console.log('Global app config: ', APP_CONFIG);
+}
+if (APP_CONFIG.api_version != 1) {
+    //TODO: make normal message!
+    alert("Версия сервера отличается от клиента. Возмоно, вам стоит капитально обновить страницу");
+}
 
 ReactDOM.render(
       <Provider store={ mainStore }>

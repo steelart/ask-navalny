@@ -22,10 +22,17 @@
 
 __author__ = 'Merkulov Alexey'
 
+import json
+
 from django.http import HttpResponse
 from django.template import loader
 
+from .utils import COMMON_APP_CONFIG
 from .utils import check_dbg_filter
+
+
+# This number should be increased every time API behaviour changes
+API_VERSION = 1
 
 
 def reactindex(request):
@@ -33,5 +40,7 @@ def reactindex(request):
     if not check_dbg_filter(request):
         index = 'askp/filter.html'
     template = loader.get_template(index)
-    context = {}
+    config = {'api_version': API_VERSION}
+    config.update(COMMON_APP_CONFIG)
+    context = {'config_data': json.dumps(config)}
     return HttpResponse(template.render(context, request))
