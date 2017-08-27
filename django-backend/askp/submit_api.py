@@ -30,6 +30,8 @@ from django.http import JsonResponse
 
 from channels.channel import Group
 
+from config.config import *
+
 from .models import Question
 from .models import Answer
 from .models import QuestionVoteList

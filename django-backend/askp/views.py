@@ -27,11 +27,11 @@ import json
 from django.http import HttpResponse
 from django.template import loader
 
+from config.config import *
+
 from .models import Question
 from .models import obj_to_dict
 
-from .utils import COMMON_APP_CONFIG
-from .utils import SERVER_CONFIG
 from .utils import check_dbg_filter
 
 

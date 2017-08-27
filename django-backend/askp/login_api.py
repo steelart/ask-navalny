@@ -31,6 +31,8 @@ from django.contrib.auth import logout
 
 from django.contrib.auth.models import Group as ModelsGroup
 
+from config.config import *
+
 from .models import QuestionVoteList
 from .models import AnswerVoteList
 
@@ -39,7 +41,6 @@ from .models import COMPLAIN
 from .models import LIKE
 from .models import DISLIKE
 
-from .utils import COMMON_APP_CONFIG
 from .utils import pass_raise_dbg_filter_or_exception
 from .utils import fail_json_response
 
