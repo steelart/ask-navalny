@@ -28,4 +28,12 @@ SERVER_CONFIG = {
 
     # A magic site number
     'site_id': 2,
+
+    # A configuration for application preload data
+    # Preloaded questions will be used for fast keystrokes search
+    'preload_config': {
+        'answered_number': 100,
+        'top_unanswered_number': 100,
+        'new_unanswered_number': 100,
+    },
 }

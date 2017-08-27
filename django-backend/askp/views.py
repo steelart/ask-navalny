@@ -27,20 +27,60 @@ import json
 from django.http import HttpResponse
 from django.template import loader
 
+from .models import Question
+from .models import obj_to_dict
+
 from .utils import COMMON_APP_CONFIG
+from .utils import SERVER_CONFIG
 from .utils import check_dbg_filter
 
 
 # This number should be increased every time API behaviour changes
-API_VERSION = 1
+API_VERSION = 2
 
+
+def collect_preload_data():
+    res = []
+
+    preload_config = SERVER_CONFIG['preload_config'];
+    # Added top answered questions
+    query = Question.objects
+    query = query.filter(banned=False)
+    query = query.filter(official_answer__isnull=False)
+    query = query.order_by('-votes_number')
+    for q in query[:preload_config['answered_number']]:
+        res.append(obj_to_dict(q))
+
+    # Added top unanswered questions
+    query = Question.objects
+    query = query.filter(banned=False)
+    query = query.filter(official_answer__isnull=True)
+    query = query.order_by('-votes_number')
+    for q in query[:preload_config['top_unanswered_number']]:
+        res.append(obj_to_dict(q))
+
+    # Added last unanswered questions
+    query = Question.objects
+    query = query.filter(banned=False)
+    query = query.filter(official_answer__isnull=True)
+    for q in query[:preload_config['new_unanswered_number']]:
+        res.append(obj_to_dict(q))
+
+    return {'questions': res}
 
 def reactindex(request):
     index = 'askp/reactindex.html'
     if not check_dbg_filter(request):
         index = 'askp/filter.html'
     template = loader.get_template(index)
+
     config = {'api_version': API_VERSION}
     config.update(COMMON_APP_CONFIG)
-    context = {'config_data': json.dumps(config)}
+
+    preload = collect_preload_data()
+
+    context = {
+        'config_data': json.dumps(config),
+        'global_preload_data': json.dumps(preload),
+    }
     return HttpResponse(template.render(context, request))

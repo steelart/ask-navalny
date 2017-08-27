@@ -66,6 +66,9 @@ function connectWebSocket() {
     };
 }
 
+console.log(window.global_preload_data);
+mainStore.dispatch({ type : 'ADD_QUESTIONS', questions : window.global_preload_data.questions });
+
 $(document).ready(function(){
     if (APP_CONFIG.web_sockets)
         connectWebSocket();
