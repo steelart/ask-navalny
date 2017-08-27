@@ -60,7 +60,7 @@ export class AnswerForm extends React.Component {
     }
 
     update_time(player) {
-        this.setState({cur_time : player.getCurrentTime()});
+        this.setState({cur_time : Math.round(player.getCurrentTime())});
     }
 
     update_start_time(video, new_val) {
@@ -109,7 +109,7 @@ export class AnswerForm extends React.Component {
                     }
                 }}
                 onPlay={(e) => {
-                    this.setState({ cur_time : e.target.getCurrentTime() });
+                    this.update_time(e.target);
                     this.setState({ timer : setInterval(() => this.update_time(e.target), 1000) });
                 }}
                 onPause={(e) => {
