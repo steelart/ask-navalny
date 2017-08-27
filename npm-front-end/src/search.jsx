@@ -30,12 +30,38 @@ class SearchPage extends React.Component {
         //console.log(queryStringEncoding({ text : this.state.text }));
     }
 
+    compareQuestions(id1, id2) {
+        const questions = this.props.questionsInfo.questions;
+        const q1 = questions[id1];
+        const q2 = questions[id2];
+        if (q1.official_answer && !q2.official_answer) {
+            return -1;
+        }
+        if (!q1.official_answer && q2.official_answer) {
+            return 1;
+        }
+        return q2.votes_number - q1.votes_number;
+    }
+
+    searchInputChanged(value) {
+        this.setState({text : value});
+        const questions = this.props.questionsInfo.questions;
+        var ids = [];
+        if (value.length != 0) for (var id in questions) {
+            if (questions[id].text_str.toLowerCase().indexOf(value.toLowerCase()) > -1) {
+                ids.push(id);
+            }
+        }
+        ids.sort((id1, id2) => this.compareQuestions(id1, id2));
+        this.setState({ ids : ids });
+    }
+
     render() {
         return <div>
             <input
                 type='text'
                 value={this.state.text}
-                onChange={(e) => this.setState({text : e.target.value})}
+                onChange={(e) => this.searchInputChanged(e.target.value)}
             />
             <button onClick={()=>this.submit()}>Найти</button>
             <br/>
