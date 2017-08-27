@@ -1,1 +1,22 @@
-../../../../npm-front-end/public/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Сервис вопросов</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900" rel="stylesheet">
+    <link rel="shortcut icon" href="/static/askp/images/icon.ico" type="image/x-icon">
+
+    <!-- <script type="text/javascript" src="config.js"></script> -->
+</head>
+<body>
+    <div id='mount-point'></div>
+
+    <script type="text/javascript">
+        window.global_app_config = {{ config_data|safe }};
+    </script>
+    <script type="text/javascript" src="/static/askp/js/bundle.js"></script>
+</body>
+</html>
