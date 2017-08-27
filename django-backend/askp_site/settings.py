@@ -18,6 +18,23 @@ from config.config import *
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+# Current server configuration version:
+ACTUAL_CONFIG_VERSION = [1, 1]
+
+# Check configuration version:
+if SERVER_CONFIG['config_version'][0] != ACTUAL_CONFIG_VERSION[0]:
+    raise Exception('Your configuration has different primary version: ' +
+                    'configuration version = ' +
+                    str(SERVER_CONFIG['config_version'][0]) +
+                    ', server version = ' +
+                    str(ACTUAL_CONFIG_VERSION[0]))
+if SERVER_CONFIG['config_version'][1] < ACTUAL_CONFIG_VERSION[1]:
+    raise Exception('Your configuration has low secondary version: ' +
+                    'configuration version = ' +
+                    str(SERVER_CONFIG['config_version'][1]) +
+                    ', server version = ' +
+                    str(ACTUAL_CONFIG_VERSION[1]))
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 

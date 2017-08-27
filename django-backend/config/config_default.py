@@ -18,6 +18,12 @@ COMMON_APP_CONFIG = {
 
 # Server specific configuration
 SERVER_CONFIG = {
+    # The first number should be exactly as in sever
+    # The second number should be equal or more the server version
+    # Configuration version is needed to check that propesed configuration is
+    # compatible with server
+    'config_version': [1, 1],
+
     'allowed_hosts': ['*'],
 
     # COOKIES filter to pass to main site, could be some string

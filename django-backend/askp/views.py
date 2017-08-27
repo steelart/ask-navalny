@@ -42,7 +42,7 @@ API_VERSION = 2
 def collect_preload_data():
     res = []
 
-    preload_config = SERVER_CONFIG['preload_config'];
+    preload_config = SERVER_CONFIG['preload_config']
     # Added top answered questions
     query = Question.objects
     query = query.filter(banned=False)
@@ -67,6 +67,7 @@ def collect_preload_data():
         res.append(obj_to_dict(q))
 
     return {'questions': res}
+
 
 def reactindex(request):
     index = 'askp/reactindex.html'
