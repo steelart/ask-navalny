@@ -124,7 +124,6 @@ class App extends React.Component {
                     <ConnectedAppMenu/>
                 </div>
                 <div className='container'>
-
                     {this.props.children}
                 </div>
             </div>

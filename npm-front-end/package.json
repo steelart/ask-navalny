@@ -20,6 +20,7 @@
     "keymirror": "*",
     "less": "*",
     "moment": "*",
+    "rc-slider": "*",
     "react": "^15.6.1",
     "react-addons-css-transition-group": "^15.6.0",
     "react-addons-transition-group": "^15.6.0",

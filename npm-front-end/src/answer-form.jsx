@@ -1,6 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Linkify from 'react-linkify';
+import YouTube from 'react-youtube';
+
+import Slider, { Range } from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 import { LinkButton, SimpleButton, RefButton, SimpleButtonLI, LinkButtonLI } from './buttons.jsx';
 import { place_question } from './question.jsx';
@@ -10,7 +13,46 @@ import { sdef, getSubmitFunction, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SU
 
 import { resetModalMode, dispatchModalMode } from './main-reducer.jsx'
 
-import YouTube from 'react-youtube';
+
+class RangeWrapper extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            start : props.start,
+            cur : props.cur,
+            end : props.end,
+            in_change: false
+        };
+    }
+
+    render() {
+        const inc = this.state.in_change;
+        const start = inc ? this.state.start : this.props.start;
+        const cur   = inc ? this.state.cur   : this.props.cur  ;
+        const end   = inc ? this.state.end   : this.props.end  ;
+        console.log(inc, 'props', this.props);
+        return <Range
+            max={this.props.full_len}
+            count={2}
+            value={[start, cur, end]}
+            onBeforeChange={(v) => this.setState({
+                start : v[0],
+                cur : v[1],
+                end : v[2],
+                in_change: true
+            })}
+            onChange={(v) => this.setState({
+                start : v[0],
+                cur : v[1],
+                end : v[2],
+            })}
+            onAfterChange={(v) => {
+                this.setState({in_change: false});
+                this.props.update(v);
+            }}
+        />;
+    }
+}
 
 export class AnswerForm extends React.Component {
     constructor(props) {
@@ -85,6 +127,17 @@ export class AnswerForm extends React.Component {
         this.state.player.loadVideoById(p);
     }
 
+    update_slider_time(video, start, cur, end) {
+        this.state.timer && clearTimeout(this.state.timer);
+        this.setState({start : start, cur_time : cur, end : end, timer : null});
+        const p = {
+            videoId : video,
+            startSeconds : cur,
+            endSeconds : end
+        };
+        this.state.player.loadVideoById(p);
+    }
+
     render_youtube(video) {
         const url_start = this.parse_time(this.props.answerText);
         const opts = {
@@ -116,6 +169,14 @@ export class AnswerForm extends React.Component {
                     this.state.timer && clearTimeout(this.state.timer);
                     this.setState({ timer : null });
                 }}
+            />
+            <br/>
+            <RangeWrapper
+                full_len={this.state.full_len}
+                start={this.state.start}
+                cur={this.state.cur_time}
+                end={this.state.end}
+                update={(v) => this.update_slider_time(video, v[0], v[1], v[2])}
             />
             <br/>
             <table>
