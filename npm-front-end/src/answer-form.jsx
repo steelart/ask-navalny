@@ -30,7 +30,6 @@ class RangeWrapper extends React.Component {
         const start = inc ? this.state.start : this.props.start;
         const cur   = inc ? this.state.cur   : this.props.cur  ;
         const end   = inc ? this.state.end   : this.props.end  ;
-        console.log(inc, 'props', this.props);
         return <Range
             max={this.props.full_len}
             count={2}
@@ -65,6 +64,9 @@ export class AnswerForm extends React.Component {
             cur_time : 0,
             timer : null
         };
+    }
+    componentWillUnmount() {
+        this.stop_timer();
     }
     setAnswerText(text) {
         this.props.dispatch({
@@ -106,7 +108,7 @@ export class AnswerForm extends React.Component {
     }
 
     update_start_time(video, new_val) {
-        this.state.timer && clearTimeout(this.state.timer);
+        this.stop_timer();
         this.setState({start : new_val, timer : null});
         const p = {
             videoId : video,
@@ -117,7 +119,7 @@ export class AnswerForm extends React.Component {
     }
 
     update_end_time(video, new_val) {
-        this.state.timer && clearTimeout(this.state.timer);
+        this.stop_timer();
         this.setState({end : new_val, timer : null});
         const p = {
             videoId : video,
@@ -128,7 +130,7 @@ export class AnswerForm extends React.Component {
     }
 
     update_slider_time(video, start, cur, end) {
-        this.state.timer && clearTimeout(this.state.timer);
+        this.stop_timer();
         this.setState({start : start, cur_time : cur, end : end, timer : null});
         const p = {
             videoId : video,
@@ -166,7 +168,7 @@ export class AnswerForm extends React.Component {
                     this.setState({ timer : setInterval(() => this.update_time(e.target), 1000) });
                 }}
                 onPause={(e) => {
-                    this.state.timer && clearTimeout(this.state.timer);
+                    this.stop_timer();
                     this.setState({ timer : null });
                 }}
             />
@@ -262,5 +264,9 @@ export class AnswerForm extends React.Component {
         if (text.charAt(i) != 's')
             return 0;
         return minutes*60 + seconds;
+    }
+
+    stop_timer() {
+        this.state.timer && clearTimeout(this.state.timer);
     }
 }
