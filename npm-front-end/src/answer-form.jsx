@@ -140,6 +140,15 @@ export class AnswerForm extends React.Component {
         this.state.player.loadVideoById(p);
     }
 
+    convertTime(input) {
+        var pad = function(input) {return (input < 10) ? "0" + input : input;};
+        return [
+            pad(Math.floor(input / 3600)),
+            pad(Math.floor(input % 3600 / 60)),
+            pad(Math.floor(input % 60))
+        ].join(':');
+    }
+
     render_youtube(video) {
         const url_start = this.parse_time(this.props.answerText);
         const opts = {
@@ -184,9 +193,9 @@ export class AnswerForm extends React.Component {
             <table>
               <tr>
                 <th></th>
-                <th><button onClick={() => this.update_start_time(video, this.state.cur_time)}>{this.state.cur_time}</button></th>
+                <th><button onClick={() => this.update_start_time(video, this.state.cur_time)}>{this.convertTime(this.state.cur_time)}</button></th>
                 <th></th>
-                <th><button onClick={() => this.update_end_time(video, this.state.cur_time)}>{this.state.cur_time}</button></th>
+                <th><button onClick={() => this.update_end_time(video, this.state.cur_time)}>{this.convertTime(this.state.cur_time)}</button></th>
               </tr>
               <tr>
                 <th>С</th>
