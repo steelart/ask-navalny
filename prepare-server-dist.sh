@@ -25,7 +25,8 @@ cp django-backend/askp/*.py server-dist/askp/
 
 cp django-backend/askp_site/*.py server-dist/askp_site/
 
-cp django-backend/config/*.py server-dist/config/
+cp django-backend/config/config.py server-dist/config/
+cp django-backend/config/config_default.py server-dist/config/
 
 cp django-backend/*.py server-dist/
 cp django-backend/*.sh server-dist/

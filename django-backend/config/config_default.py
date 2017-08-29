@@ -22,7 +22,7 @@ SERVER_CONFIG = {
     # The second number should be equal or more the server version
     # Configuration version is needed to check that propesed configuration is
     # compatible with server
-    'config_version': [1, 1],
+    'config_version': [2, 1],
 
     'allowed_hosts': ['*'],
 
@@ -32,8 +32,7 @@ SERVER_CONFIG = {
     # Django secret key
     'secret_key': ')x2@*8)x6dx0(00mynl%xj5lp*y66(zm-v61)i(6q8vwk$7b@2',
 
-    # A magic site number
-    'site_id': 2,
+    'domain': 'localhost:8000',
 
     # A configuration for application preload data
     # Preloaded questions will be used for fast keystrokes search
@@ -42,4 +41,14 @@ SERVER_CONFIG = {
         'top_unanswered_number': 100,
         'new_unanswered_number': 100,
     },
+
+    'auth_config': None,
+    # A template to configure social nets authentication
+    # As alternative social nets auth could be configured by /admin menu
+    #'auth_config': {
+    #    'google': {
+    #        'secret': 'XXXXXXXXXXXXXXXXXXXXXXXX',
+    #        'client_id': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    #    }
+    #},
 }
