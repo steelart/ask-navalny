@@ -33,3 +33,4 @@ txaio==2.8.1
 urllib3==1.22
 zope.interface==4.4.2
 django-allauth==0.33.0
+django-polymorphic==1.3
