@@ -33,7 +33,6 @@ a = add_new_youtube_answer(
     video_id='B2l1RoWSzXw',
     start=2609,
     end=3048)
-q.official_answer = a
 q.save()
 
 sleep(0.1)

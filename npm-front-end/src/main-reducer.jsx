@@ -72,10 +72,7 @@ var loadedDataReducer = function (state=UNINITED_LOADED_DATA, action, type) {
 export const NOT_LOGINED_ID_INFO = {
     logged_in : false,
     personaname : null,
-    permissions : {
-        ban_question : false,
-        choose_answer : false
-    }
+    is_moderator : false,
 };
 
 var idInfoReducer = function (state=NOT_LOGINED_ID_INFO, action) {

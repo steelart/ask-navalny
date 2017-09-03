@@ -23,12 +23,17 @@
 __author__ = 'Merkulov Alexey'
 
 from django.http import JsonResponse
-
+from django.db.models import Q
 
 from .models import Question
 from .models import Answer
 from .models import obj_to_dict
 from .models import answer_to_dict
+
+from .models import APPROVED
+from .models import REJECTED
+from .models import UNDECIDED
+from .models import ANSWERED
 
 from .utils import pass_raise_dbg_filter_or_exception
 
@@ -46,9 +51,8 @@ def query_questions(request):
 def last_questions(request, start_id):
     pass_raise_dbg_filter_or_exception(request)
     res = []
-    start_filter = Question.objects.filter(
-        banned=False).filter(
-        official_answer__isnull=True)
+    q = Q(status=UNDECIDED) | Q(status=APPROVED)
+    start_filter = Question.objects.filter()
     if str(start_id) == '0':  # TODO!!
         from_filter = start_filter
     else:
@@ -74,21 +78,20 @@ def extract_questions_list(request, questions_filter):
 
 def top_questions(request):
     pass_raise_dbg_filter_or_exception(request)
-    query = Question.objects.filter(banned=False)
-    query = query.filter(official_answer__isnull=True)
+    query = Question.objects.filter(status=UNDECIDED)
     query = query.order_by('-votes_number')
     return extract_questions_list(request, query)
 
 
 def banned_questions(request):
     pass_raise_dbg_filter_or_exception(request)
-    query = Question.objects.filter(banned=True)
+    query = Question.objects.filter(status=REJECTED)
     return extract_questions_list(request, query)
 
 
 def answered_questions(request):
     pass_raise_dbg_filter_or_exception(request)
-    query = Question.objects.filter(official_answer__isnull=False)
+    query = Question.objects.filter(status=ANSWERED)
     query = query.order_by('-votes_number')
     return extract_questions_list(request, query)
 
@@ -96,7 +99,12 @@ def answered_questions(request):
 def answers(request, question_id):
     pass_raise_dbg_filter_or_exception(request)
     adict = {}
-    for a in Answer.objects.filter(question=question_id):
+    query = Answer.objects.filter(question=question_id)
+
+    if not request.user.has_perm('askp.moderator_perm'):
+        query = query.filter(status=APPROVED)
+
+    for a in query:
         adict[a.id] = answer_to_dict(a)
         # print(a.text_str)
     question = Question.objects.get(id=question_id)

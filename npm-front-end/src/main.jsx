@@ -139,7 +139,7 @@ const ConnectedApp = connect((state, props) => ({
 if (APP_CONFIG.debug) {
     console.log('Global app config: ', APP_CONFIG);
 }
-if (APP_CONFIG.api_version != 2) {
+if (APP_CONFIG.api_version != 3) {
     //TODO: make normal message!
     alert("Версия сервера отличается от клиента. Возмоно, вам стоит капитально обновить страницу");
 }

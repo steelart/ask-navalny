@@ -30,25 +30,39 @@ from django.contrib.auth.models import User
 
 from polymorphic.models import PolymorphicModel
 
+class ModeratorActions(models.Model):
+    json = models.CharField(max_length=1000)
+    action_date = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User)
+
+
+APPROVED='a'
+REJECTED='r'
+UNDECIDED='u'
+ANSWERED='c'  # use c as closed
+
 
 class Question(models.Model):
-    text_str = models.CharField(max_length=20000)
+    QuestionStatus = (
+        (UNDECIDED, 'Undecided'),
+        (ANSWERED, 'Answered'),
+        (APPROVED, 'Approbed'),
+        (REJECTED, 'Rejected'),
+    )
+    status = models.CharField(
+        max_length=1,
+        choices=QuestionStatus,
+        default=UNDECIDED)
+    text_str = models.CharField(max_length=500)
     author = models.ForeignKey(User)
     submit_date = models.DateTimeField(auto_now_add=True)
+    answered = models.IntegerField(default=1)
     votes_number = models.IntegerField(default=1)
-    official_answer = models.ForeignKey(
-        'Answer',
-        null=True,
-        blank=True,
-        default=None,
-        related_name='+')
-    banned = models.BooleanField(default=False)
     complains = models.IntegerField(default=0)
 
     class Meta:
         permissions = (
-            ('ban_question', 'Can ban quesion'),
-            ('choose_answer', 'Can choose oficial answer'),
+            ('moderator_perm', 'Can do moderator actions'),
         )
 
 
@@ -77,16 +91,25 @@ class QuestionVoteList(models.Model):
 YOUTUBE = 'y'
 TEXT = 't'  # not implemented now
 
-
 class Answer(PolymorphicModel):
     AnswerTypes = (
         (YOUTUBE, 'Youtube'),
         (TEXT, 'Text')
     )
+    AnswerStatus = (
+        (UNDECIDED, 'Undecided'),
+        (APPROVED, 'Approbed'),
+        (REJECTED, 'Rejected'),
+    )
     answer_type = models.CharField(max_length=1, choices=AnswerTypes)
+    status = models.CharField(
+        max_length=1,
+        choices=AnswerStatus,
+        default=UNDECIDED)
     author = models.ForeignKey(User)
     question = models.ForeignKey(Question)
     submit_date = models.DateTimeField(auto_now_add=True)
+    position = models.IntegerField(default=0)  # 0 means undecided
     like_number = models.IntegerField(default=0)
     dislike_number = models.IntegerField(default=0)
 

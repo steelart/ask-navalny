@@ -41,7 +41,7 @@ function login_actions(dispatch, data) {
     dispatch({ type : 'SET_ID_INFO', result : {
         logged_in : true,
         personaname : data.username,
-        permissions : data.permissions
+        is_moderator : data.is_moderator
     }});
     dispatch({type : 'SET_SELECTIONS', selections : data.selections});
     dispatch({type : 'SET_MODAL_MODE', modal_mode : null});

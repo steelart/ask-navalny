@@ -26,11 +26,13 @@ import React from 'react';
 import Linkify from 'react-linkify';
 import { Link } from 'react-router';
 
-import { ConnectedAppHeader } from './app-header.jsx';
-
 import { Button } from 'reactstrap';
 
+import { ConnectedAppHeader } from './app-header.jsx';
+
 import { setLoginModalMode } from './login-page.jsx';
+
+import { APPROVED, REJECTED, UNDECIDED, ANSWERED } from './utils.jsx';
 
 import './style_okonst.css';
 
@@ -53,10 +55,14 @@ export class Question extends React.Component {
 
     render() {
         const data = this.props.data;
+        const banned = data.status == REJECTED;
+        const answered = data.status == ANSWERED;
+        const undecided = data.status == UNDECIDED;
+        const is_moderator = this.props.idInfo.is_moderator;
         return (
             <div>
                 <div className="questions_list">
-                <div className={data.banned ? 'bannedQuestion' : (data.official_answer ? 'answeredQuestion one' : ' one')}>
+                <div className={banned ? 'bannedQuestion' : (answered ? 'answeredQuestion one' : ' one')}>
                     <div className="question-pos">
                         <div className="question-pos-l">
                             <p className='title'>
@@ -67,7 +73,8 @@ export class Question extends React.Component {
                         { this.button('VOTE_FOR_QUESTION', '+' + data.votes_number, 'voted') }
                         {/* this.button('COMPLAIN_ABOUT_QUESTION', data.complains + ' Пожаловаться', 'complained')*/ }
                     </div>
-                    { this.props.idInfo.permissions.ban_question && ( data.banned
+                    { is_moderator && undecided && this.button('APPROVE_QUESTION', 'Одобрить') }
+                    { is_moderator && ( banned
                         ? this.button('UNBAN_QUESTION', 'Разбанить')
                         : this.button('BAN_QUESTION', 'Забанить')
                     )}
