@@ -112,6 +112,8 @@ const questionsDefault = {
     last_all : questionsLoadedLastDefault,
     last_answered : questionsLoadedLastDefault,
     last_banned : questionsLoadedLastDefault,
+    last_approved : questionsLoadedLastDefault,
+    last_undecided : questionsLoadedLastDefault,
 
     top_approved : questionsLoadedListDefault,
     top_answered : questionsLoadedListDefault,

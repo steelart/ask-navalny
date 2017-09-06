@@ -66,6 +66,7 @@ class AppMenu extends React.Component {
     render() {
         const logged_in = this.props.idInfo.logged_in;
         const personaname = this.props.idInfo.personaname;
+        const is_moderator = this.props.idInfo.is_moderator;
         return (
             <div>
                 <Navbar light>
@@ -86,9 +87,6 @@ class AppMenu extends React.Component {
                     <Collapse className="navbar-toggleable-md" isOpen={!this.state.collapsed}>
                         <Nav vertical>
                             <NavItem>
-                                <Link to="/last-all" className="nav-link">Все последние</Link>
-                            </NavItem>
-                            <NavItem>
                                 <Link to="/last-answered" className="nav-link">Последние отвеченные</Link>
                             </NavItem>
                             <NavItem>
@@ -97,9 +95,18 @@ class AppMenu extends React.Component {
                             <NavItem>
                                 <Link to="/top-answered" className="nav-link">Популярные отвеченные</Link>
                             </NavItem>
-                            <NavItem>
+                            { is_moderator && <NavItem>
+                                <Link to="/last-all" className="nav-link">Все последние</Link>
+                            </NavItem> }
+                            { is_moderator && <NavItem>
+                                <Link to="/last-undecided" className="nav-link">Немодерированные</Link>
+                            </NavItem> }
+                            { is_moderator && <NavItem>
                                 <Link to="/last-banned" className="nav-link">Забаненные</Link>
-                            </NavItem>
+                            </NavItem> }
+                            { is_moderator && <NavItem>
+                                <Link to="/last-approved" className="nav-link">Одобренные</Link>
+                            </NavItem> }
                             <NavItem>
                                 <Link to="/search" className="nav-link">Заглушка поиска</Link>
                             </NavItem>

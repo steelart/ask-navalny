@@ -61,9 +61,9 @@ def last_questions(request, list_type, start_id):
     if list_type == 'answered':
         #TODO: order by answer time
         start_filter = Question.objects.filter(status=ANSWERED)
-    #else:
-    #    if not request.user.has_perm('askp.moderator_perm'):
-    #        raise Http404('No permissions for ' + list_type)
+    else:
+        if not request.user.has_perm('askp.moderator_perm'):
+            raise Http404('No permissions for ' + list_type)
     if list_type == 'all':
         start_filter = Question.objects.all()
     if list_type == 'unanswered':

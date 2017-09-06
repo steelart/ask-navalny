@@ -61,6 +61,8 @@ import './global-init.jsx';
 const ConnectedLastAllQuestionsPage = connectedQuestionsLastTemplate('all');
 const ConnectedLastAnsweredQuestionsPage = connectedQuestionsLastTemplate('answered');
 const ConnectedLastBannedQuestionsPage = connectedQuestionsLastTemplate('banned');
+const ConnectedLastApprovedQuestionsPage = connectedQuestionsLastTemplate('approved');
+const ConnectedLastUndecidedQuestionsPage = connectedQuestionsLastTemplate('undecided');
 
 const ConnectedTopApprovedQuestionsPage = connectedQuestionsTopTemplate('approved');
 const ConnectedTopAnsweredQuestionsPage = connectedQuestionsTopTemplate('answered');
@@ -152,13 +154,15 @@ if (APP_CONFIG.api_version != 4) {
 ReactDOM.render(
       <Provider store={ mainStore }>
         <Router history={browserHistory}>
-            <Redirect from='/' to='/last-all' />
-            <Redirect from='/last' to='/last-all' />
+            <Redirect from='/' to='/last-answered' />
+            <Redirect from='/last' to='/last-answered' />
 
             <Route path='/' component={ConnectedApp}>
                 <Route path='/last-all' component={ConnectedLastAllQuestionsPage} />
                 <Route path='/last-answered' component={ConnectedLastAnsweredQuestionsPage} />
                 <Route path='/last-banned' component={ConnectedLastBannedQuestionsPage} />
+                <Route path='/last-approved' component={ConnectedLastApprovedQuestionsPage} />
+                <Route path='/last-undecided' component={ConnectedLastUndecidedQuestionsPage} />
                 <Route path='/top-approved' component={ConnectedTopApprovedQuestionsPage} />
                 <Route path='/top-answered' component={ConnectedTopAnsweredQuestionsPage} />
                 <Route path='/ask' component={ConnectedQuestionForm} />
