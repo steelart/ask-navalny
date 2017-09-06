@@ -25,6 +25,7 @@ __author__ = 'Merkulov Alexey'
 import json
 
 from django.http import HttpResponse
+from django.http import Http404
 from django.template import loader
 
 from config.config import *
@@ -41,7 +42,7 @@ from .utils import check_dbg_filter
 
 
 # This number should be increased every time API behaviour changes
-API_VERSION = 3
+API_VERSION = 4
 
 
 def collect_preload_data():
@@ -87,3 +88,7 @@ def reactindex(request):
         'global_preload_data': json.dumps(preload),
     }
     return HttpResponse(template.render(context, request))
+
+
+def unknown_api(request):
+    raise Http404('Unknown API')

@@ -27,6 +27,7 @@ import json
 from django.db import transaction
 
 from django.http import JsonResponse
+from django.http import Http404
 
 from channels.channel import Group
 

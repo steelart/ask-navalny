@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+//TODO: RENAME THIS SOURCE FILE!!!!
+
 import React from 'react';
 import { connect } from 'react-redux';
 import Linkify from 'react-linkify';
@@ -35,10 +37,13 @@ import { api_connect, loadData } from './loading-api.jsx';
 import { sdef, getSubmitFunction, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SUCCESSED } from './utils.jsx';
 
 
-function questionsListTemplate(templ_param) { return class extends React.Component {
+function questionsTopTemplate(templ_param) {
+    const sname = templ_param.section_name;
+    return class extends React.Component {
+
     constructor(props) {
         super(props);
-        if (this.props.questionsInfo[templ_param.section_name].status == LOADING_IN_PROCESS) {
+        if (this.props.questionsInfo[sname].status == LOADING_IN_PROCESS) {
             this.load();
         }
     }
@@ -49,8 +54,8 @@ function questionsListTemplate(templ_param) { return class extends React.Compone
 
     next() {
         const questionsInfo = this.props.questionsInfo;
-        const ids = questionsInfo[templ_param.section_name].ids;
-        const loaded_num = questionsInfo[templ_param.section_name].loaded_num;
+        const ids = questionsInfo[sname].ids;
+        const loaded_num = questionsInfo[sname].loaded_num;
         if (loaded_num < ids.length) {
             templ_param.reset_function(this.props.dispatch);
             const query = ids.slice(loaded_num, loaded_num+3).join(',');
@@ -61,7 +66,7 @@ function questionsListTemplate(templ_param) { return class extends React.Compone
     render() {
         const questionsInfo = this.props.questionsInfo;
         const qs = questionsInfo.questions;
-        const section = questionsInfo[templ_param.section_name];
+        const section = questionsInfo[sname];
         const status = section.status;
         const ids = section.ids;
         const loaded_num = section.loaded_num;
@@ -78,25 +83,26 @@ function questionsListTemplate(templ_param) { return class extends React.Compone
 }}
 
 
-export function connectedQuestionsListTemplate(section_name) {
-    const QuestionsPage = questionsListTemplate({
+export function connectedQuestionsTopTemplate(short_name) {
+    const full_name = 'top_' + short_name;
+    const QuestionsPage = questionsTopTemplate({
         load_function  : (dispatch) => loadData(
-            '/api/' + section_name + '-questions',
+            '/api/sorted-questions/' + short_name,
             'SET_QUESTIONS_SECTION',
             dispatch,
-            { section_name : section_name }
+            { section_name : full_name }
         ),
         upload_fuction : (dispatch, query) => loadData(
             '/api/query-questions?' + query,
             'UPLOAD_QUESTIONS_SECTION',
             dispatch,
-            { section_name : section_name }
+            { section_name : full_name }
         ),
         reset_function : (dispatch) => dispatch({
             type : 'RESET_QUESTIONS_SECTION_LOADING',
-            section_name : section_name
+            section_name : full_name
         }),
-        section_name : section_name
+        section_name : full_name
     });
 
     const ConnectedQuestionsPage = connect((state) => ({

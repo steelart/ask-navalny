@@ -86,22 +86,25 @@ class AppMenu extends React.Component {
                     <Collapse className="navbar-toggleable-md" isOpen={!this.state.collapsed}>
                         <Nav vertical>
                             <NavItem>
-                                <Link to="/last" className="nav-link">Последнее неотвеченные</Link>
+                                <Link to="/last-all" className="nav-link">Все последние</Link>
                             </NavItem>
                             <NavItem>
-                                <Link to="/top" className="nav-link">Популярные неотвеченные</Link>
+                                <Link to="/last-answered" className="nav-link">Последние отвеченные</Link>
                             </NavItem>
                             <NavItem>
-                                <Link to="/answered" className="nav-link">Популярные отвеченные</Link>
+                                <Link to="/top-approved" className="nav-link">Популярные неотвеченные</Link>
                             </NavItem>
                             <NavItem>
-                                <Link to="/banned/" className="nav-link">Забаненные</Link>
+                                <Link to="/top-answered" className="nav-link">Популярные отвеченные</Link>
                             </NavItem>
                             <NavItem>
-                                <Link to="/search/" className="nav-link">Заглушка поиска</Link>
+                                <Link to="/last-banned" className="nav-link">Забаненные</Link>
                             </NavItem>
                             <NavItem>
-                                <Link to="/ask/" className="nav-link">Спросить</Link>
+                                <Link to="/search" className="nav-link">Заглушка поиска</Link>
+                            </NavItem>
+                            <NavItem>
+                                <Link to="/ask" className="nav-link">Спросить</Link>
                             </NavItem>
                             { logged_in
                                 ? <NavItem><NavLink onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</NavLink></NavItem>

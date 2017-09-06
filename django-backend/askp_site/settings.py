@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Current server configuration version:
-ACTUAL_CONFIG_VERSION = [2, 1]
+ACTUAL_CONFIG_VERSION = [3, 1]
 
 # Check configuration version:
 if SERVER_CONFIG['config_version'][0] != ACTUAL_CONFIG_VERSION[0]:

@@ -22,7 +22,7 @@ SERVER_CONFIG = {
     # The second number should be equal or more the server version
     # Configuration version is needed to check that propesed configuration is
     # compatible with server
-    'config_version': [2, 1],
+    'config_version': [3, 1],
 
     'allowed_hosts': ['*'],
 
@@ -33,6 +33,9 @@ SERVER_CONFIG = {
     'secret_key': ')x2@*8)x6dx0(00mynl%xj5lp*y66(zm-v61)i(6q8vwk$7b@2',
 
     'domain': 'localhost:8000',
+
+    # How many questions we need to send when user press 'more' button
+    'upload_questions_count': 3,
 
     # A configuration for application preload data
     # Preloaded questions will be used for fast keystrokes search

@@ -40,8 +40,9 @@ import { ConnectedAppMenu } from './app-menu.jsx';
 
 import { setLoginModalMode } from './login-page.jsx';
 
-import { ConnectedLastQuestionsPage } from './last-questions-page.jsx';
-import { connectedQuestionsListTemplate } from './questions-list-template.jsx';
+import { connectedQuestionsLastTemplate } from './last-questions-page.jsx';
+import { connectedQuestionsTopTemplate } from './questions-list-template.jsx';
+
 import { ConnectedQuestionPage } from './question-page.jsx';
 
 import { queryStringEncoding } from './utils.jsx';
@@ -56,9 +57,13 @@ import './style_okonst.css';
 import './style_orange.css';
 import './global-init.jsx';
 
-const ConnectedTopQuestionsPage = connectedQuestionsListTemplate('top');
-const ConnectedAnsweredQuestionsPage = connectedQuestionsListTemplate('answered');
-const ConnectedBannedQuestionsPage = connectedQuestionsListTemplate('banned');
+
+const ConnectedLastAllQuestionsPage = connectedQuestionsLastTemplate('all');
+const ConnectedLastAnsweredQuestionsPage = connectedQuestionsLastTemplate('answered');
+const ConnectedLastBannedQuestionsPage = connectedQuestionsLastTemplate('banned');
+
+const ConnectedTopApprovedQuestionsPage = connectedQuestionsTopTemplate('approved');
+const ConnectedTopAnsweredQuestionsPage = connectedQuestionsTopTemplate('answered');
 
 
 class NotFound extends React.Component {
@@ -139,7 +144,7 @@ const ConnectedApp = connect((state, props) => ({
 if (APP_CONFIG.debug) {
     console.log('Global app config: ', APP_CONFIG);
 }
-if (APP_CONFIG.api_version != 3) {
+if (APP_CONFIG.api_version != 4) {
     //TODO: make normal message!
     alert("Версия сервера отличается от клиента. Возмоно, вам стоит капитально обновить страницу");
 }
@@ -147,13 +152,15 @@ if (APP_CONFIG.api_version != 3) {
 ReactDOM.render(
       <Provider store={ mainStore }>
         <Router history={browserHistory}>
-            <Redirect from='/' to='/last' />
+            <Redirect from='/' to='/last-all' />
+            <Redirect from='/last' to='/last-all' />
 
             <Route path='/' component={ConnectedApp}>
-                <Route path='/last' component={ConnectedLastQuestionsPage} />
-                <Route path='/top' component={ConnectedTopQuestionsPage} />
-                <Route path='/answered' component={ConnectedAnsweredQuestionsPage} />
-                <Route path='/banned' component={ConnectedBannedQuestionsPage} />
+                <Route path='/last-all' component={ConnectedLastAllQuestionsPage} />
+                <Route path='/last-answered' component={ConnectedLastAnsweredQuestionsPage} />
+                <Route path='/last-banned' component={ConnectedLastBannedQuestionsPage} />
+                <Route path='/top-approved' component={ConnectedTopApprovedQuestionsPage} />
+                <Route path='/top-answered' component={ConnectedTopAnsweredQuestionsPage} />
                 <Route path='/ask' component={ConnectedQuestionForm} />
                 <Route path='/todo' component={TodoPage} />
                 <Route path='/search' component={ConnectedSearchPage} />

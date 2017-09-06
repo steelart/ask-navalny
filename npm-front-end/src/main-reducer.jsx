@@ -86,6 +86,12 @@ var idInfoReducer = function (state=NOT_LOGINED_ID_INFO, action) {
 }
 
 
+const questionsLoadedLastDefault = {
+    status : LOADING_IN_PROCESS,
+    ids : [],
+    new_ids : [],
+}
+
 const questionsLoadedListDefault = {
     status : LOADING_IN_PROCESS,
     ids : [],
@@ -103,13 +109,12 @@ const questionsDefault = {
     liked_answers_list : {}, // list of liked answers
     disliked_answers_list : {}, // list of disliked answers
 
-    last_status : LOADING_IN_PROCESS,
-    last_ids : [],
-    new_ids : [],
+    last_all : questionsLoadedLastDefault,
+    last_answered : questionsLoadedLastDefault,
+    last_banned : questionsLoadedLastDefault,
 
-    top : questionsLoadedListDefault,
-    banned : questionsLoadedListDefault,
-    answered : questionsLoadedListDefault
+    top_approved : questionsLoadedListDefault,
+    top_answered : questionsLoadedListDefault,
 };
 
 
@@ -124,9 +129,6 @@ function set_selections(state, input_list, output_name) {
 
 function questionsReducer(state=questionsDefault, action) {
     switch (action.type) {
-        case 'RESET_QUESTIONS_LAST_LOADING':
-            return {...state, last_status : LOADING_IN_PROCESS};
-
         case 'ADD_QUESTIONS':
             var questions = { ...sdef(state.questions) };
             for (var i = 0; i < action.questions.length; i++) {
@@ -136,11 +138,14 @@ function questionsReducer(state=questionsDefault, action) {
             return fld(state, 'questions', questions);
 
         case 'SET_QUESTION_LAST':
+            const sname = action.section_name;
+            var last = { ...state[sname] };
             var res = { ...state };
+            res[sname] = last;
             if (action.result.data) {
-                res.last_status = LOADING_SUCCESSED;
+                last.status = LOADING_SUCCESSED;
                 var questions = { ...sdef(state.questions) };
-                var last_ids = [ ...sdef(state.last_ids) ];
+                var last_ids = [ ...last.ids ];
                 //console.log('SET_QUESTION_LAST: action: ', action);
                 for (var i = 0; i < action.result.data.questions.length; i++) {
                     var q = action.result.data.questions[i];
@@ -148,9 +153,9 @@ function questionsReducer(state=questionsDefault, action) {
                     last_ids.push(q.id);
                 }
                 res.questions = questions;
-                res.last_ids = last_ids;
+                last.ids = last_ids;
             } else {
-                res.last_status = LOADING_FAILED;
+                last.status = LOADING_FAILED;
             }
             return res;
 
@@ -211,21 +216,23 @@ function questionsReducer(state=questionsDefault, action) {
             const id = action.question.id;
             var questions = {...state.questions};
             questions[id] = action.question;
-            var new_ids = undefined;
-            if (state.last_ids.length > 0) { // check, that 'last questions' page is initialized
-                new_ids = [...state.new_ids];
+            var s = state;
+            s = fld(s, 'questions', questions);
+            if (state.last_all.ids.length > 0) { // check, that 'last questions' page is initialized
+                var new_ids = [...state.last_all.new_ids];
                 new_ids.unshift(id);
-            } else {
-                 new_ids = state.new_ids;
+                s = fld(s, ['last_all', 'new_ids'], new_ids);
             }
-            return {...state, questions : questions, new_ids : new_ids };
+            return s;
         }
         case 'SHOW_NEW_QUESTIONS': {
-            var last_ids = [ ...state.new_ids, ...state.last_ids ];
-            return {...state, last_ids : last_ids, new_ids : [] };
+            const sname = action.section_name;
+            var last_ids = [ ...state[sname].new_ids, ...state[sname].ids ];
+            var s = state;
+            s = fld(s, [sname, 'new_ids'], []);
+            s = fld(s, [sname, 'ids'], last_ids);
+            return s;
         }
-
-        //SHOW_NEW_QUESTIONS
 
         case 'SET_ANSWERS': {
             if (!action.result.data) {
