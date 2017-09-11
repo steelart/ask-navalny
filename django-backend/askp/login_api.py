@@ -66,15 +66,11 @@ def questions_list(user, state):
 
 
 def login_responce(user):
-    perm_ban_question = user.has_perm('askp.ban_question')
-    perm_choose_answer = user.has_perm('askp.choose_answer')
+    moderator_perm = user.has_perm('askp.moderator_perm')
     return JsonResponse({
         'success': True,
         'username': user.username,
-        'permissions': {
-            'ban_question': perm_ban_question,
-            'choose_answer': perm_choose_answer
-        },
+        'is_moderator': moderator_perm,
         'selections': {
             'votes': questions_list(user, VOTED),
             'complains': questions_list(user, COMPLAIN),

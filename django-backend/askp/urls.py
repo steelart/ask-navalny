@@ -38,16 +38,18 @@ urlpatterns = [
     url(r'api/search$', query_api.search_api),
     url(r'api/search/$', query_api.search_api),
     url(r'api/query-questions$', query_api.query_questions),
-    url(r'api/last-questions/(?P<start_id>[0-9]+)$', query_api.last_questions),
-    url(r'api/last-questions/(?P<start_id>[0-9]+)/$', query_api.last_questions),
     url(r'api/answers/(?P<question_id>[0-9]+)$', query_api.answers),
     url(r'api/answers/(?P<question_id>[0-9]+)/$', query_api.answers),
-    url(r'api/top-questions$', query_api.top_questions),
-    url(r'api/top-questions/$', query_api.top_questions),
-    url(r'api/answered-questions$', query_api.answered_questions),
-    url(r'api/answered-questions/$', query_api.answered_questions),
-    url(r'api/banned-questions$', query_api.banned_questions),
-    url(r'api/banned-questions/$', query_api.banned_questions),
+
+    url(r'api/last-questions/(?P<list_type>[a-z]+)/(?P<start_id>[0-9]+)$',
+        query_api.last_questions),
+    url(r'api/last-questions/(?P<list_type>[a-z]+)/(?P<start_id>[0-9]+)$/',
+        query_api.last_questions),
+
+    url(r'api/sorted-questions/(?P<sort_type>[a-z]+)$',
+        query_api.sorted_questions),
+    url(r'api/sorted-questions/(?P<sort_type>[a-z]+)/$',
+        query_api.sorted_questions),
 
     url(r'api/post-api$', submit_api.post_api),
     url(r'api/post-api/$', submit_api.post_api),
@@ -60,6 +62,8 @@ urlpatterns = [
     url(r'api/simple-login/$', login_api.simple_login),
     url(r'api/registration$', login_api.registration),
     url(r'api/registration/$', login_api.registration),
+
+    url(r'^api/', views.unknown_api),
 
     url(r'^', views.reactindex),
 ]

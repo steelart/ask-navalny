@@ -28,25 +28,41 @@ from django.db import models
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
 
+from polymorphic.models import PolymorphicModel
+
+class ModeratorActions(models.Model):
+    json = models.CharField(max_length=1000)
+    action_date = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User)
+
+
+APPROVED='a'
+REJECTED='r'
+UNDECIDED='u'
+ANSWERED='c'  # use c as closed
+
 
 class Question(models.Model):
-    text_str = models.CharField(max_length=20000)
+    QuestionStatus = (
+        (UNDECIDED, 'Undecided'),
+        (ANSWERED, 'Answered'),
+        (APPROVED, 'Approbed'),
+        (REJECTED, 'Rejected'),
+    )
+    status = models.CharField(
+        max_length=1,
+        choices=QuestionStatus,
+        default=UNDECIDED)
+    text_str = models.CharField(max_length=500)
     author = models.ForeignKey(User)
     submit_date = models.DateTimeField(auto_now_add=True)
+    answered = models.IntegerField(default=1)
     votes_number = models.IntegerField(default=1)
-    official_answer = models.ForeignKey(
-        'Answer',
-        null=True,
-        blank=True,
-        default=None,
-        related_name='+')
-    banned = models.BooleanField(default=False)
     complains = models.IntegerField(default=0)
 
     class Meta:
         permissions = (
-            ('ban_question', 'Can ban quesion'),
-            ('choose_answer', 'Can choose oficial answer'),
+            ('moderator_perm', 'Can do moderator actions'),
         )
 
 
@@ -75,25 +91,36 @@ class QuestionVoteList(models.Model):
 YOUTUBE = 'y'
 TEXT = 't'  # not implemented now
 
-
-class Answer(models.Model):
+class Answer(PolymorphicModel):
     AnswerTypes = (
         (YOUTUBE, 'Youtube'),
-        (TEXT, 'text')
+        (TEXT, 'Text')
     )
+    AnswerStatus = (
+        (UNDECIDED, 'Undecided'),
+        (APPROVED, 'Approbed'),
+        (REJECTED, 'Rejected'),
+    )
+    answer_type = models.CharField(max_length=1, choices=AnswerTypes)
+    status = models.CharField(
+        max_length=1,
+        choices=AnswerStatus,
+        default=UNDECIDED)
     author = models.ForeignKey(User)
     question = models.ForeignKey(Question)
-    answer_type = models.CharField(max_length=1, choices=AnswerTypes)
-    data_key = models.IntegerField()
     submit_date = models.DateTimeField(auto_now_add=True)
+    position = models.IntegerField(default=0)  # 0 means undecided
     like_number = models.IntegerField(default=0)
     dislike_number = models.IntegerField(default=0)
 
 
-class YoutubeVideo(models.Model):
+class YoutubeAnswer(Answer):
     video_id = models.CharField(max_length=20)
     start = models.IntegerField(default=0)
     end = models.IntegerField(default=0)
+
+class TextAnswer(Answer):
+    answer_text = models.CharField(max_length=500)
 
 
 class AnswerVoteList(models.Model):
@@ -122,12 +149,6 @@ def obj_to_dict(obj):
 
 def answer_to_dict(answer):
     res = obj_to_dict(answer)
-    if (answer.answer_type == YOUTUBE):
-        video = YoutubeVideo.objects.get(id=answer.data_key)
-        res['video_id'] = video.video_id
-        res['start'] = video.start
-        res['end'] = video.end
-        # TODO: remove data_key from res dict
     return res
 
 
@@ -138,13 +159,11 @@ def add_new_question(text_str, author):
 
 
 def add_new_youtube_answer(author, question, video_id, start, end):
-    video = YoutubeVideo.objects.create(
+    a = YoutubeAnswer.objects.create(
+        answer_type=YOUTUBE,
+        author=author,
+        question=question,
         video_id=video_id,
         start=start,
         end=end)
-    a = Answer.objects.create(
-        author=author,
-        question=question,
-        answer_type=YOUTUBE,
-        data_key=video.id)
     return a

@@ -26,9 +26,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Linkify from 'react-linkify';
 
-import { place_question } from './question.jsx';
+import YouTube from 'react-youtube';
+
 
 import { Button } from 'reactstrap';
+
+import { place_question } from './question.jsx';
 
 import { api_connect, loadData } from './loading-api.jsx';
 import { sdef, getSubmitFunction, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SUCCESSED } from './utils.jsx';
@@ -38,7 +41,8 @@ import { setLoginModalMode } from './login-page.jsx';
 
 import { AnswerForm } from './answer-form.jsx';
 
-import YouTube from 'react-youtube';
+import { APPROVED, REJECTED, UNDECIDED, ANSWERED } from './utils.jsx';
+
 
 class Answer extends React.Component {
     button(action, name, field, choosedStyle) {
@@ -57,6 +61,10 @@ class Answer extends React.Component {
 
     render() {
         const data = this.props.data;
+        const rejected = data.status == REJECTED;
+        const approved = data.status == APPROVED;
+        const undecided = data.status == UNDECIDED;
+        const is_moderator = this.props.idInfo.is_moderator;
 
         const opts = {
             height: '390',
@@ -67,11 +75,12 @@ class Answer extends React.Component {
                 autoplay: 0
             }
         };
-        return <div className={this.props.choosedAnswer ? 'choosedAnswer' : 'answerInList'}>
+        return <div className={'answerInList'}>
             { this.button('LIKE_ANSWER', data.like_number + '+', 'like', 'votedQuestion') }
             { this.button('DISLIKE_ANSWER', data.dislike_number + '-', 'dislike', 'complainedQuestion') }
             <span>{data.submit_date}</span>
-            { this.props.idInfo.permissions.choose_answer && this.button('CHOOSE_ANSWER', 'Выбрать ответ') }
+            { is_moderator && !approved && this.button('APPROVE_ANSWER', 'Одобрить ответ') }
+            { is_moderator && !rejected && this.button('REJECT_ANSWER', 'Заблокировать ответ') }
             <YouTube
                 videoId={data.video_id}
                 opts={opts}
@@ -84,14 +93,37 @@ class QuestionPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            answer_num : 0
+            // Use id instead of local index because the index could change in other session
+            answer_id : null
         };
     }
+
+    compareAnswers(answers, id1, id2) {
+        const a1 = answers[id1];
+        const a2 = answers[id2];
+        if (a1.position != 0 && a2.position != 0) {
+            return a1.position - a2.position;
+        }
+        if (a1.position != 0) return -1;
+        if (a2.position != 0) return  1;
+        // TODO: First we need show undecided, then rejected
+        if (a1.submit_date < a2.submit_date) return -1;
+        if (a1.submit_date > a2.submit_date) return  1;
+        return id1 - id2;
+    }
+
+    getAnswersOrder(answers) {
+        var keys = [...Object.keys(answers)];
+        keys.sort((id1, id2) => this.compareAnswers(answers, id1, id2));
+        return keys;
+    }
+
     render() {
         const question_id = this.props.params.id;
         const questionsInfo = this.props.questionsInfo;
         const answers = questionsInfo.answers_map[question_id];
         const question = questionsInfo.questions[question_id];
+        const is_moderator = this.props.idInfo.is_moderator;
 
         const ConnectedAnswerForm = connect((state, props) => ({
                 question_id : question_id,
@@ -101,16 +133,24 @@ class QuestionPage extends React.Component {
             }))(AnswerForm);
 
         if (!answers) {
-            loadData('/api/answers/' + question_id, 'SET_ANSWERS', this.props.dispatch, {question_id : question_id});
+            loadData(
+                '/api/answers/' + question_id,
+                'SET_ANSWERS',
+                this.props.dispatch,
+                {question_id : question_id},
+                (data) => this.setState({answer_id : this.getAnswersOrder(data.answers)[0]}));
             return <div>
                 <p> Идёт загрузка ответов </p>
             </div>;
         } else {
-            const official_answer_id = question.official_answer;
-            const asfn = (n) => answers[Object.keys(answers)[n]];
-            const cur_num = this.state.answer_num;
+            const keys = this.getAnswersOrder(answers);
+            const answers_size = keys.length;
+            const asfn = (n) => answers[keys[n]];
+            const cur_num = keys.indexOf(keys.find((id) => id == this.state.answer_id));
             const answer = asfn(cur_num);
-            const answers_size = Object.keys(answers).length;
+
+            const approved = answer && answer.status == APPROVED;
+
             return (
                 <div>
                 { place_question(this.props, questionsInfo.questions, question_id, false) }
@@ -125,15 +165,22 @@ class QuestionPage extends React.Component {
                     </Button>
                 </div>
                 <br/>
-                { answers_size != 0 && <button onClick={() => asfn(cur_num - 1) && this.setState({answer_num : cur_num - 1})}>{'<'}</button> }
+                { answers_size != 0 && <button onClick={() => asfn(cur_num - 1) && this.setState({answer_id : keys[cur_num - 1]})}>{'<'}</button> }
                 { answers_size != 0 && <span>Ответ {cur_num+1}/{answers_size}</span>}
-                { answers_size != 0 && <button onClick={() => asfn(cur_num + 1) && this.setState({answer_num : cur_num + 1})}>{'>'}</button> }
+                { answers_size != 0 && <button onClick={() => asfn(cur_num + 1) && this.setState({answer_id : keys[cur_num + 1]})}>{'>'}</button> }
+                { is_moderator && approved && <div>
+                    <span>Изменить порядок:</span>
+                    <select value={answer.position} onChange={(e) => this.props.submit('REORDER_ANSWER', {'id' : answer.id, 'position': e.target.value})}>
+                        { keys.filter((id) => answers[id].position > 0).map((id) =>
+                            <option value={answers[id].position} key={id}>{'Позиция ' + answers[id].position}</option>
+                        )}
+                    </select>
+                </div>}
                 { answer && <Answer
                     submit={this.props.submit}
                     idInfo={this.props.idInfo}
                     data={answer}
                     dispatch={this.props.dispatch}
-                    choosedAnswer={answer.id == official_answer_id}
                 /> }
                 { answers_size == 0 && <p>Ещё нет ни одного ответа</p>}
                 </div>

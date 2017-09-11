@@ -25,6 +25,7 @@ __author__ = 'Merkulov Alexey'
 import json
 
 from django.http import HttpResponse
+from django.http import Http404
 from django.template import loader
 
 from config.config import *
@@ -32,37 +33,39 @@ from config.config import *
 from .models import Question
 from .models import obj_to_dict
 
+from .models import APPROVED
+from .models import REJECTED
+from .models import UNDECIDED
+from .models import ANSWERED
+
 from .utils import check_dbg_filter
 
 
 # This number should be increased every time API behaviour changes
-API_VERSION = 2
+API_VERSION = 4
 
 
 def collect_preload_data():
     res = []
-
     preload_config = SERVER_CONFIG['preload_config']
+
     # Added top answered questions
     query = Question.objects
-    query = query.filter(banned=False)
-    query = query.filter(official_answer__isnull=False)
+    query = query.filter(status=ANSWERED)
     query = query.order_by('-votes_number')
     for q in query[:preload_config['answered_number']]:
         res.append(obj_to_dict(q))
 
     # Added top unanswered questions
     query = Question.objects
-    query = query.filter(banned=False)
-    query = query.filter(official_answer__isnull=True)
+    query = query.filter(status=UNDECIDED)
     query = query.order_by('-votes_number')
     for q in query[:preload_config['top_unanswered_number']]:
         res.append(obj_to_dict(q))
 
     # Added last unanswered questions
     query = Question.objects
-    query = query.filter(banned=False)
-    query = query.filter(official_answer__isnull=True)
+    query = query.filter(status=UNDECIDED)
     for q in query[:preload_config['new_unanswered_number']]:
         res.append(obj_to_dict(q))
 
@@ -85,3 +88,7 @@ def reactindex(request):
         'global_preload_data': json.dumps(preload),
     }
     return HttpResponse(template.render(context, request))
+
+
+def unknown_api(request):
+    raise Http404('Unknown API')

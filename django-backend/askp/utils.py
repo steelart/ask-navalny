@@ -22,6 +22,7 @@
 
 __author__ = 'Merkulov Alexey'
 
+import json
 import urllib2
 
 from django.http import JsonResponse

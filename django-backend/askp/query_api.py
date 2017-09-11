@@ -23,15 +23,25 @@
 __author__ = 'Merkulov Alexey'
 
 from django.http import JsonResponse
+from django.http import Http404
+from django.db.models import Q
 
+from config.config import *
 
 from .models import Question
 from .models import Answer
 from .models import obj_to_dict
 from .models import answer_to_dict
 
-from .utils import pass_raise_dbg_filter_or_exception
+from .models import APPROVED
+from .models import REJECTED
+from .models import UNDECIDED
+from .models import ANSWERED
 
+from .utils import pass_raise_dbg_filter_or_exception
+from .utils import fail_json_response
+
+UPLOAD_QUESTIONS_COUNT = SERVER_CONFIG['upload_questions_count']
 
 def query_questions(request):
     pass_raise_dbg_filter_or_exception(request)
@@ -43,60 +53,78 @@ def query_questions(request):
     return JsonResponse({'questions': res})
 
 
-def last_questions(request, start_id):
+
+def last_questions(request, list_type, start_id):
     pass_raise_dbg_filter_or_exception(request)
+
+    start_filter = None
+    if list_type == 'answered':
+        #TODO: order by answer time
+        start_filter = Question.objects.filter(status=ANSWERED)
+    else:
+        if not request.user.has_perm('askp.moderator_perm'):
+            raise Http404('No permissions for ' + list_type)
+    if list_type == 'all':
+        start_filter = Question.objects.all()
+    if list_type == 'unanswered':
+        q = Q(status=UNDECIDED) | Q(status=APPROVED)
+        start_filter = Question.objects.filter(q)
+    if list_type == 'approved':
+        start_filter = Question.objects.filter(status=APPROVED)
+    if list_type == 'undecided':
+        start_filter = Question.objects.filter(status=UNDECIDED)
+    if list_type == 'banned':
+        start_filter = Question.objects.filter(status=REJECTED)
+
+    if start_filter is None:
+        raise Http404('Unknown list type ' + list_type)
+
     res = []
-    start_filter = Question.objects.filter(
-        banned=False).filter(
-        official_answer__isnull=True)
     if str(start_id) == '0':  # TODO!!
         from_filter = start_filter
     else:
         from_filter = start_filter.filter(id__lt=start_id)
 
-    for q in from_filter.order_by('-id')[:3]:
+    for q in from_filter.order_by('-id')[:UPLOAD_QUESTIONS_COUNT]:
         res.append(obj_to_dict(q))
     return JsonResponse({'questions': res})
 
 
-def extract_questions_list(request, questions_filter):
+def sorted_questions(request, sort_type):
+    pass_raise_dbg_filter_or_exception(request)
+    query = None
+    if sort_type == 'approved':
+        query = Question.objects.filter(status=APPROVED)
+    if sort_type == 'answered':
+        query = Question.objects.filter(status=ANSWERED)
+
+    if query is None:
+        raise Http404('Unknown sort type ' + sort_type)
+
+    query = query.order_by('-votes_number')
+
     # TODO: optimize it!
     qarr = []
     idarr = []
     num = 0
-    for q in questions_filter:
-        if num < 3:
+    for q in query:
+        if num < UPLOAD_QUESTIONS_COUNT:
             qarr.append(obj_to_dict(q))
         idarr.append(q.id)
         num = num + 1
     return JsonResponse({'questions': qarr, 'id_list': idarr})
 
 
-def top_questions(request):
-    pass_raise_dbg_filter_or_exception(request)
-    query = Question.objects.filter(banned=False)
-    query = query.filter(official_answer__isnull=True)
-    query = query.order_by('-votes_number')
-    return extract_questions_list(request, query)
-
-
-def banned_questions(request):
-    pass_raise_dbg_filter_or_exception(request)
-    query = Question.objects.filter(banned=True)
-    return extract_questions_list(request, query)
-
-
-def answered_questions(request):
-    pass_raise_dbg_filter_or_exception(request)
-    query = Question.objects.filter(official_answer__isnull=False)
-    query = query.order_by('-votes_number')
-    return extract_questions_list(request, query)
-
 
 def answers(request, question_id):
     pass_raise_dbg_filter_or_exception(request)
     adict = {}
-    for a in Answer.objects.filter(question=question_id):
+    query = Answer.objects.filter(question=question_id)
+
+    if not request.user.has_perm('askp.moderator_perm'):
+        query = query.filter(status=APPROVED)
+
+    for a in query:
         adict[a.id] = answer_to_dict(a)
         # print(a.text_str)
     question = Question.objects.get(id=question_id)

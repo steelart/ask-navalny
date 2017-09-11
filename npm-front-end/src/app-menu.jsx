@@ -67,6 +67,7 @@ class AppMenu extends React.Component {
     render() {
         const logged_in = this.props.idInfo.logged_in;
         const personaname = this.props.idInfo.personaname;
+        const is_moderator = this.props.idInfo.is_moderator;
         return (
             <div>
                 <Navbar light>
@@ -94,53 +95,10 @@ class AppMenu extends React.Component {
                                 <path className="cyan-fill" fill="#007FA3" d="M67.12 18.38L48.88 75 63.75 75 66.91 64.38 86.79 64.38 90.14 75 105.19 75 88 18.38 67.12 18.38zM83 51.13L71 51.13 77.18 29.91 83 51.13zM148.79 45.78C151.7 43.66 153.53 39.64 153.53 34.66 153.53 24.21 148.75 18.37 133.7 18.37L111.39 18.37 111.39 75 134.59 75C148.59 75 155.31 69.16 155.31 57.47 155.3 51 152.4 47.38 148.79 45.78zM125.56 30.78L134.06 30.78C137.42 30.78 139.55 32.37 139.55 35.78 139.55 39.19 137.78 40.78 134.24 40.78L125.56 40.78 125.56 30.78zM135.65 62.65L125.55 62.65 125.55 52.37 135.64 52.37C139 52.37 141.13 53.61 141.13 57.37 141.14 61.23 139 62.64 135.65 62.64L135.65 62.65zM422.51 18.38L436.68 18.38 436.68 75 422.51 75 422.51 18.38zM418.08 54.5C418.08 68.13 411.71 75.04 395.59 75.04L376.82 75.04 376.82 18.38 391 18.38 391 35.55 396.31 35.55C410.82 35.55 418.08 41.93 418.08 54.5zM403.91 55.21C403.91 51.67 402.32 48.66 397.18 48.66L391 48.66 391 61.94 397.2 61.94C401.44 61.94 403.92 59.46 403.92 55.21L403.91 55.21z"></path>
                             </g>
                         </svg>
-
                     </NavbarBrand>
                 </Navbar>
             </div>
         );
-        /*<div> <Navbar>
-            <Navbar.Header>
-                <Navbar.Brand>
-                    <span>Навальный 20!8</span>
-                </Navbar.Brand>
-                <Navbar.Toggle />
-            </Navbar.Header>
-            <Navbar.Collapse>
-                <Nav navbar>
-                    <NavItem><LinkButtonLI to={'/last'}>Последние</LinkButtonLI></NavItem>
-                    <NavItem><LinkButtonLI to={'/top'}>Популярные</LinkButtonLI></NavItem>
-                    <NavItem><LinkButtonLI to={'/answered'}>Отвеченные</LinkButtonLI></NavItem>
-                    <NavItem><LinkButtonLI to={'/banned'}>Забаненные</LinkButtonLI></NavItem>
-                    <NavItem><LinkButtonLI to={'/search'}>Поиск</LinkButtonLI></NavItem>
-                    <NavItem><LinkButtonLI to={'/todo'}>todo</LinkButtonLI></NavItem>
-                    <NavItem>{logged_in && <LinkButtonLI to={'/ask'}>Новый вопрос</LinkButtonLI> }</NavItem>
-                    { logged_in
-                        ? <NavItem onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</NavItem>
-                        : <NavItem onClick={() => setLoginModalMode(this)}>Войти</NavItem>
-                    }
-                </Nav>
-            </Navbar.Collapse>
-            </Navbar>
-            <div className="container">
-            <div className="bg_holder">
-
-                <div className="question form-group has-feedback">
-                <span className=" form-control-feedback" aria-hidden="true"></span>
-                <div className="question form-group has-feedback">
-				<FormControl type="text" className="form-control" id="question" aria-describedby="inputSuccess2Status" placeholder="Спроси Навального" data-toggle="dropdown"/>
-				<span className="form-control-feedback" aria-hidden="true"></span>
-
-		        </div>
-
-
-            </div>
-
-        </div>
-
-		</div>
-
-				</div>;*/
     }
 
 }

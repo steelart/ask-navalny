@@ -29,7 +29,7 @@ const $ = require('jquery');
 
 var loadingMap = {};
 
-export function loadData(path, action_type, dispatch, params = {}) {
+export function loadData(path, action_type, dispatch, params = {}, callback = null) {
     if (loadingMap[action_type]) {
         console.log('double load from: ' + path, loadingMap);
         return;
@@ -41,6 +41,7 @@ export function loadData(path, action_type, dispatch, params = {}) {
        loadingMap[action_type] = false;
        console.log('loaded from: ', path, ' action type: ', action_type, ' data:', data);
        dispatch({type: action_type, result: { data: data, inited: true, success: true }, ...params});
+       if (callback) callback(data);
     }).fail(function( data ) {
        loadingMap[action_type] = false;
        dispatch({type: action_type, result: { data: null, inited: true, success: false}, ...params });

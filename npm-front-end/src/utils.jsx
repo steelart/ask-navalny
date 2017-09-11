@@ -22,11 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import { post_api } from './loading-api.jsx';
+
 export const LOADING_IN_PROCESS = 1;
 export const LOADING_FAILED = 2;
 export const LOADING_SUCCESSED = 3;
 
-import { post_api } from './loading-api.jsx';
+//Status constants
+export const APPROVED = 'a';
+export const REJECTED = 'r';
+export const UNDECIDED = 'u';
+export const ANSWERED = 'c';
 
 
 //set def

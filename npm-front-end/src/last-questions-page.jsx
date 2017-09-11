@@ -35,21 +35,24 @@ import { api_connect, loadData } from './loading-api.jsx';
 import { sdef, getSubmitFunction, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SUCCESSED } from './utils.jsx';
 
 
-class LastQuestionsPage extends React.Component {
+function questionsLastTemplate(templ_param) {
+    const sname = templ_param.section_name;
+    return class extends React.Component {
+
     constructor(props) {
         super(props);
-        if (this.props.questionsInfo.last_status == LOADING_IN_PROCESS) {
+        if (this.props.questionsInfo[sname].status == LOADING_IN_PROCESS) {
             this.load(0);
         }
     }
 
     load(start_id) {
-        loadData('/api/last-questions/' + start_id, 'SET_QUESTION_LAST', this.props.dispatch);
+        templ_param.load_function(this.props.dispatch, start_id);
     }
 
     reload() {
-        this.props.dispatch({type:'RESET_QUESTIONS_LAST_LOADING'});
-        var ids = this.props.questionsInfo.last_ids;
+        templ_param.reset_function(this.props.dispatch);
+        var ids = this.props.questionsInfo[sname].ids;
         if (ids.length > 0)
             this.load(ids[ids.length-1])
         else
@@ -57,15 +60,15 @@ class LastQuestionsPage extends React.Component {
     }
 
     show_new_questions() {
-        this.props.dispatch({type:'SHOW_NEW_QUESTIONS'});
+        templ_param.show_new(this.props.dispatch);
     }
 
     render() {
         const questionsInfo = this.props.questionsInfo;
-        const status = questionsInfo.last_status;
+        const status = questionsInfo[sname].status;
         const qs = questionsInfo.questions;
-        const ids = questionsInfo.last_ids;
-        const new_ids = questionsInfo.new_ids;
+        const ids = questionsInfo[sname].ids;
+        const new_ids = questionsInfo[sname].new_ids;
         const voted_list = questionsInfo.voted_list;
         //console.log('voted_list', voted_list);
         //{new_ids.length == 0 && <button> заменить на пустое место того же размера </button> }
@@ -80,12 +83,37 @@ class LastQuestionsPage extends React.Component {
                     {status == LOADING_SUCCESSED  && <a className="button button--blue" onClick={() => this.reload()} >Показать еще</a> }
                 </div><br/>
             </div>
-        );;
+        );
     }
+}}
+
+
+export function connectedQuestionsLastTemplate(short_name) {
+    const full_name = 'last_' + short_name;
+    const QuestionsPage = questionsLastTemplate({
+        load_function  : (dispatch, start_id) => loadData(
+            '/api/last-questions/' + short_name + '/' + start_id,
+            'SET_QUESTION_LAST',
+            dispatch,
+            { section_name : full_name }
+        ),
+        reset_function : (dispatch) => dispatch({
+            type : 'RESET_QUESTIONS_SECTION_LOADING',
+            section_name : full_name
+        }),
+        show_new : (dispatch) => dispatch({
+            type : 'SHOW_NEW_QUESTIONS',
+            section_name : full_name
+        }),
+        section_name : full_name
+    });
+
+    const ConnectedQuestionsPage = connect((state) => ({
+        idInfo : state.idInfo,
+        questionsInfo : state.questionsInfo,
+        submit : getSubmitFunction(state)
+    }))(QuestionsPage);
+
+    return ConnectedQuestionsPage;
 }
 
-export const ConnectedLastQuestionsPage = connect((state) => ({
-    idInfo : state.idInfo,
-    questionsInfo : state.questionsInfo,
-    submit : getSubmitFunction(state)
-}))(LastQuestionsPage);
