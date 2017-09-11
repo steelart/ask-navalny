@@ -24,6 +24,7 @@
     "react": "^15.6.1",
     "react-addons-css-transition-group": "^15.6.0",
     "react-addons-transition-group": "^15.6.0",
+    "react-burger-menu": "^2.1.6",
     "react-dom": "^15.6.1",
     "react-linkify": "*",
     "react-modal": "*",

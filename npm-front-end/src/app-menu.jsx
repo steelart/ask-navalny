@@ -29,6 +29,7 @@ import { NOT_LOGINED_ID_INFO, dispatchModalMode } from './main-reducer.jsx';
 
 import { LinkButton, SimpleButton, RefButton, LinkButtonLI, SimpleButtonLI, RefButtonLI } from './buttons.jsx';
 import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, Button, Modal } from 'reactstrap';
+import { slide as Menu } from 'react-burger-menu';
 
 import { post_api } from './loading-api.jsx';
 
@@ -69,7 +70,19 @@ class AppMenu extends React.Component {
         return (
             <div>
                 <Navbar light>
-                    <NavbarToggler onClick={this.toggleNavbar} />
+                    <Menu>
+                        <Link to="/" className="menu-item">Главная</Link>
+                        <Link to="/last" className="menu-item" >Последнее неотвеченные</Link>
+                        <Link to="/top" className="menu-item">Популярные неотвеченные</Link>
+                        <Link to="/answered" className="menu-item">Популярные отвеченные</Link>
+                        <Link to="/banned" className="menu-item">Забаненные</Link>
+                        <Link to="/search/" className="menu-item">Заглушка поиска</Link>
+                        <Link to="/ask/" className="menu-item">Спросить</Link>
+                        { logged_in
+                            ? <NavLink onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</NavLink>
+                            : <NavLink onClick={() => setLoginModalMode(this)}>Войти</NavLink>
+                        }
+                    </Menu>
                     <NavbarBrand href="/">
                         <svg className="logo" viewBox="0 0 685 76">
                             <g>
@@ -83,32 +96,6 @@ class AppMenu extends React.Component {
                         </svg>
 
                     </NavbarBrand>
-                    <Collapse className="navbar-toggleable-md" isOpen={!this.state.collapsed}>
-                        <Nav vertical>
-                            <NavItem>
-                                <Link to="/last" className="nav-link">Последнее неотвеченные</Link>
-                            </NavItem>
-                            <NavItem>
-                                <Link to="/top" className="nav-link">Популярные неотвеченные</Link>
-                            </NavItem>
-                            <NavItem>
-                                <Link to="/answered" className="nav-link">Популярные отвеченные</Link>
-                            </NavItem>
-                            <NavItem>
-                                <Link to="/banned/" className="nav-link">Забаненные</Link>
-                            </NavItem>
-                            <NavItem>
-                                <Link to="/search/" className="nav-link">Заглушка поиска</Link>
-                            </NavItem>
-                            <NavItem>
-                                <Link to="/ask/" className="nav-link">Спросить</Link>
-                            </NavItem>
-                            { logged_in
-                                ? <NavItem><NavLink onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</NavLink></NavItem>
-                                : <NavItem><NavLink onClick={() => setLoginModalMode(this)}>Войти</NavLink></NavItem>
-                            }
-                        </Nav>
-                    </Collapse>
                 </Navbar>
             </div>
         );
