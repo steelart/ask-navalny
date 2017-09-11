@@ -63,6 +63,7 @@ const ConnectedLastAnsweredQuestionsPage = connectedQuestionsLastTemplate('answe
 const ConnectedLastBannedQuestionsPage = connectedQuestionsLastTemplate('banned');
 const ConnectedLastApprovedQuestionsPage = connectedQuestionsLastTemplate('approved');
 const ConnectedLastUndecidedQuestionsPage = connectedQuestionsLastTemplate('undecided');
+const ConnectedNewAnswersQuestionsPage = connectedQuestionsLastTemplate('newanswers');
 
 const ConnectedTopApprovedQuestionsPage = connectedQuestionsTopTemplate('approved');
 const ConnectedTopAnsweredQuestionsPage = connectedQuestionsTopTemplate('answered');
@@ -165,6 +166,7 @@ ReactDOM.render(
                 <Route path='/last-undecided' component={ConnectedLastUndecidedQuestionsPage} />
                 <Route path='/top-approved' component={ConnectedTopApprovedQuestionsPage} />
                 <Route path='/top-answered' component={ConnectedTopAnsweredQuestionsPage} />
+                <Route path='/last-undecided-answers' component={ConnectedNewAnswersQuestionsPage} />
                 <Route path='/ask' component={ConnectedQuestionForm} />
                 <Route path='/todo' component={TodoPage} />
                 <Route path='/search' component={ConnectedSearchPage} />

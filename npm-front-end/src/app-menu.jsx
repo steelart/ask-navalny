@@ -107,6 +107,9 @@ class AppMenu extends React.Component {
                             { is_moderator && <NavItem>
                                 <Link to="/last-approved" className="nav-link">Одобренные</Link>
                             </NavItem> }
+                            { is_moderator && <NavItem>
+                                <Link to="/last-undecided-answers" className="nav-link">Последние неразмеченные ответы</Link>
+                            </NavItem> }
                             <NavItem>
                                 <Link to="/search" className="nav-link">Заглушка поиска</Link>
                             </NavItem>

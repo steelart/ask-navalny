@@ -75,6 +75,8 @@ def last_questions(request, list_type, start_id):
         start_filter = Question.objects.filter(status=UNDECIDED)
     if list_type == 'banned':
         start_filter = Question.objects.filter(status=REJECTED)
+    if list_type == 'newanswers':
+        start_filter = Question.objects.filter(answer__question__status=UNDECIDED)
 
     if start_filter is None:
         raise Http404('Unknown list type ' + list_type)
