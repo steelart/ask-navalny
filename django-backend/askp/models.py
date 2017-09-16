@@ -153,8 +153,13 @@ def answer_to_dict(answer):
 
 
 def add_new_question(text_str, author):
-    q = Question.objects.create(text_str=text_str, author=author)
-    QuestionVoteList.objects.create(question=q, user=author, state=VOTED)
+    q = Question.objects.create(
+        text_str=text_str,
+        author=author)
+    QuestionVoteList.objects.create(
+        question=q,
+        user=author,
+        state=VOTED)
     return q
 
 

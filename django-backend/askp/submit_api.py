@@ -67,13 +67,13 @@ def update_and_send_question(question):
     send_object({'type': 'UPDATE_QUESTION', 'question': qdict})
     return qdict
 
-def update_question(data, updater):
-    question = Question.objects.get(id=data['id'])
+def update_question(question_id, updater):
+    question = Question.objects.get(id=question_id)
     res = updater(question)
     if res is not None and not res:
         return fail_json_response('could not change question')
     qdict = update_and_send_question(question)
-    return JsonResponse({'success': True, 'question': qdict})
+    return {'success': True, 'question': qdict}
 
 def update_and_send_answer(answer):
     answer.save()
@@ -81,17 +81,17 @@ def update_and_send_answer(answer):
     send_object({'type': 'SET_ANSWER_DATA', 'answer': adict})
     return adict
 
-def update_answer(data, updater):
-    answer = Answer.objects.get(id=data['id'])
+def update_answer(answer_id, updater):
+    answer = Answer.objects.get(id=answer_id)
     res = updater(answer)
     if res is not None and not res:
         return fail_json_response('could not change answer')
     adict = update_and_send_answer(answer)
-    return JsonResponse({'success': True, 'answer': adict})
+    return {'success': True, 'answer': adict}
 
 
-def update_answer_status(data, status):
-    answer = Answer.objects.get(id=data['id'])
+def update_answer_status(answer_id, status):
+    answer = Answer.objects.get(id=answer_id)
     if status == answer.status:
         return fail_json_response('The same status')
     question = answer.question
@@ -124,14 +124,13 @@ def update_answer_status(data, status):
     ad = update_and_send_answer(answer)
     adict[answer.id] = ad
 
-    return JsonResponse({
+    return {
         'success': True,
         'answers': adict,
-        'question': qdict})
+        'question': qdict}
 
-def reorder_answer(data):
-    answer = Answer.objects.get(id=data['id'])
-    position = data['position']
+def reorder_answer(answer_id, position):
+    answer = Answer.objects.get(id=answer_id)
     if position <= 0:
         return fail_json_response('Incorrect position!')
     if answer.status != APPROVED:
@@ -160,23 +159,113 @@ def reorder_answer(data):
     ad = update_and_send_answer(answer)
     adict[answer.id] = ad
 
-    return JsonResponse({
+    return {
         'success': True,
-        'answers': adict})
-
+        'answers': adict}
 
 def check_moderator_perms_and_log(request):
     user = request.user
-    if not user.has_perm('askp.moderator_perm'):
-        raise Http404('No permissions')
-    # log all moderator actions
     data = request.POST.dict()
+    if not user.has_perm('askp.moderator_perm'):
+        raise Http404('No api for action ' + data['action'])
+    # log all moderator actions
     ModeratorActions.objects.create(
         json=json.dumps(data),
         author=user)
 
-@transaction.atomic
-def post_api(request):
+def new_question(author, text_str):
+    q = add_new_question(text_str=text_str, author=author)
+    qdict = obj_to_dict(q)
+    send_object({'type': 'NEW_QUESTION', 'question': qdict})
+    return {'success': True, 'id': q.id}
+
+def new_youtube_answer(author, question_id, video_id, start, end):
+    # TODO: add video validations (for existance and time)
+    question = Question.objects.get(id=question_id)
+
+    a = add_new_youtube_answer(
+        author=author,
+        question=question,
+        video_id=video_id,
+        start=start,
+        end=end)
+    adict = answer_to_dict(a)
+    send_object(
+        {'type': 'SET_ANSWER_DATA',
+         'question_id': question_id,
+         'answer': adict})
+    return {'success': True, 'id': a.id}
+
+def vote_for_question(user, question_id):
+    def updater(q):
+        exists = QuestionVoteList.objects.filter(
+            question=q, user=user).exists()
+        if exists:
+            return False
+        QuestionVoteList.objects.create(question=q, user=user, state=VOTED)
+        q.votes_number += 1
+        return True
+    return update_question(question_id, updater)
+
+def complain_about_question(user, question_id):
+    def updater(q):
+        exists = QuestionVoteList.objects.filter(
+            question=q, user=user).exists()
+        if exists:
+            return False
+        QuestionVoteList.objects.create(question=q, user=user, state=COMPLAIN)
+        q.complains += 1
+        return True
+    return update_question(question_id, updater)
+
+def like_answer(user, answer_id):
+    def updater(a):
+        exists = AnswerVoteList.objects.filter(
+            answer=a, user=user).exists()
+        if exists:
+            return False
+        AnswerVoteList.objects.create(
+            question=a.question,
+            answer=a,
+            user=user,
+            state=LIKE)
+        a.like_number += 1
+        return True
+    return update_answer(answer_id, updater)
+
+def dislike_answer(user, answer_id):
+    def updater(a):
+        exists = AnswerVoteList.objects.filter(
+            answer=a, user=user).exists()
+        if exists:
+            return False
+        AnswerVoteList.objects.create(
+            question=a.question,
+            answer=a,
+            user=user,
+            state=DISLIKE)
+        a.dislike_number += 1
+        return True
+    return update_answer(answer_id, updater)
+
+
+def approve_question(question_id):
+    def updater(q):
+        answers = Answer.objects.filter(question=q, status=APPROVED)
+        if (answers.exists()):
+            q.status = ANSWERED
+        else:
+            q.status = APPROVED
+    return update_question(question_id, updater)
+
+
+def ban_question(question_id):
+    def updater(q):
+        q.status = REJECTED
+    return update_question(question_id, updater)
+
+
+def post_api_main(request):
     pass_raise_dbg_filter_or_exception(request)
     data = request.POST
     user = request.user
@@ -185,122 +274,48 @@ def post_api(request):
     print(data)
     action = data['action']
     if action == 'NEW_QUESTION':
-        text_message = data['text']
-        q = add_new_question(text_str=text_message, author=user)
-        qdict = obj_to_dict(q)
-        send_object({'type': 'NEW_QUESTION', 'question': qdict})
-        return JsonResponse({'success': True, 'id': q.id})
+        return new_question(user, data['text'])
 
     if action == 'VOTE_FOR_QUESTION':
-        def updater(q):  # TODO: make atomic BD operation
-            exists = QuestionVoteList.objects.filter(
-                question=q, user=user).exists()
-            if exists:
-                return False
-            QuestionVoteList.objects.create(question=q, user=user, state=VOTED)
-            q.votes_number += 1
-            return True
-        return update_question(data, updater)
+        return vote_for_question(user, data['id'])
+
+    if action == 'LIKE_ANSWER':
+        return like_answer(user, data['id'])
+
+    if action == 'DISLIKE_ANSWER':
+        return dislike_answer(user, data['id'])
 
     if action == 'COMPLAIN_ABOUT_QUESTION':
-        def updater(q):  # TODO: make atomic BD operation
-            exists = QuestionVoteList.objects.filter(
-                question=q, user=user).exists()
-            if exists:
-                return False
-            QuestionVoteList.objects.create(
-                question=q,
-                user=user,
-                state=COMPLAIN)
-            q.complains += 1
-            return True
-        return update_question(data, updater)
+        return complain_about_question(user, data['id'])
 
     if action == 'NEW_YOUTUBE_ANSWER':
         question_id = data['question_id']
         video_id = data['video_id']
         start = data['start']
         end = data['end']
-        # TODO: add video validations (for existance and time)
-        question = Question.objects.get(id=question_id)
-
-        a = add_new_youtube_answer(
-            author=user,
-            question=question,
-            video_id=video_id,
-            start=start,
-            end=end)
-        adict = answer_to_dict(a)
-        send_object(
-            {'type': 'SET_ANSWER_DATA',
-             'question_id': question_id,
-             'answer': adict})
-
-    if action == 'LIKE_ANSWER':
-        def updater(a):
-            exists = AnswerVoteList.objects.filter(
-                answer=a, user=user).exists()
-            if exists:
-                return False
-            AnswerVoteList.objects.create(
-                question=a.question,
-                answer=a,
-                user=user,
-                state=LIKE)
-            a.like_number += 1
-            return True
-        return update_answer(data, updater)
-
-    if action == 'DISLIKE_ANSWER':
-        def updater(a):
-            exists = AnswerVoteList.objects.filter(
-                answer=a, user=user).exists()
-            if exists:
-                return False
-            AnswerVoteList.objects.create(
-                question=a.question,
-                answer=a,
-                user=user,
-                state=DISLIKE)
-            a.dislike_number += 1
-            return True
-        return update_answer(data, updater)
+        return new_youtube_answer(user, question_id, video_id, start, end)
 
     # Now moderator actions:
+    check_moderator_perms_and_log(request)
 
-    if action == 'APPROVE_QUESTION':
-        check_moderator_perms_and_log(request)
-        def updater(q):
-            if (q.status == UNDECIDED):
-                q.status = APPROVED
-        return update_question(data, updater)
+    if action == 'APPROVE_QUESTION' or action == 'UNBAN_QUESTION':
+        return approve_question(data['id'])
 
     if action == 'BAN_QUESTION':
-        check_moderator_perms_and_log(request)
-        def updater(q):
-            q.status = REJECTED
-        return update_question(data, updater)
-
-    if action == 'UNBAN_QUESTION':
-        check_moderator_perms_and_log(request)
-        def updater(q):
-            answers = Answer.objects.filter(question=q, status=APPROVED)
-            if (answers.exists()):
-                q.status = ANSWERED
-            else:
-                q.status = APPROVED
-        return update_question(data, updater)
+        return ban_question(data['id'])
 
     if action == 'APPROVE_ANSWER':
-        check_moderator_perms_and_log(request)
-        return update_answer_status(data, APPROVED)
+        return update_answer_status(data['id'], APPROVED)
 
     if action == 'REJECT_ANSWER':
-        check_moderator_perms_and_log(request)
-        return update_answer_status(data, REJECTED)
+        return update_answer_status(data['id'], REJECTED)
 
     if action == 'REORDER_ANSWER':
-        check_moderator_perms_and_log(request)
-        return reorder_answer(data)
+        return reorder_answer(data['id'], data['position'])
 
-    return fail_json_response('unknown action ' + action)
+    raise Http404('No api for action ' + action)
+
+@transaction.atomic
+def post_api(request):
+    dres = post_api_main(request)
+    return JsonResponse(dres)
