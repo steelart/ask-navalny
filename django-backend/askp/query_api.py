@@ -76,7 +76,7 @@ def last_questions(request, list_type, start_id):
     if list_type == 'banned':
         start_filter = Question.objects.filter(status=REJECTED)
     if list_type == 'newanswers':
-        start_filter = Question.objects.filter(answer__question__status=UNDECIDED)
+        start_filter = Question.objects.filter(answer__status=UNDECIDED)
 
     if start_filter is None:
         raise Http404('Unknown list type ' + list_type)
@@ -87,8 +87,11 @@ def last_questions(request, list_type, start_id):
     else:
         from_filter = start_filter.filter(id__lt=start_id)
 
+    ids = set()
     for q in from_filter.order_by('-id')[:UPLOAD_QUESTIONS_COUNT]:
-        res.append(obj_to_dict(q))
+        if q.id not in ids:
+            res.append(obj_to_dict(q))
+            ids.add(q.id)
     return JsonResponse({'questions': res})
 
 
