@@ -38,6 +38,9 @@ from .models import Answer
 from .models import QuestionVoteList
 from .models import AnswerVoteList
 from .models import ModeratorActions
+from .models import QuestionBanReason
+from .models import AnswerBanReason
+
 from .models import obj_to_dict
 from .models import answer_to_dict
 from .models import add_new_question
@@ -52,6 +55,10 @@ from .models import VOTED
 from .models import COMPLAIN
 from .models import LIKE
 from .models import DISLIKE
+
+from .models import SOFT_BAN
+from .models import HARD_BAN
+from .models import AUTO_BAN
 
 from .utils import pass_raise_dbg_filter_or_exception
 from .utils import fail_json_response
@@ -89,30 +96,129 @@ def update_answer(answer_id, updater):
     adict = update_and_send_answer(answer)
     return {'success': True, 'answer': adict}
 
+def set_ban_for_question(question, ban_type):
+    QuestionBanReason.objects.create(
+        question=question,
+        user=question.author,
+        ban_type=ban_type)
 
+def set_ban_for_answer(answer, ban_type):
+    AnswerBanReason.objects.create(
+        answer=answer,
+        user=answer.author,
+        ban_type=ban_type)
+
+
+def unban_auto_banned_if_needed(ban):
+    qdict = {}
+    adict = {}
+    rdict = {'questions': qdict, 'answers': adict}
+    if ban.ban_type != HARD_BAN:
+        return rdict
+    hard_ban_q_count = QuestionBanReason.objects.filter(
+            user=ban.user,
+            ban_type=HARD_BAN
+        ).count()
+    hard_ban_a_count = AnswerBanReason.objects.filter(
+            user=ban.user,
+            ban_type=HARD_BAN
+        ).count()
+    if hard_ban_q_count + hard_ban_a_count == 1:
+        # unban autobanned questions:
+        auto_banned = QuestionBanReason.objects.filter(
+            user=ban.user,
+            ban_type=AUTO_BAN)
+        for b in auto_banned:
+            q = b.question
+            q.status = UNDECIDED
+            qd = update_and_send_question(q)
+            qdict[q.id] = qd
+        auto_banned.delete()
+        # unban autobanned answers:
+        auto_banned = AnswerBanReason.objects.filter(
+            user=ban.user,
+            ban_type=AUTO_BAN)
+        for b in auto_banned:
+            a = b.answer
+            a.status = UNDECIDED
+            ad = update_and_send_answer(a)
+            adict[a.id] = ad
+        auto_banned.delete()
+    return rdict
+
+
+def auto_ban_undecided(content, content_type):
+    qdict = {}
+    adict = {}
+    rdict = {'questions': qdict, 'answers': adict}
+    user = content.author
+    answers = Answer.objects.filter(author=user, status=UNDECIDED)
+    for a in answers:
+        if content_type == 'answer' and a.id == content.id:
+            continue
+        a.status = REJECTED
+        set_ban_for_answer(a, AUTO_BAN)
+        ad = update_and_send_answer(a)
+        adict[a.id] = ad
+    questions = Question.objects.filter(author=user, status=UNDECIDED)
+    for q in questions:
+        if content_type == 'question' and q.id == content.id:
+            continue
+        q.status = REJECTED
+        set_ban_for_question(q, AUTO_BAN)
+        qd = update_and_send_question(q)
+        qdict[q.id] = qd
+    return rdict
+
+# status is extended by HARD_BAN
 def update_answer_status(answer_id, status):
     answer = Answer.objects.get(id=answer_id)
+    old_status = answer.status
+    if status == HARD_BAN and old_status == REJECTED:
+        if AnswerBanReason.objects.get(answer=answer).ban_type == HARD_BAN:
+            return fail_json_response('The same status')
+
+    if status == HARD_BAN:
+        status = REJECTED
+        hard_ban = True
+    else:
+        hard_ban = False
+
     if status == answer.status:
         return fail_json_response('The same status')
     question = answer.question
     qdict = obj_to_dict(question)
-    all_answers = Answer.objects.filter(question=question, status=APPROVED)
+    approved_answers = Answer.objects.filter(question=question, status=APPROVED)
     if question.status != REJECTED:
-        if status == APPROVED and not all_answers.exists():
+        if status == APPROVED and not approved_answers.exists():
             # The first approved answer
             question.status = ANSWERED
             qdict = update_and_send_question(question)
-        if status != APPROVED and all_answers.count() == 1:
+        if status != APPROVED and approved_answers.count() == 1:
             # Removed only one answer so return question to APPROVED status
             question.status = APPROVED
             qdict = update_and_send_question(question)
     if status == APPROVED:
-        count = all_answers.count()
+        count = approved_answers.count()
         answer.position = count + 1
     adict = {}
+
+    if status == REJECTED:
+        if hard_ban:
+            auto_ban_undecided(answer, 'answer')
+            set_ban_for_answer(answer, HARD_BAN)
+        else:
+            # Soft ban
+            set_ban_for_answer(answer, SOFT_BAN)
+    elif old_status == REJECTED:
+        # Unban answer
+        ban = AnswerBanReason.objects.get(answer=answer)
+        unban_auto_banned_if_needed(ban)
+        ban.delete()
+
     if status == REJECTED and answer.position != 0:
         # Shift possitions of other approved answers
-        need_shift = all_answers.filter(position__gt=answer.position)
+        need_shift = approved_answers.filter(position__gt=answer.position)
         for a in need_shift:
             a.position -= 1
             ad = update_and_send_answer(a)
@@ -128,6 +234,7 @@ def update_answer_status(answer_id, status):
         'success': True,
         'answers': adict,
         'question': qdict}
+
 
 def reorder_answer(answer_id, position):
     answer = Answer.objects.get(id=answer_id)
@@ -250,7 +357,12 @@ def dislike_answer(user, answer_id):
 
 
 def approve_question(question_id):
+    qdict = {}
     def updater(q):
+        if q.status == REJECTED:
+            ban = QuestionBanReason.objects.get(question=q)
+            unban_auto_banned_if_needed(ban)
+            QuestionBanReason.objects.filter(question=q).delete()
         answers = Answer.objects.filter(question=q, status=APPROVED)
         if (answers.exists()):
             q.status = ANSWERED
@@ -262,8 +374,26 @@ def approve_question(question_id):
 def ban_question(question_id):
     def updater(q):
         q.status = REJECTED
+        set_ban_for_question(q, SOFT_BAN)
     return update_question(question_id, updater)
 
+
+def ban_question_and_user(question_id):
+    def updater(q):
+        q.status = REJECTED
+        set_ban_for_question(q, HARD_BAN)
+    res = update_question(question_id, updater)
+    question = Question.objects.get(id=question_id)
+    auto_ban_undecided(question, 'question')
+    return res
+
+
+def user_is_banned(user):
+    if AnswerBanReason.objects.filter(user=user, ban_type=HARD_BAN):
+        return True
+    if QuestionBanReason.objects.filter(user=user, ban_type=HARD_BAN):
+        return True
+    return False
 
 def post_api_main(request):
     pass_raise_dbg_filter_or_exception(request)
@@ -271,7 +401,9 @@ def post_api_main(request):
     user = request.user
     if not user.is_authenticated:
         return fail_json_response('user is not authenticated')
-    print(data)
+    if user_is_banned(user):
+        return fail_json_response('user is banned')
+
     action = data['action']
     if action == 'NEW_QUESTION':
         return new_question(user, data['text'])
@@ -304,11 +436,17 @@ def post_api_main(request):
     if action == 'BAN_QUESTION':
         return ban_question(data['id'])
 
+    if action == 'BAN_QUESTION_AND_AUTHOR':
+        return ban_question_and_user(data['id'])
+
     if action == 'APPROVE_ANSWER':
         return update_answer_status(data['id'], APPROVED)
 
     if action == 'REJECT_ANSWER':
         return update_answer_status(data['id'], REJECTED)
+
+    if action == 'BAN_ANSWER_AND_AUTHOR':
+        return update_answer_status(data['id'], HARD_BAN)
 
     if action == 'REORDER_ANSWER':
         return reorder_answer(data['id'], data['position'])

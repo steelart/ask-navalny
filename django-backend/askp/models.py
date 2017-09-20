@@ -88,6 +88,22 @@ class QuestionVoteList(models.Model):
             self.state)
 
 
+SOFT_BAN = 'v' # banned only content, not user
+# content is so bad, that user should be banned with all his unreviewed content
+HARD_BAN = 'h'
+AUTO_BAN = 'a' # automatic content ban because of user ban
+
+class QuestionBanReason(models.Model):
+    QuestionBanReasonType = (
+        (SOFT_BAN, 'SoftBan'),
+        (HARD_BAN, 'HardBan'),
+        (AUTO_BAN, 'AutoBan')
+    )
+    question = models.ForeignKey(Question)
+    user = models.ForeignKey(User)
+    ban_type = models.CharField(max_length=1, choices=QuestionBanReasonType)
+
+
 YOUTUBE = 'y'
 TEXT = 't'  # not implemented now
 
@@ -139,6 +155,17 @@ class AnswerVoteList(models.Model):
             self.answer.text_str,
             self.user.username,
             self.state)
+
+
+class AnswerBanReason(models.Model):
+    AnswerBanReasonType = (
+        (SOFT_BAN, 'SoftBan'),
+        (HARD_BAN, 'HardBan'),
+        (AUTO_BAN, 'AutoBan')
+    )
+    answer = models.ForeignKey(Answer)
+    user = models.ForeignKey(User)
+    ban_type = models.CharField(max_length=1, choices=AnswerBanReasonType)
 
 
 def obj_to_dict(obj):
