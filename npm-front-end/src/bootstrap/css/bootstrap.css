@@ -407,7 +407,7 @@ a {
 }
 
 a:focus, a:hover {
-  color: #014c8c;
+  color: #007FA3;
 }
 
 pre {
@@ -3912,7 +3912,6 @@ tbody.collapse.show {
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
-  padding: 0.5rem 1rem;
 }
 
 
@@ -3987,8 +3986,7 @@ tbody.collapse.show {
 
 .page-header {
   padding-bottom: 10px;
-  margin: 10px 0 40px;
-  border-bottom: 1px solid #eee;
+  margin: 0 0 75px;
 }
 
 @media (max-width: 575px) {
@@ -4306,6 +4304,7 @@ tbody.collapse.show {
 .navbar-light .navbar-brand,
 .navbar-light .navbar-toggler {
   color: rgba(0, 0, 0, 0.9);
+  margin-top: 32px;
 }
 
 .navbar-light .navbar-brand:focus, .navbar-light .navbar-brand:hover,

@@ -28,7 +28,8 @@ import { Link } from 'react-router';
 import { NOT_LOGINED_ID_INFO, dispatchModalMode } from './main-reducer.jsx';
 
 import { LinkButton, SimpleButton, RefButton, LinkButtonLI, SimpleButtonLI, RefButtonLI } from './buttons.jsx';
-import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, Button, Modal } from 'reactstrap';
+import { Navbar, NavbarBrand, NavLink, Button, Modal } from 'reactstrap';
+import { slide as Menu } from 'react-burger-menu';
 
 import { post_api } from './loading-api.jsx';
 
@@ -51,17 +52,13 @@ class AppMenu extends React.Component {
     constructor(props) {
         super(props);
 
-        this.toggleNavbar = this.toggleNavbar.bind(this);
         this.state = {
             collapsed: true
         };
     }
-
-    toggleNavbar() {
-        this.setState({
-            collapsed: !this.state.collapsed
-        });
-    }
+    showSettings (event) {
+    event.preventDefault();
+  }
 
     render() {
         const logged_in = this.props.idInfo.logged_in;
@@ -70,7 +67,22 @@ class AppMenu extends React.Component {
         return (
             <div>
                 <Navbar light>
-                    <NavbarToggler onClick={this.toggleNavbar} />
+                    <Menu>
+                        <Link to="/last-answered" className="bm-menu">Последние отвеченные</Link>
+                        <Link to="/top-approved" className="bm-menu">Популярные неотвеченные</Link>
+                        <Link to="/top-answered" className="bm-menu">Популярные отвеченные</Link>
+                        { is_moderator && <Link to="/last-all" className="bm-menu">Все последние</Link> }
+                        { is_moderator && <Link to="/last-undecided" className="bm-menu">Немодерированные</Link> }
+                        { is_moderator && <Link to="/last-banned" className="bm-menu">Забаненные</Link> }
+                        { is_moderator && <Link to="/last-approved" className="bm-menu">Одобренные</Link> }
+                        { is_moderator && <Link to="/last-undecided-answers" className="bm-menu">Последние неразмеченные ответы</Link> }
+                        <Link to="/search" className="bm-menu">Заглушка поиска</Link>
+                        <Link to="/ask" className="bm-menu">Спросить</Link>
+                        { logged_in
+                        ? <NavLink className="bm-menu" onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</NavLink>
+                        : <NavLink className="bm-menu" onClick={() => setLoginModalMode(this)}>Войти</NavLink>
+                        }
+                    </Menu>
                     <NavbarBrand href="/">
                         <svg className="logo" viewBox="0 0 685 76">
                             <g>
@@ -82,46 +94,7 @@ class AppMenu extends React.Component {
                                 <path className="cyan-fill" fill="#007FA3" d="M67.12 18.38L48.88 75 63.75 75 66.91 64.38 86.79 64.38 90.14 75 105.19 75 88 18.38 67.12 18.38zM83 51.13L71 51.13 77.18 29.91 83 51.13zM148.79 45.78C151.7 43.66 153.53 39.64 153.53 34.66 153.53 24.21 148.75 18.37 133.7 18.37L111.39 18.37 111.39 75 134.59 75C148.59 75 155.31 69.16 155.31 57.47 155.3 51 152.4 47.38 148.79 45.78zM125.56 30.78L134.06 30.78C137.42 30.78 139.55 32.37 139.55 35.78 139.55 39.19 137.78 40.78 134.24 40.78L125.56 40.78 125.56 30.78zM135.65 62.65L125.55 62.65 125.55 52.37 135.64 52.37C139 52.37 141.13 53.61 141.13 57.37 141.14 61.23 139 62.64 135.65 62.64L135.65 62.65zM422.51 18.38L436.68 18.38 436.68 75 422.51 75 422.51 18.38zM418.08 54.5C418.08 68.13 411.71 75.04 395.59 75.04L376.82 75.04 376.82 18.38 391 18.38 391 35.55 396.31 35.55C410.82 35.55 418.08 41.93 418.08 54.5zM403.91 55.21C403.91 51.67 402.32 48.66 397.18 48.66L391 48.66 391 61.94 397.2 61.94C401.44 61.94 403.92 59.46 403.92 55.21L403.91 55.21z"></path>
                             </g>
                         </svg>
-
                     </NavbarBrand>
-                    <Collapse className="navbar-toggleable-md" isOpen={!this.state.collapsed}>
-                        <Nav vertical>
-                            <NavItem>
-                                <Link to="/last-answered" className="nav-link">Последние отвеченные</Link>
-                            </NavItem>
-                            <NavItem>
-                                <Link to="/top-approved" className="nav-link">Популярные неотвеченные</Link>
-                            </NavItem>
-                            <NavItem>
-                                <Link to="/top-answered" className="nav-link">Популярные отвеченные</Link>
-                            </NavItem>
-                            { is_moderator && <NavItem>
-                                <Link to="/last-all" className="nav-link">Все последние</Link>
-                            </NavItem> }
-                            { is_moderator && <NavItem>
-                                <Link to="/last-undecided" className="nav-link">Немодерированные</Link>
-                            </NavItem> }
-                            { is_moderator && <NavItem>
-                                <Link to="/last-banned" className="nav-link">Забаненные</Link>
-                            </NavItem> }
-                            { is_moderator && <NavItem>
-                                <Link to="/last-approved" className="nav-link">Одобренные</Link>
-                            </NavItem> }
-                            { is_moderator && <NavItem>
-                                <Link to="/last-undecided-answers" className="nav-link">Последние неразмеченные ответы</Link>
-                            </NavItem> }
-                            <NavItem>
-                                <Link to="/search" className="nav-link">Заглушка поиска</Link>
-                            </NavItem>
-                            <NavItem>
-                                <Link to="/ask" className="nav-link">Спросить</Link>
-                            </NavItem>
-                            { logged_in
-                                ? <NavItem><NavLink onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</NavLink></NavItem>
-                                : <NavItem><NavLink onClick={() => setLoginModalMode(this)}>Войти</NavLink></NavItem>
-                            }
-                        </Nav>
-                    </Collapse>
                 </Navbar>
             </div>
         );
