@@ -30,6 +30,9 @@ from config.config import *
 
 from .models import Question
 from .models import Answer
+
+from .models import ModeratorAction
+
 from .models import obj_to_dict
 from .models import answer_to_dict
 
@@ -136,6 +139,17 @@ def answers(request, question_id):
     qdict = obj_to_dict(question)
     return JsonResponse({'question': qdict, 'answers': adict})
 
+
+def moderator_actions(start_id):
+    if not request.user.has_perm('askp.moderator_perm'):
+        raise Http404('No permissions for ' + list_type)
+    query = ModeratorAction.objects.all()[:start_id]
+    if str(start_id) != '0':  # TODO!!
+        query = query.filter(id__lt=start_id)
+    actdict = {}
+    for act in query:
+        actdict[act.id] = obj_to_dict(act)
+    return JsonResponse({'actions': actdict})
 
 # TODO: Could be slow! Every time we return all found questions.
 def search_api(request):

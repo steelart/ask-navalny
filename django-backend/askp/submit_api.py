@@ -37,9 +37,13 @@ from .models import Question
 from .models import Answer
 from .models import QuestionVoteList
 from .models import AnswerVoteList
-from .models import ModeratorActions
+from .models import ModeratorAction
 from .models import QuestionBanReason
 from .models import AnswerBanReason
+
+from .models import ChangeQuestionStatusAction
+from .models import ChangeAnswerStatusAction
+from .models import ReorderAnswerAction
 
 from .models import obj_to_dict
 from .models import answer_to_dict
@@ -64,6 +68,12 @@ from .utils import pass_raise_dbg_filter_or_exception
 from .utils import fail_json_response
 
 
+def get_question(question_id):
+    return Question.objects.get(id=question_id)
+
+def get_answer(answer_id):
+    return Answer.objects.get(id=answer_id)
+
 def send_object(obj):
     if COMMON_APP_CONFIG['web_sockets']:
         Group('all').send({'text': json.dumps(obj)})
@@ -75,7 +85,7 @@ def update_and_send_question(question):
     return qdict
 
 def update_question(question_id, updater):
-    question = Question.objects.get(id=question_id)
+    question = get_question(question_id)
     res = updater(question)
     if res is not None and not res:
         return fail_json_response('could not change question')
@@ -89,7 +99,7 @@ def update_and_send_answer(answer):
     return adict
 
 def update_answer(answer_id, updater):
-    answer = Answer.objects.get(id=answer_id)
+    answer = get_answer(answer_id)
     res = updater(answer)
     if res is not None and not res:
         return fail_json_response('could not change answer')
@@ -172,7 +182,7 @@ def auto_ban_undecided(content, content_type):
 
 # status is extended by HARD_BAN
 def update_answer_status(answer_id, status):
-    answer = Answer.objects.get(id=answer_id)
+    answer = get_answer(answer_id)
     old_status = answer.status
     if status == HARD_BAN and old_status == REJECTED:
         if AnswerBanReason.objects.get(answer=answer).ban_type == HARD_BAN:
@@ -237,7 +247,7 @@ def update_answer_status(answer_id, status):
 
 
 def reorder_answer(answer_id, position):
-    answer = Answer.objects.get(id=answer_id)
+    answer = get_answer(answer_id)
     if position <= 0:
         return fail_json_response('Incorrect position!')
     if answer.status != APPROVED:
@@ -276,9 +286,9 @@ def check_moderator_perms_and_log(request):
     if not user.has_perm('askp.moderator_perm'):
         raise Http404('No api for action ' + data['action'])
     # log all moderator actions
-    ModeratorActions.objects.create(
+    ModeratorAction.objects.create(
         json=json.dumps(data),
-        author=user)
+        moderator=user)
 
 def new_question(author, text_str):
     q = add_new_question(text_str=text_str, author=author)
@@ -288,7 +298,7 @@ def new_question(author, text_str):
 
 def new_youtube_answer(author, question_id, video_id, start, end):
     # TODO: add video validations (for existance and time)
-    question = Question.objects.get(id=question_id)
+    question = get_question(question_id)
 
     a = add_new_youtube_answer(
         author=author,
@@ -383,7 +393,7 @@ def ban_question_and_user(question_id):
         q.status = REJECTED
         set_ban_for_question(q, HARD_BAN)
     res = update_question(question_id, updater)
-    question = Question.objects.get(id=question_id)
+    question = get_question(question_id)
     auto_ban_undecided(question, 'question')
     return res
 
@@ -428,30 +438,76 @@ def post_api_main(request):
         return new_youtube_answer(user, question_id, video_id, start, end)
 
     # Now moderator actions:
-    check_moderator_perms_and_log(request)
+    if not user.has_perm('askp.moderator_perm'):
+        raise Http404('No API for action ' + data['action'])
+
+    content_id = data['id']
 
     if action == 'APPROVE_QUESTION' or action == 'UNBAN_QUESTION':
-        return approve_question(data['id'])
+        res = approve_question(content_id)
+        ChangeQuestionStatusAction.objects.create(
+            moderator=user,
+            question=get_question(content_id),
+            new_status=APPROVED
+        )
+        return res
 
     if action == 'BAN_QUESTION':
-        return ban_question(data['id'])
+        res = ban_question(content_id)
+        ChangeQuestionStatusAction.objects.create(
+            moderator=user,
+            question=get_question(content_id),
+            new_status=REJECTED
+        )
+        return res
 
     if action == 'BAN_QUESTION_AND_AUTHOR':
-        return ban_question_and_user(data['id'])
+        res = ban_question_and_user(content_id)
+        ChangeQuestionStatusAction.objects.create(
+            moderator=user,
+            question=get_question(content_id),
+            new_status=HARD_BAN
+        )
+        return res
 
     if action == 'APPROVE_ANSWER':
-        return update_answer_status(data['id'], APPROVED)
+        res = update_answer_status(content_id, APPROVED)
+        ChangeAnswerStatusAction.objects.create(
+            moderator=user,
+            answer=get_answer(content_id),
+            new_status=APPROVED
+        )
+        return res
 
     if action == 'REJECT_ANSWER':
-        return update_answer_status(data['id'], REJECTED)
+        res = update_answer_status(content_id, REJECTED)
+        ChangeAnswerStatusAction.objects.create(
+            moderator=user,
+            answer=get_answer(content_id),
+            new_status=REJECTED
+        )
+        return res
 
     if action == 'BAN_ANSWER_AND_AUTHOR':
-        return update_answer_status(data['id'], HARD_BAN)
+        res = update_answer_status(content_id, HARD_BAN)
+        ChangeAnswerStatusAction.objects.create(
+            moderator=user,
+            answer=get_answer(content_id),
+            new_status=HARD_BAN
+        )
+        return res
 
     if action == 'REORDER_ANSWER':
-        return reorder_answer(data['id'], data['position'])
+        position = data['position']
+        res = reorder_answer(content_id, position)
+        ReorderAnswerAction.objects.create(
+            moderator=user,
+            answer=get_answer(content_id),
+            new_position=position
+        )
+        return res
 
-    raise Http404('No api for action ' + action)
+    raise Http404('No API for action ' + action)
 
 @transaction.atomic
 def post_api(request):

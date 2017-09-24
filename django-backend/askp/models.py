@@ -30,11 +30,6 @@ from django.contrib.auth.models import User
 
 from polymorphic.models import PolymorphicModel
 
-class ModeratorActions(models.Model):
-    json = models.CharField(max_length=1000)
-    action_date = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User)
-
 
 APPROVED='a'
 REJECTED='r'
@@ -199,3 +194,33 @@ def add_new_youtube_answer(author, question, video_id, start, end):
         start=start,
         end=end)
     return a
+
+
+# Moderator actions logging
+class ModeratorAction(PolymorphicModel):
+    action_date = models.DateTimeField(auto_now_add=True)
+    moderator = models.ForeignKey(User)
+
+class ChangeQuestionStatusAction(ModeratorAction):
+    ChageStatusAction = (
+        (APPROVED, 'Approbed'),
+        (REJECTED, 'Rejected'),
+        (HARD_BAN, 'UserBanned')
+    )
+    question = models.ForeignKey(Question)
+    new_status = models.CharField(max_length=1, choices=ChageStatusAction)
+
+
+class ChangeAnswerStatusAction(ModeratorAction):
+    ChageStatusAction = (
+        (APPROVED, 'Approbed'),
+        (REJECTED, 'Rejected'),
+        (HARD_BAN, 'UserBanned')
+    )
+    answer = models.ForeignKey(Answer)
+    new_status = models.CharField(max_length=1, choices=ChageStatusAction)
+
+
+class ReorderAnswerAction(ModeratorAction):
+    new_position = models.IntegerField()
+    answer = models.ForeignKey(Answer)

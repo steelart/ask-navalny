@@ -51,6 +51,11 @@ urlpatterns = [
     url(r'api/sorted-questions/(?P<sort_type>[a-z]+)/$',
         query_api.sorted_questions),
 
+    url(r'api/moderator-actions/(?P<start_id>[0-9]+)$',
+        query_api.moderator_actions),
+    url(r'api/moderator-actions/(?P<start_id>[0-9]+)$/',
+        query_api.moderator_actions),
+
     url(r'api/post-api$', submit_api.post_api),
     url(r'api/post-api/$', submit_api.post_api),
 
