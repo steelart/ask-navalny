@@ -348,6 +348,10 @@
   width: 24px;
 }
 
+.bm-cross-button-mod {
+    position: absolute; width: 24px; height: 24px; right: 8px; top: 8px;
+}
+
 .bm-cross-button button {
     top: 16px !important;
     left: -25px !important;
@@ -361,6 +365,39 @@
     height: 24px !important;
     width: 4px !important;
     border-radius: 10px;
+}
+
+.bm-cross-line {
+    position: absolute;
+    top: 6px;
+    right: 14px;
+}
+
+.bm-cross-line-ch-1,
+.bm-cross-line-ch-2 {
+    position: absolute;
+    width: 3px;
+    height: 14px;
+    transform: rotate(45deg);
+}
+
+.bm-cross-line-ch-2 {
+    transform: rotate(-45deg);
+}
+
+.bm-cross-btn {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    border: none;
+    text-indent: -9999px;
+    background: transparent;
+    outline: none;
+    cursor: pointer;
 }
 
 /* General sidebar styles */
@@ -403,4 +440,26 @@
 .bm-item-list a span {
     margin-left: 10px;
     font-weight: 700;
+}
+
+.bm-item-list div[tabindex="-1"] {
+    height: 100%;
+}
+
+.login-modal {
+    color: #000;
+    margin: 70px 0;
+}
+
+div.loging-svg {
+    margin: 50px 0;
+}
+
+div.loging-svg div {
+    display: inline-block;
+    margin-right: 35px;
+}
+
+div.loging-svg div:last-child {
+    margin-right: 0 ;
 }

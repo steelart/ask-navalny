@@ -12,6 +12,7 @@
   "author": "Merkulov Alexey",
   "license": "ISC",
   "dependencies": {
+    "boron": "^0.2.3",
     "classnames": "*",
     "events": "*",
     "flux": "*",
@@ -31,6 +32,7 @@
     "react-redux": "*",
     "react-router": "3.*",
     "react-slider": "*",
+    "react-svg": "^2.1.21",
     "react-tap-event-plugin": "*",
     "react-youtube": "*",
     "reactstrap": "^4.8.0",

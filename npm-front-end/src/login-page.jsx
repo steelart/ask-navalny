@@ -23,6 +23,9 @@ SOFTWARE.
 */
 
 import React from 'react';
+import ReactDOM from 'react-dom'
+import ReactSVG from 'react-svg'
+
 import { connect } from 'react-redux';
 
 import { APP_CONFIG } from './config.jsx';
@@ -30,6 +33,8 @@ import { APP_CONFIG } from './config.jsx';
 import { mainStore, resetModalMode, dispatchModalMode } from './main-reducer.jsx';
 
 import { LinkButton, SimpleButton, RefButton, LinkButtonLI, SimpleButtonLI, RefButtonLI } from './buttons.jsx';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Collapse, CardBlock, Card, Button, Row, Col } from 'reactstrap';
+import classnames from 'classnames';
 
 import { post_api } from './loading-api.jsx';
 import { ConnectedRegistrationPage } from './registration-page.jsx';
@@ -74,15 +79,16 @@ class LoginViaSocialNetsPage extends React.Component {
 export const ConnectedLoginViaSocialNetsPage =
     connect((state) => ({}))(LoginViaSocialNetsPage);
 
-
 class LocalLoginPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             username : '',
             password : '',
-            incorrect_login : false
+            incorrect_login : false,
+            activeTab: '1'
         };
+        this.toggle = this.toggle.bind(this);
     }
 
     error_text() {
@@ -90,42 +96,97 @@ class LocalLoginPage extends React.Component {
         return null;
     }
 
+    toggle(tab) {
+        if (this.state.activeTab !== tab) {
+                this.setState({
+                activeTab: tab
+            });
+        }
+    }
+
     render() {
         const error_text = this.error_text();
-        //placeholder='••••••••••'
-        //<RefButton href='/steamlogin'>Войти через steam</RefButton>
         // TODO: save hostname for debug!
-        return <div>
-            <br/>
-            <SimpleButtonLI onClick={() => dispatchModalMode(this, ConnectedRegistrationPage)}>Зарегистрироваться</SimpleButtonLI>
-            <br/>
-            <LoginViaSocialNets/>
-            <p>В тестовой версии безопасность передачи и хранение пароля не проработаны! Не используйте реальные пароли!</p>
-            <form >
-                <input
-                    value={this.state.username}
-                    onChange={(e) => this.setState({username : e.target.value, incorrect_login : false})}
-                    type='email'
-                    placeholder='пользователь'
-                    autoCorrect='off'
-                    autoCapitalize='off'
-                    spellCheck='false'
-                />
-                <br/>
-                <input
-                    value={this.state.password}
-                    onChange={(e) => this.setState({password : e.target.value})}
-                    type='password'
-                    placeholder='пароль'
-                    autoCorrect='off'
-                    autoCapitalize='off'
-                    spellCheck='false'
-                />
-            </form>
-            {error_text && <p className={'errorText'}>{error_text}</p> }
-            <button onClick={()=>this.submit()}>Войти</button>
-            <button onClick={()=>resetModalMode(this)}>отмена</button>
-        </div>;
+
+        return (
+            <div className="login-modal">
+                <TabContent activeTab={this.state.activeTab}>
+                    <TabPane tabId="1">
+                        <Row>
+                            <Col sm="12">
+                                <h2>Чтобы задать вопрос, авторизуйтесь:</h2>
+                                <div className="loging-svg">
+                                    <ReactSVG
+                                        path="/static/askp/images/svg/vk.svg"
+                                        callback={svg => console.log(svg)}
+                                        className="example"
+                                        style={{ width: 125 }}
+                                    />
+                                    <ReactSVG
+                                        path="/static/askp/images/svg/facebook.svg"
+                                        callback={svg => console.log(svg)}
+                                        className="example"
+                                        style={{ width: 125 }}
+                                    />
+                                    <ReactSVG
+                                        path="/static/askp/images/svg/twitter.svg"
+                                        callback={svg => console.log(svg)}
+                                        className="example"
+                                        style={{ width: 125 }}
+                                    />
+                                    <ReactSVG
+                                        path="/static/askp/images/svg/google-plus.svg"
+                                        callback={svg => console.log(svg)}
+                                        className="example"
+                                        style={{ width: 125 }}
+                                    />
+                                </div>
+                                <NavLink onClick={() => { this.toggle('2'); }}>
+                                    Войти с помощью формы
+                                </NavLink>
+                                <h5>После авторизации вы сможете добавлять<br/>ответы и задавать вопросы Алексею</h5>
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane tabId="2">
+                        <Row>
+                            <Col sm="12">
+                                <NavLink onClick={() => dispatchModalMode(this, ConnectedRegistrationPage)}>Зарегистрироваться</NavLink>
+                                <LoginViaSocialNets/>
+                                <p>В тестовой версии безопасность передачи и хранение пароля не проработаны! Не используйте реальные пароли!</p>
+                                <form >
+                                    <input
+                                        value={this.state.username}
+                                        onChange={(e) => this.setState({username : e.target.value, incorrect_login : false})}
+                                        type='email'
+                                        placeholder='пользователь'
+                                        autoCorrect='off'
+                                        autoCapitalize='off'
+                                        spellCheck='false'
+                                    />
+                                    <br/>
+                                    <input
+                                        value={this.state.password}
+                                        onChange={(e) => this.setState({password : e.target.value})}
+                                        type='password'
+                                        placeholder='пароль'
+                                        autoCorrect='off'
+                                        autoCapitalize='off'
+                                        spellCheck='false'
+                                    />
+                                </form>
+                                {error_text && <p className={'errorText'}>{error_text}</p> }
+                                <NavLink onClick={() => { this.toggle('1'); }}>
+                                    Войти через социальную сеть
+                                </NavLink>
+                                <button onClick={()=>this.submit()}>Войти</button>
+                                <button onClick={()=>resetModalMode(this)}>отмена</button>
+                            </Col>
+                        </Row>
+                    </TabPane>
+                </TabContent>
+            </div>
+        )
 
     }
 

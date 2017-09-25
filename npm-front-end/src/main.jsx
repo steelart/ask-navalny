@@ -38,8 +38,6 @@ import { mainStore, resetModalMode, dispatchModalMode } from './main-reducer.jsx
 import { ConnectedQuestionForm } from './ask-question-page.jsx';
 import { ConnectedAppMenu } from './app-menu.jsx';
 
-import { setLoginModalMode } from './login-page.jsx';
-
 import { connectedQuestionsLastTemplate } from './last-questions-page.jsx';
 import { connectedQuestionsTopTemplate } from './questions-list-template.jsx';
 

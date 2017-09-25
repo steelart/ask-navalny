@@ -28,12 +28,12 @@ import { Link } from 'react-router';
 import { NOT_LOGINED_ID_INFO, dispatchModalMode } from './main-reducer.jsx';
 
 import { LinkButton, SimpleButton, RefButton, LinkButtonLI, SimpleButtonLI, RefButtonLI } from './buttons.jsx';
-import { Navbar, NavbarBrand, NavLink, Button, Modal } from 'reactstrap';
-import { slide as Menu } from 'react-burger-menu';
+import { Navbar, NavbarBrand, NavLink, Button } from 'reactstrap';
 
+import { slide as Menu } from 'react-burger-menu';
 import { post_api } from './loading-api.jsx';
 
-import { setLoginModalMode } from './login-page.jsx';
+import { ConnectedLoginPage } from './login-page.jsx';
 
 class AppMenu extends React.Component {
     logout() {
@@ -80,7 +80,7 @@ class AppMenu extends React.Component {
                         <Link to="/ask" className="bm-menu">Спросить</Link>
                         { logged_in
                         ? <NavLink className="bm-menu" onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</NavLink>
-                        : <NavLink className="bm-menu" onClick={() => setLoginModalMode(this)}>Войти</NavLink>
+                        : <LoginModal/>
                         }
                     </Menu>
                     <NavbarBrand href="/">
@@ -98,52 +98,79 @@ class AppMenu extends React.Component {
                 </Navbar>
             </div>
         );
-        /*<div> <Navbar>
-            <Navbar.Header>
-                <Navbar.Brand>
-                    <span>Навальный 20!8</span>
-                </Navbar.Brand>
-                <Navbar.Toggle />
-            </Navbar.Header>
-            <Navbar.Collapse>
-                <Nav navbar>
-                    <NavItem><LinkButtonLI to={'/last'}>Последние</LinkButtonLI></NavItem>
-                    <NavItem><LinkButtonLI to={'/top'}>Популярные</LinkButtonLI></NavItem>
-                    <NavItem><LinkButtonLI to={'/answered'}>Отвеченные</LinkButtonLI></NavItem>
-                    <NavItem><LinkButtonLI to={'/banned'}>Забаненные</LinkButtonLI></NavItem>
-                    <NavItem><LinkButtonLI to={'/search'}>Поиск</LinkButtonLI></NavItem>
-                    <NavItem><LinkButtonLI to={'/todo'}>todo</LinkButtonLI></NavItem>
-                    <NavItem>{logged_in && <LinkButtonLI to={'/ask'}>Новый вопрос</LinkButtonLI> }</NavItem>
-                    { logged_in
-                        ? <NavItem onClick={() => this.logout()}>{'Выйти(' + personaname + ')'}</NavItem>
-                        : <NavItem onClick={() => setLoginModalMode(this)}>Войти</NavItem>
-                    }
-                </Nav>
-            </Navbar.Collapse>
-            </Navbar>
-            <div className="container">
-            <div className="bg_holder">
-
-                <div className="question form-group has-feedback">
-                <span className=" form-control-feedback" aria-hidden="true"></span>
-                <div className="question form-group has-feedback">
-				<FormControl type="text" className="form-control" id="question" aria-describedby="inputSuccess2Status" placeholder="Спроси Навального" data-toggle="dropdown"/>
-				<span className="form-control-feedback" aria-hidden="true"></span>
-
-		        </div>
-
-
-            </div>
-
-        </div>
-
-		</div>
-
-				</div>;*/
     }
-
 }
 
+
+{ /* Login & reg modal */ }
+var Boron = require('boron');
+var styles = {
+  btn: {
+      position: 'fixed',
+      top: 0,
+      right: 0,
+      margin: '1em auto',
+      padding: '1em 2em',
+      outline: 'none',
+      fontSize: 16,
+      fontWeight: '600',
+      background: '#C94E50',
+      color: '#FFFFFF',
+      border: 'none'
+  },
+  container: {
+      padding: '2em',
+      textAlign: 'center',
+      height: '100%'
+  },
+  title: {
+    margin: 0,
+    color: '#C94E50',
+    fontWeight: 400
+  }
+}
+var modalStyle = {
+    width: '100vw',
+    height: '100vh'
+};
+var LoginModal = React.createClass({
+    toggleDialog: function(ref){
+        return function(){
+            this.refs[ref].toggle();
+        }.bind(this)
+    },
+    getContent: function(modalName){
+        return (
+            <div style={styles.container}>
+                <ConnectedLoginPage/>
+                <div className="bm-cross-button bm-cross-button-mod">
+                <span className="bm-cross-line">
+                    <span className="bm-cross bm-cross-line-ch-1"></span>
+                    <span className="bm-cross bm-cross-line-ch-2"></span>
+                </span>
+                <button className="bm-cross-btn" onClick={this.toggleDialog(modalName)}>Закрыть</button>
+                </div>
+            </div>
+        );
+    },
+    getTiggerAndModal: function(modalName, textBtn){
+        var Modal = Boron[modalName];
+        return (
+            <div>
+                <NavLink className="bm-menu" onClick={this.toggleDialog(modalName)}>{textBtn}</NavLink>
+                <Modal ref={modalName} modalStyle={modalStyle}>{this.getContent(modalName)}</Modal>
+            </div>
+        );
+    },
+    render: function() {
+        var self = this;
+        return (
+            <div>
+                { self.getTiggerAndModal('WaveModal', 'Войти') }
+            </div>
+        );
+    }
+});
 
 export const ConnectedAppMenu = connect(
     (state) => ({
