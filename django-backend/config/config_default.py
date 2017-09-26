@@ -12,7 +12,9 @@ COMMON_APP_CONFIG = {
     },
     # Allow to login via social nets
     'social_auth': {
-        'google': True,
+        'google': False,
+        'vk': False,
+        'facebook': False
     },
 }
 
@@ -22,7 +24,7 @@ SERVER_CONFIG = {
     # The second number should be equal or more the server version
     # Configuration version is needed to check that propesed configuration is
     # compatible with server
-    'config_version': [3, 1],
+    'config_version': [3, 2],
 
     'allowed_hosts': ['*'],
 
@@ -50,6 +52,14 @@ SERVER_CONFIG = {
     # As alternative social nets auth could be configured by /admin menu
     #'auth_config': {
     #    'google': {
+    #        'secret': 'XXXXXXXXXXXXXXXXXXXXXXXX',
+    #        'client_id': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    #    },
+    #    'facebook': {
+    #        'secret': 'XXXXXXXXXXXXXXXXXXXXXXXX',
+    #        'client_id': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    #    },
+    #    'vk': {
     #        'secret': 'XXXXXXXXXXXXXXXXXXXXXXXX',
     #        'client_id': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
     #    }

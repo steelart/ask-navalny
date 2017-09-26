@@ -63,8 +63,12 @@ post_api('/api/check-logined', {}, (data) => {
 class LoginViaSocialNets extends React.Component {
     render() {
         const google = sdef(APP_CONFIG.social_auth).google;
+        const facebook = sdef(APP_CONFIG.social_auth).facebook;
+        const vk = sdef(APP_CONFIG.social_auth).vk;
         return <div>
             { google && <RefButton href={'/accounts/google/login/?next=' + encodeURIComponent(window.location.pathname)}>Войти через google</RefButton> }
+            { facebook && <RefButton href={'/accounts/facebook/login/?next=' + encodeURIComponent(window.location.pathname)}>Войти через facebook</RefButton> }
+            { vk && <RefButton href={'/accounts/vk/login/?next=' + encodeURIComponent(window.location.pathname)}>Войти через vk</RefButton> }
         </div>;
     }
 }

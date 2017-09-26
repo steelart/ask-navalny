@@ -20,10 +20,29 @@ urlpatterns = [
 ]
 
 # TODO: better move it somewhere
+def init_provider(auth_config, site, name):
+    from allauth.socialaccount.models import SocialApp
+    cfg = auth_config[name]
+    if cfg is not None:
+        try:
+            app = SocialApp.objects.get(provider=name)
+            app.secret = cfg['secret']
+            app.client_id = cfg['client_id']
+            app.save()
+        except SocialApp.DoesNotExist:
+            app = SocialApp.objects.create(
+                provider=name,
+                secret=cfg['secret'],
+                client_id=cfg['client_id'],
+                name=(name + ' provider'))
+            app.sites.add(site)
+            app.save()
+
+
+# TODO: better move it somewhere
 def check_and_reset_auth_data():
     from django.db.utils import OperationalError
     from django.contrib.sites.models import Site
-    from allauth.socialaccount.models import SocialApp
 
     from config.config import COMMON_APP_CONFIG
     from config.config import SERVER_CONFIG
@@ -43,22 +62,9 @@ def check_and_reset_auth_data():
     auth_config = SERVER_CONFIG['auth_config']
     if auth_config is None:
         return
-
-    cfg = auth_config['google']
-    if cfg is not None:
-        try:
-            app = SocialApp.objects.get(provider='google')
-            app.secret = cfg['secret']
-            app.client_id = cfg['client_id']
-            app.save()
-        except SocialApp.DoesNotExist:
-            app = SocialApp.objects.create(
-                provider='google',
-                secret=cfg['secret'],
-                client_id=cfg['client_id'],
-                name='google provider')
-            app.sites.add(site)
-            app.save()
+    init_provider(auth_config, site, 'google')
+    init_provider(auth_config, site, 'facebook')
+    init_provider(auth_config, site, 'vk')
 
 # Perform this code once when server starts
 check_and_reset_auth_data()

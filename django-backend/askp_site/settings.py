@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Current server configuration version:
-ACTUAL_CONFIG_VERSION = [3, 1]
+ACTUAL_CONFIG_VERSION = [3, 2]
 
 # Check configuration version:
 if SERVER_CONFIG['config_version'][0] != ACTUAL_CONFIG_VERSION[0]:
@@ -69,6 +69,10 @@ if COMMON_APP_CONFIG['social_auth'] is not None:
     ])
     if COMMON_APP_CONFIG['social_auth']['google']:
         INSTALLED_APPS.append('allauth.socialaccount.providers.google')
+    if COMMON_APP_CONFIG['social_auth']['facebook']:
+        INSTALLED_APPS.append('allauth.socialaccount.providers.facebook')
+    if COMMON_APP_CONFIG['social_auth']['vk']:
+        INSTALLED_APPS.append('allauth.socialaccount.providers.vk')
 
 SITE_ID = 1
 
