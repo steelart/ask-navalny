@@ -2488,8 +2488,13 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
   color: #d9534f;
 }
 
-.has-danger .form-control {
+.has-danger .form-control,
+.form-control-danger {
   border-color: #d9534f;
+}
+
+.form-control-danger {
+    background-image: url(data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' f…%3E%3Ccircle cy='3' r='.5'/%3E%3Ccircle cx='3' cy='3' r='.5'/%3E%3C/svg%3E);
 }
 
 .has-danger .input-group-addon {

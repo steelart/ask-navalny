@@ -33,7 +33,10 @@ import { APP_CONFIG } from './config.jsx';
 import { mainStore, resetModalMode, dispatchModalMode } from './main-reducer.jsx';
 
 import { LinkButton, SimpleButton, RefButton, LinkButtonLI, SimpleButtonLI, RefButtonLI } from './buttons.jsx';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Collapse, CardBlock, Card, Button, Row, Col } from 'reactstrap';
+import { Alert, TabContent, TabPane, Nav, NavItem, NavLink, Collapse, CardBlock,
+         Card, Button, Row, Col, Form, FormGroup, FormFeedback, Label, Input,
+         FormText } from 'reactstrap';
+
 import classnames from 'classnames';
 
 import { post_api } from './loading-api.jsx';
@@ -149,38 +152,57 @@ class LocalLoginPage extends React.Component {
                         </Row>
                     </TabPane>
                     <TabPane tabId="2">
-                        <Row>
-                            <Col sm="12">
+                        <Row className="flex-center">
+                            <Col sm="6">
                                 <NavLink onClick={() => dispatchModalMode(this, ConnectedRegistrationPage)}>Зарегистрироваться</NavLink>
+                                <Form>
+                                    <Alert color="warning">
+                                        <strong>Не используйте реальные пароли!</strong> В тестовой версии безопасность передачи и хранение пароля не проработаны!
+                                    </Alert>
+                                    <FormGroup row>
+                                        <Label for="authLogin" sm={2}>Логин</Label>
+                                        <Col sm={10}>
+                                            <Input
+                                                state={error_text && 'danger'}
+                                                value={this.state.username}
+                                                onChange={(e) => this.setState({username : e.target.value, incorrect_login : false})}
+                                                autoCorrect='off'
+                                                autoCapitalize='off'
+                                                spellCheck='false'
+                                                type="email"
+                                                name="email"
+                                                id="authLogin"
+                                                placeholder="Введите логин" />
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row>
+                                            <Label for="authPass" sm={2}>Пароль</Label>
+                                            <Col sm={10}>
+                                                <Input
+                                                    state={error_text && 'danger'}
+                                                    value={ this.state.password }
+                                                    onChange={(e) => this.setState({password : e.target.value, incorrect_password : false})}
+                                                    autoCorrect='off'
+                                                    autoCapitalize='off'
+                                                    spellCheck='false'
+                                                    type="password"
+                                                    name="password"
+                                                    id="authPass"
+                                                    placeholder="Введите пароль" />
+                                            </Col>
+                                    </FormGroup>
+                                    <FormGroup check row>
+                                        { error_text && <FormFeedback><small>{error_text}</small></FormFeedback> }
+                                        <Col sm={{ size: 8, offset: 2 }}>
+                                            <Button className="button button--blue" onClick={()=>this.submit()}>Войти</Button>
+                                        </Col>
+                                    </FormGroup>
+                                </Form>
+                                { /* TODO : Перенести авторизацию через гугл на tab[1] */ }
                                 <LoginViaSocialNets/>
-                                <p>В тестовой версии безопасность передачи и хранение пароля не проработаны! Не используйте реальные пароли!</p>
-                                <form >
-                                    <input
-                                        value={this.state.username}
-                                        onChange={(e) => this.setState({username : e.target.value, incorrect_login : false})}
-                                        type='email'
-                                        placeholder='пользователь'
-                                        autoCorrect='off'
-                                        autoCapitalize='off'
-                                        spellCheck='false'
-                                    />
-                                    <br/>
-                                    <input
-                                        value={this.state.password}
-                                        onChange={(e) => this.setState({password : e.target.value})}
-                                        type='password'
-                                        placeholder='пароль'
-                                        autoCorrect='off'
-                                        autoCapitalize='off'
-                                        spellCheck='false'
-                                    />
-                                </form>
-                                {error_text && <p className={'errorText'}>{error_text}</p> }
                                 <NavLink onClick={() => { this.toggle('1'); }}>
-                                    Войти через социальную сеть
+                                    Войти через социальную сеть (todo)
                                 </NavLink>
-                                <button onClick={()=>this.submit()}>Войти</button>
-                                <button onClick={()=>resetModalMode(this)}>отмена</button>
                             </Col>
                         </Row>
                     </TabPane>
