@@ -248,6 +248,7 @@ def update_answer_status(answer_id, status):
 
 def reorder_answer(answer_id, position):
     answer = get_answer(answer_id)
+    print('reorder new position: ' + str(position))
     if position <= 0:
         return fail_json_response('Incorrect position!')
     if answer.status != APPROVED:
@@ -256,6 +257,7 @@ def reorder_answer(answer_id, position):
         return fail_json_response('Same position!')
     question = answer.question
     all_answers = Answer.objects.filter(question=question, status=APPROVED)
+    #print('reorder all answers: ' + str(all_answers.count()))
     if position > all_answers.count() + 1:
         return fail_json_response('Incorrect position!')
     adict = {}
@@ -498,7 +500,7 @@ def post_api_main(request):
         return res
 
     if action == 'REORDER_ANSWER':
-        position = data['position']
+        position = int(data['position'])
         res = reorder_answer(content_id, position)
         ReorderAnswerAction.objects.create(
             moderator=user,
