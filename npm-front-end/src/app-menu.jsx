@@ -76,6 +76,7 @@ class AppMenu extends React.Component {
                         { is_moderator && <Link to="/last-banned" className="bm-menu">Забаненные</Link> }
                         { is_moderator && <Link to="/last-approved" className="bm-menu">Одобренные</Link> }
                         { is_moderator && <Link to="/last-undecided-answers" className="bm-menu">Последние неразмеченные ответы</Link> }
+                        { is_moderator && <Link to="/moderator-log" className="bm-menu">Лог</Link> }
                         <Link to="/search" className="bm-menu">Заглушка поиска</Link>
                         <Link to="/ask" className="bm-menu">Спросить</Link>
                         { logged_in

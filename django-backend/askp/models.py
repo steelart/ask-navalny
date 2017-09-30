@@ -198,7 +198,7 @@ def add_new_youtube_answer(author, question, video_id, start, end):
 
 # Moderator actions logging
 class ModeratorAction(PolymorphicModel):
-    action_date = models.DateTimeField(auto_now_add=True)
+    submit_date = models.DateTimeField(auto_now_add=True)
     moderator = models.ForeignKey(User)
 
 class ChangeQuestionStatusAction(ModeratorAction):
@@ -224,3 +224,9 @@ class ChangeAnswerStatusAction(ModeratorAction):
 class ReorderAnswerAction(ModeratorAction):
     new_position = models.IntegerField()
     answer = models.ForeignKey(Answer)
+
+def mod_act_to_dict(act):
+    res = obj_to_dict(act)
+    res['type'] = type(act).__name__
+    res['moderator_name'] = act.moderator.username
+    return res

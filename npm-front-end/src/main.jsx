@@ -48,6 +48,8 @@ const $ = require('jquery');
 import { Question } from './question.jsx';
 import { getSubmitFunction } from './utils.jsx';
 
+import { ConnectedModeratorLog } from './moderator-log.jsx'
+
 import { ConnectedSearchPage } from './search.jsx'
 
 import './bootstrap/css/bootstrap.css';
@@ -166,6 +168,7 @@ ReactDOM.render(
                 <Route path='/top-answered' component={ConnectedTopAnsweredQuestionsPage} />
                 <Route path='/last-undecided-answers' component={ConnectedNewAnswersQuestionsPage} />
                 <Route path='/ask' component={ConnectedQuestionForm} />
+                <Route path='/moderator-log' component={ConnectedModeratorLog} />
                 <Route path='/todo' component={TodoPage} />
                 <Route path='/search' component={ConnectedSearchPage} />
                 <Route path='/questions/:id' component={ConnectedQuestionPage} />

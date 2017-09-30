@@ -289,6 +289,26 @@ function questionsReducer(state=questionsDefault, action) {
     }
 }
 
+const moderatorLogDefault = {
+    modlog : null,
+    status : LOADING_IN_PROCESS
+}
+
+function moderatorLogReducer(state=moderatorLogDefault, action) {
+    switch (action.type) {
+        case 'SET_MODERATOR_LOG': {
+            //console.log('modlog', sdef(sdef(action.data).result).modlog);
+            if (action.result.data) {
+                return { modlog : action.result.data.modlog, status : LOADING_SUCCESSED };
+            } else {
+                console.log('FAIL!!!!!!!!');
+                return fld(state, 'status', LOADING_FAILED);
+            }
+        }
+        default:
+            return state;
+    }
+}
 
 function appConfigReducer(state={ modal_mode : null }, action) {
     switch (action.type) {
@@ -317,6 +337,8 @@ var reducer = combineReducers({
     idInfo: idInfoReducer,
 
     questionsInfo: questionsReducer,
+
+    moderatorLog: moderatorLogReducer,
 
     appConfig : appConfigReducer
 });

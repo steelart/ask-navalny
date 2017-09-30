@@ -35,6 +35,7 @@ from .models import ModeratorAction
 
 from .models import obj_to_dict
 from .models import answer_to_dict
+from .models import mod_act_to_dict
 
 from .models import APPROVED
 from .models import REJECTED
@@ -140,16 +141,18 @@ def answers(request, question_id):
     return JsonResponse({'question': qdict, 'answers': adict})
 
 
-def moderator_actions(start_id):
+def moderator_actions(request, start_id):
     if not request.user.has_perm('askp.moderator_perm'):
-        raise Http404('No permissions for ' + list_type)
-    query = ModeratorAction.objects.all()[:start_id]
-    if str(start_id) != '0':  # TODO!!
-        query = query.filter(id__lt=start_id)
-    actdict = {}
+        raise Http404('No permissions')
+    query = ModeratorAction.objects.all().order_by('-id')
+    #if str(start_id) != '0':  # TODO!!
+    #    query = query.filter(id__lt=start_id)
+    actdict = []
+    print('start:')
     for act in query:
-        actdict[act.id] = obj_to_dict(act)
-    return JsonResponse({'actions': actdict})
+        print('  act:', act)
+        actdict.append(mod_act_to_dict(act))
+    return JsonResponse({'modlog': actdict})
 
 # TODO: Could be slow! Every time we return all found questions.
 def search_api(request):
