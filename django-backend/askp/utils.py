@@ -52,8 +52,12 @@ def pass_raise_dbg_filter_or_exception(request):
         raise Http404('You need to pass debug filter')
 
 
+def fail_dict(diagnostic):
+    return {'success': False, 'diagnostic': diagnostic}
+
+
 def fail_json_response(diagnostic):
-    return JsonResponse({'success': False, 'diagnostic': diagnostic})
+    return JsonResponse(fail_dict(diagnostic))
 
 
 def get_domain(uri):

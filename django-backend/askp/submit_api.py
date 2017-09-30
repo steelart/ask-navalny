@@ -65,7 +65,7 @@ from .models import HARD_BAN
 from .models import AUTO_BAN
 
 from .utils import pass_raise_dbg_filter_or_exception
-from .utils import fail_json_response
+from .utils import fail_dict
 
 
 def get_question(question_id):
@@ -88,7 +88,7 @@ def update_question(question_id, updater):
     question = get_question(question_id)
     res = updater(question)
     if res is not None and not res:
-        return fail_json_response('could not change question')
+        return fail_dict('could not change question')
     qdict = update_and_send_question(question)
     return {'success': True, 'question': qdict}
 
@@ -102,7 +102,7 @@ def update_answer(answer_id, updater):
     answer = get_answer(answer_id)
     res = updater(answer)
     if res is not None and not res:
-        return fail_json_response('could not change answer')
+        return fail_dict('could not change answer')
     adict = update_and_send_answer(answer)
     return {'success': True, 'answer': adict}
 
@@ -186,7 +186,7 @@ def update_answer_status(answer_id, status):
     old_status = answer.status
     if status == HARD_BAN and old_status == REJECTED:
         if AnswerBanReason.objects.get(answer=answer).ban_type == HARD_BAN:
-            return fail_json_response('The same status')
+            return fail_dict('The same status')
 
     if status == HARD_BAN:
         status = REJECTED
@@ -195,7 +195,7 @@ def update_answer_status(answer_id, status):
         hard_ban = False
 
     if status == answer.status:
-        return fail_json_response('The same status')
+        return fail_dict('The same status')
     question = answer.question
     qdict = obj_to_dict(question)
     approved_answers = Answer.objects.filter(question=question, status=APPROVED)
@@ -250,16 +250,16 @@ def reorder_answer(answer_id, position):
     answer = get_answer(answer_id)
     print('reorder new position: ' + str(position))
     if position <= 0:
-        return fail_json_response('Incorrect position!')
+        return fail_dict('Incorrect position!')
     if answer.status != APPROVED:
-        return fail_json_response('Not approved answer!')
+        return fail_dict('Not approved answer!')
     if answer.position == position:
-        return fail_json_response('Same position!')
+        return fail_dict('Same position!')
     question = answer.question
     all_answers = Answer.objects.filter(question=question, status=APPROVED)
     #print('reorder all answers: ' + str(all_answers.count()))
     if position > all_answers.count() + 1:
-        return fail_json_response('Incorrect position!')
+        return fail_dict('Incorrect position!')
     adict = {}
     if position > answer.position:
         need_shift = all_answers.filter(position__gt=answer.position, position__lte=position)
@@ -412,9 +412,9 @@ def post_api_main(request):
     data = request.POST
     user = request.user
     if not user.is_authenticated:
-        return fail_json_response('user is not authenticated')
+        return fail_dict('user is not authenticated')
     if user_is_banned(user):
-        return fail_json_response('user is banned')
+        return fail_dict('user is banned')
 
     action = data['action']
     if action == 'NEW_QUESTION':
@@ -514,4 +514,5 @@ def post_api_main(request):
 @transaction.atomic
 def post_api(request):
     dres = post_api_main(request)
+    print dres
     return JsonResponse(dres)
