@@ -24,8 +24,9 @@ SOFTWARE.
 
 import ReactDOM from 'react-dom';
 import React from 'react';
-import { Router, Route, IndexRoute, Redirect, browserHistory } from 'react-router';
-import { Link } from 'react-router';
+import { Route, Link, Redirect, Switch, HashRouter, BrowserRouter } from 'react-router-dom';
+import { withRouter } from 'react-router'
+import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux';
 
 import { Provider, connect } from 'react-redux';
 
@@ -33,7 +34,7 @@ import Modal from 'react-modal';
 
 import { APP_CONFIG } from './config.jsx';
 
-import { mainStore, resetModalMode, dispatchModalMode } from './main-reducer.jsx';
+import { history, mainStore, resetModalMode, dispatchModalMode } from './main-reducer.jsx';
 
 import { ConnectedQuestionForm } from './ask-question-page.jsx';
 import { ConnectedAppMenu } from './app-menu.jsx';
@@ -56,7 +57,6 @@ import './bootstrap/css/bootstrap.css';
 import './style_okonst.css';
 import './style_orange.css';
 import './global-init.jsx';
-
 
 const ConnectedLastAllQuestionsPage = connectedQuestionsLastTemplate('all');
 const ConnectedLastAnsweredQuestionsPage = connectedQuestionsLastTemplate('answered');
@@ -139,9 +139,15 @@ class App extends React.Component {
     }
 }
 
-const ConnectedApp = connect((state, props) => ({
+/*
+<button type='button' onClick={() => { this.props.history.push('/new-location') }}>
+    Click Me!
+</button>
+*/
+
+const ConnectedApp = withRouter(connect((state, props) => ({
         appConfig : state.appConfig
-    }))(App);
+    }))(App));
 
 
 if (APP_CONFIG.debug) {
@@ -154,26 +160,23 @@ if (APP_CONFIG.api_version != 4) {
 
 ReactDOM.render(
       <Provider store={ mainStore }>
-        <Router history={browserHistory}>
-            <Redirect from='/' to='/last-answered' />
-            <Redirect from='/last' to='/last-answered' />
-
-            <Route path='/' component={ConnectedApp}>
-                <Route path='/last-all' component={ConnectedLastAllQuestionsPage} />
-                <Route path='/last-answered' component={ConnectedLastAnsweredQuestionsPage} />
-                <Route path='/last-banned' component={ConnectedLastBannedQuestionsPage} />
-                <Route path='/last-approved' component={ConnectedLastApprovedQuestionsPage} />
-                <Route path='/last-undecided' component={ConnectedLastUndecidedQuestionsPage} />
-                <Route path='/top-approved' component={ConnectedTopApprovedQuestionsPage} />
-                <Route path='/top-answered' component={ConnectedTopAnsweredQuestionsPage} />
-                <Route path='/last-undecided-answers' component={ConnectedNewAnswersQuestionsPage} />
-                <Route path='/ask' component={ConnectedQuestionForm} />
-                <Route path='/moderator-log' component={ConnectedModeratorLog} />
-                <Route path='/todo' component={TodoPage} />
-                <Route path='/search' component={ConnectedSearchPage} />
-                <Route path='/questions/:id' component={ConnectedQuestionPage} />
-            </Route>
+        <ConnectedRouter history={history}><ConnectedApp><Switch>
+            <Route exact path='/last-all' component={ConnectedLastAllQuestionsPage} />
+            <Route exact path='/last-answered' component={ConnectedLastAnsweredQuestionsPage} />
+            <Route exact path='/last-banned' component={ConnectedLastBannedQuestionsPage} />
+            <Route exact path='/last-approved' component={ConnectedLastApprovedQuestionsPage} />
+            <Route exact path='/last-undecided' component={ConnectedLastUndecidedQuestionsPage} />
+            <Route exact path='/top-approved' component={ConnectedTopApprovedQuestionsPage} />
+            <Route exact path='/top-answered' component={ConnectedTopAnsweredQuestionsPage} />
+            <Route exact path='/last-undecided-answers' component={ConnectedNewAnswersQuestionsPage} />
+            <Route exact path='/ask' component={ConnectedQuestionForm} />
+            <Route exact path='/moderator-log' component={ConnectedModeratorLog} />
+            <Route exact path='/todo' component={TodoPage} />
+            <Route exact path='/search' component={ConnectedSearchPage} />
+            <Route exact path='/questions/:id' component={ConnectedQuestionPage} />
+            <Redirect exact from='/' to='/last-answered' />
+            <Redirect exact from='/last' to='/last-answered' />
             <Route path='*' component={NotFound} />
-        </Router>
+        </Switch></ConnectedApp></ConnectedRouter>
       </Provider>,
     document.getElementById('mount-point'));

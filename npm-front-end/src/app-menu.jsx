@@ -24,7 +24,7 @@ SOFTWARE.
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { NOT_LOGINED_ID_INFO, dispatchModalMode } from './main-reducer.jsx';
 
 import { LinkButton, SimpleButton, RefButton, LinkButtonLI, SimpleButtonLI, RefButtonLI } from './buttons.jsx';

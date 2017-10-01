@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 
 import {sdef, fld, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SUCCESSED} from './utils.jsx';
 import { Button, Form, FormGroup, Label, Input, FormText, Modal, Alert } from 'reactstrap';
@@ -329,7 +329,16 @@ export function resetModalMode(connectedReactComp) {
     dispatchModalMode(connectedReactComp, null);
 }
 
+import createHistory from 'history/createBrowserHistory';
+export const history = createHistory();
+
+import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux';
+
+const middleware = routerMiddleware(history);
+
 var reducer = combineReducers({
+    router: routerReducer,
+
     questionText: questionReducer,
     answerText: answerReducer,
     webSocket: socketReducer,
@@ -343,4 +352,4 @@ var reducer = combineReducers({
     appConfig : appConfigReducer
 });
 
-export let mainStore = createStore(reducer);
+export let mainStore = createStore(reducer, applyMiddleware(middleware));

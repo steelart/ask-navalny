@@ -119,7 +119,7 @@ class QuestionPage extends React.Component {
     }
 
     render() {
-        const question_id = this.props.params.id;
+        const question_id = this.props.match.params.id;
         const questionsInfo = this.props.questionsInfo;
         const answers = questionsInfo.answers_map[question_id];
         const question = questionsInfo.questions[question_id];

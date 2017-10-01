@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 import React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 
 class BaseButton extends React.Component {
