@@ -66,7 +66,7 @@ export class Question extends React.Component {
                     <div className="question-pos">
                         <div className="question-pos-l">
                             <p className='title'>
-                                <Link to={'/questions/' + data.id}>{data.text_str}</Link>
+                                <Link to={'/question/' + data.id}>{data.text_str}</Link>
                             </p>
                             <span className="subtitle">{data.submit_date}</span>
                         </div>

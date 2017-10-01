@@ -173,7 +173,8 @@ ReactDOM.render(
             <Route exact path='/moderator-log' component={ConnectedModeratorLog} />
             <Route exact path='/todo' component={TodoPage} />
             <Route exact path='/search' component={ConnectedSearchPage} />
-            <Route exact path='/questions/:id' component={ConnectedQuestionPage} />
+            <Route exact path='/question/:qid' component={ConnectedQuestionPage} />
+            <Route exact path='/question/:qid/:aid' component={ConnectedQuestionPage} />
             <Redirect exact from='/' to='/last-answered' />
             <Redirect exact from='/last' to='/last-answered' />
             <Route path='*' component={NotFound} />

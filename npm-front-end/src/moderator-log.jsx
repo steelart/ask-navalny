@@ -32,7 +32,7 @@ class ModeratorLog extends React.Component {
             <td>{item.submit_date}</td>
             <td>{item.moderator_name}</td>
             <td>{type}</td>
-            {cqsa && <td><Link to={'/questions/' + item.question}>q{item.question}</Link> </td>}
+            {cqsa && <td><Link to={'/question/' + item.question}>q{item.question}</Link> </td>}
             {(casa || raa) && <td>a{item.answer}</td> }
             {(cqsa || casa) && <td>{get_action_name(item.new_status)}</td> }
             { raa && <td>{item.new_position}</td> }

@@ -24,6 +24,8 @@ SOFTWARE.
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router'
+
 import Linkify from 'react-linkify';
 
 import YouTube from 'react-youtube';
@@ -92,10 +94,6 @@ class Answer extends React.Component {
 class QuestionPage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            // Use id instead of local index because the index could change in other session
-            answer_id : null
-        };
     }
 
     compareAnswers(answers, id1, id2) {
@@ -118,8 +116,12 @@ class QuestionPage extends React.Component {
         return keys;
     }
 
+
     render() {
-        const question_id = this.props.match.params.id;
+        const question_id = this.props.match.params.qid;
+        const change_answer = (aid) =>
+            this.props.history.push('/question/' + question_id + '/' + aid);
+        const answer_id = this.props.match.params.aid;
         const questionsInfo = this.props.questionsInfo;
         const answers = questionsInfo.answers_map[question_id];
         const question = questionsInfo.questions[question_id];
@@ -138,7 +140,11 @@ class QuestionPage extends React.Component {
                 'SET_ANSWERS',
                 this.props.dispatch,
                 {question_id : question_id},
-                (data) => this.setState({answer_id : this.getAnswersOrder(data.answers)[0]}));
+                (data) => {
+                    const aid = this.getAnswersOrder(data.answers)[0];
+                    if (aid != undefined)
+                        change_answer(aid);
+                });
             return <div>
                 <p> Идёт загрузка ответов </p>
             </div>;
@@ -146,7 +152,7 @@ class QuestionPage extends React.Component {
             const keys = this.getAnswersOrder(answers);
             const answers_size = keys.length;
             const asfn = (n) => answers[keys[n]];
-            const cur_num = keys.indexOf(keys.find((id) => id == this.state.answer_id));
+            const cur_num = keys.indexOf(keys.find((id) => id == answer_id));
             const answer = asfn(cur_num);
 
             const approved = answer && answer.status == APPROVED;
@@ -165,9 +171,9 @@ class QuestionPage extends React.Component {
                     </Button>
                 </div>
                 <br/>
-                { answers_size != 0 && <button onClick={() => asfn(cur_num - 1) && this.setState({answer_id : keys[cur_num - 1]})}>{'<'}</button> }
+                { answers_size != 0 && <button onClick={() => asfn(cur_num - 1) && change_answer(keys[cur_num - 1])}>{'<'}</button> }
                 { answers_size != 0 && <span>Ответ {cur_num+1}/{answers_size}</span>}
-                { answers_size != 0 && <button onClick={() => asfn(cur_num + 1) && this.setState({answer_id : keys[cur_num + 1]})}>{'>'}</button> }
+                { answers_size != 0 && <button onClick={() => asfn(cur_num + 1) && change_answer(keys[cur_num + 1])}>{'>'}</button> }
                 { is_moderator && approved && <div>
                     <span>Изменить порядок:</span>
                     <select value={answer.position} onChange={(e) => this.props.submit('REORDER_ANSWER', {'id' : answer.id, 'position': e.target.value})}>
@@ -189,9 +195,9 @@ class QuestionPage extends React.Component {
     }
 }
 
-export const ConnectedQuestionPage = connect((state, props) => ({
+export const ConnectedQuestionPage = withRouter(connect((state, props) => ({
         idInfo : state.idInfo,
         answerText : state.answerText,
         questionsInfo : state.questionsInfo,
         submit : getSubmitFunction(state)
-    }))(QuestionPage);
+    }))(QuestionPage));
