@@ -474,27 +474,33 @@ def post_api_main(request):
 
     if action == 'APPROVE_ANSWER':
         res = update_answer_status(content_id, APPROVED)
+        answer = get_answer(content_id)
         ChangeAnswerStatusAction.objects.create(
             moderator=user,
-            answer=get_answer(content_id),
+            answer=answer,
+            question=answer.question,
             new_status=APPROVED
         )
         return res
 
     if action == 'REJECT_ANSWER':
         res = update_answer_status(content_id, REJECTED)
+        answer = get_answer(content_id)
         ChangeAnswerStatusAction.objects.create(
             moderator=user,
-            answer=get_answer(content_id),
+            answer=answer,
+            question=answer.question,
             new_status=REJECTED
         )
         return res
 
     if action == 'BAN_ANSWER_AND_AUTHOR':
         res = update_answer_status(content_id, HARD_BAN)
+        answer = get_answer(content_id)
         ChangeAnswerStatusAction.objects.create(
             moderator=user,
-            answer=get_answer(content_id),
+            answer=answer,
+            question=answer.question,
             new_status=HARD_BAN
         )
         return res
@@ -502,9 +508,11 @@ def post_api_main(request):
     if action == 'REORDER_ANSWER':
         position = int(data['position'])
         res = reorder_answer(content_id, position)
+        answer = get_answer(content_id)
         ReorderAnswerAction.objects.create(
             moderator=user,
-            answer=get_answer(content_id),
+            answer=answer,
+            question=answer.question,
             new_position=position
         )
         return res

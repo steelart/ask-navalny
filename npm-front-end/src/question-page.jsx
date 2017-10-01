@@ -142,7 +142,7 @@ class QuestionPage extends React.Component {
                 {question_id : question_id},
                 (data) => {
                     const aid = this.getAnswersOrder(data.answers)[0];
-                    if (aid != undefined)
+                    if (aid != undefined && answer_id == undefined)
                         change_answer(aid);
                 });
             return <div>

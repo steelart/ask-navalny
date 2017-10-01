@@ -217,12 +217,14 @@ class ChangeAnswerStatusAction(ModeratorAction):
         (REJECTED, 'Rejected'),
         (HARD_BAN, 'UserBanned')
     )
+    question = models.ForeignKey(Question)
     answer = models.ForeignKey(Answer)
     new_status = models.CharField(max_length=1, choices=ChageStatusAction)
 
 
 class ReorderAnswerAction(ModeratorAction):
     new_position = models.IntegerField()
+    question = models.ForeignKey(Question)
     answer = models.ForeignKey(Answer)
 
 def mod_act_to_dict(act):

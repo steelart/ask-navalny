@@ -148,9 +148,9 @@ def moderator_actions(request, start_id):
     #if str(start_id) != '0':  # TODO!!
     #    query = query.filter(id__lt=start_id)
     actdict = []
-    print('start:')
+    #print('start:')
     for act in query:
-        print('  act:', act)
+        #print('  act:', act)
         actdict.append(mod_act_to_dict(act))
     return JsonResponse({'modlog': actdict})
 
