@@ -24,7 +24,7 @@ SOFTWARE.
 
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 
-import {sdef, fld, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SUCCESSED} from './utils.jsx';
+import {sdef, fld, getIdMap, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SUCCESSED} from './utils.jsx';
 import { Button, Form, FormGroup, Label, Input, FormText, Modal, Alert } from 'reactstrap';
 
 var questionReducer = function (state = '', action) {
@@ -247,7 +247,7 @@ function questionsReducer(state=questionsDefault, action) {
             questions[question_id] = action.result.data.question;
 
             var answers_map = {...state.answers_map};
-            answers_map[question_id] = action.result.data.answers;
+            answers_map[question_id] = getIdMap(action.result.data.answers);
 
             return { ...state, questions : questions, answers_map : answers_map};
         }

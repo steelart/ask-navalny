@@ -127,14 +127,14 @@ def sorted_questions(request, sort_type):
 
 def answers(request, question_id):
     pass_raise_dbg_filter_or_exception(request)
-    adict = {}
+    adict = []
     query = Answer.objects.filter(question=question_id)
 
     if not request.user.has_perm('askp.moderator_perm'):
         query = query.filter(status=APPROVED)
 
     for a in query:
-        adict[a.id] = answer_to_dict(a)
+        adict.append(answer_to_dict(a))
         # print(a.text_str)
     question = Question.objects.get(id=question_id)
     qdict = obj_to_dict(question)

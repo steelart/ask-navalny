@@ -36,7 +36,7 @@ import { Button } from 'reactstrap';
 import { place_question } from './question.jsx';
 
 import { api_connect, loadData } from './loading-api.jsx';
-import { sdef, getSubmitFunction, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SUCCESSED } from './utils.jsx';
+import { sdef, getSubmitFunction, getIdMap, LOADING_IN_PROCESS, LOADING_FAILED, LOADING_SUCCESSED } from './utils.jsx';
 
 import { resetModalMode, dispatchModalMode } from './main-reducer.jsx'
 import { setLoginModalMode } from './login-page.jsx';
@@ -141,7 +141,7 @@ class QuestionPage extends React.Component {
                 this.props.dispatch,
                 {question_id : question_id},
                 (data) => {
-                    const aid = this.getAnswersOrder(data.answers)[0];
+                    const aid = this.getAnswersOrder(getIdMap(data.answers))[0];
                     if (aid != undefined && answer_id == undefined)
                         change_answer(aid);
                 });

@@ -79,6 +79,15 @@ export function getArrayOfKeys(obj) {
     return res;
 }
 
+export function getIdMap(arr) {
+    var res = {};
+    for (var i = 0; i < arr.length; i++) {
+        const val = arr[i];
+        res[val.id] = val;
+    }
+    return res;
+}
+
 export function getSubmitFunction(state) {
     return (action, input, callback) => post_api(
         '/api/post-api',
