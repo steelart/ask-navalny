@@ -204,7 +204,7 @@ def update_answer_status(answer_id, status):
             # The first approved answer
             question.status = ANSWERED
             qdict = update_and_send_question(question)
-        if status != APPROVED and approved_answers.count() == 1:
+        if status != APPROVED and old_status == APPROVED and approved_answers.count() == 1:
             # Removed only one answer so return question to APPROVED status
             question.status = APPROVED
             qdict = update_and_send_question(question)
