@@ -59,6 +59,11 @@ class Question(models.Model):
         permissions = (
             ('moderator_perm', 'Can do moderator actions'),
         )
+    def __str__(self):
+        return '%s %s %s' % (
+            self.text_str,
+            self.status,
+            self.author.username)
 
 
 VOTED = 'v'
