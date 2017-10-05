@@ -137,8 +137,9 @@ def answers(request, question_id):
         adict.append(answer_to_dict(a))
         # print(a.text_str)
     question = Question.objects.get(id=question_id)
-    qdict = obj_to_dict(question)
-    return JsonResponse({'question': qdict, 'answers': adict})
+    qdict = []
+    qdict.append(obj_to_dict(question))
+    return JsonResponse({'questions': qdict, 'answers': adict})
 
 
 def moderator_actions(request, start_id):

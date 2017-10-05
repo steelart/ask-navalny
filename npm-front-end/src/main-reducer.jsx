@@ -130,15 +130,33 @@ function set_selections(state, input_list, output_name) {
     return fld(state, output_name, r);
 }
 
+function update_questions_data(old_state, data) {
+    var state = old_state;
+    if (data.questions) {
+        var questions = { ...sdef(state.questions) };
+        for (var i = 0; i < data.questions.length; i++) {
+            var q = data.questions[i];
+            questions[q.id] = q;
+        }
+        state = fld(state, 'questions', questions);
+    }
+    if (data.answers) {
+        var answers_map = {...state.answers_map};
+        for (var i = 0; i < data.answers.length; i++) {
+            const answer = data.answers[i];
+            const question_id = answer.question;
+            answers_map[question_id] = fld(answers_map[question_id], answer.id, answer);
+        }
+        state = fld(state, 'answers_map', answers_map);
+    }
+    return state;
+}
+
+
 function questionsReducer(state=questionsDefault, action) {
     switch (action.type) {
         case 'ADD_QUESTIONS':
-            var questions = { ...sdef(state.questions) };
-            for (var i = 0; i < action.questions.length; i++) {
-                var q = action.questions[i];
-                questions[q.id] = q;
-            }
-            return fld(state, 'questions', questions);
+            return update_questions_data(state, action);
 
         case 'SET_QUESTION_LAST':
             const sname = action.section_name;
@@ -237,20 +255,11 @@ function questionsReducer(state=questionsDefault, action) {
             return s;
         }
 
-        case 'SET_ANSWERS': {
+        case 'SET_ANSWERS':
             if (!action.result.data) {
                 return state;
             }
-            const question_id = action.question_id;
-
-            var questions = {...state.questions};
-            questions[question_id] = action.result.data.question;
-
-            var answers_map = {...state.answers_map};
-            answers_map[question_id] = getIdMap(action.result.data.answers);
-
-            return { ...state, questions : questions, answers_map : answers_map};
-        }
+            return update_questions_data(state, action.result.data);
 
         case 'SET_ANSWER_DATA': {
             const question_id = action.answer.question;
