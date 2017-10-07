@@ -33,7 +33,7 @@ from .models import Answer
 
 from .models import ModeratorAction
 
-from .models import obj_to_dict
+from .models import question_to_dict
 from .models import answer_to_dict
 from .models import mod_act_to_dict
 
@@ -53,7 +53,7 @@ def query_questions(request):
     res = []
     for qid in numbers:
         q = Question.objects.get(id=qid)
-        res.append(obj_to_dict(q))
+        res.append(question_to_dict(q))
     return JsonResponse({'questions': res})
 
 
@@ -94,7 +94,7 @@ def last_questions(request, list_type, start_id):
     ids = set()
     for q in from_filter.order_by('-id')[:UPLOAD_QUESTIONS_COUNT]:
         if q.id not in ids:
-            res.append(obj_to_dict(q))
+            res.append(question_to_dict(q))
             ids.add(q.id)
     return JsonResponse({'questions': res})
 
@@ -118,7 +118,7 @@ def sorted_questions(request, sort_type):
     num = 0
     for q in query:
         if num < UPLOAD_QUESTIONS_COUNT:
-            qarr.append(obj_to_dict(q))
+            qarr.append(question_to_dict(q))
         idarr.append(q.id)
         num = num + 1
     return JsonResponse({'questions': qarr, 'id_list': idarr})
@@ -138,7 +138,7 @@ def answers(request, question_id):
         # print(a.text_str)
     question = Question.objects.get(id=question_id)
     qdict = []
-    qdict.append(obj_to_dict(question))
+    qdict.append(question_to_dict(question))
     return JsonResponse({'questions': qdict, 'answers': adict})
 
 
@@ -163,6 +163,6 @@ def search_api(request):
     questions = Question.objects.filter(text_str__icontains=text)
     found = []
     for q in questions:
-        found.append(obj_to_dict(q))
+        found.append(question_to_dict(q))
 
     return JsonResponse({'success': True, 'found': found})

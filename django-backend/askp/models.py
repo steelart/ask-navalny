@@ -174,6 +174,11 @@ def obj_to_dict(obj):
     return res
 
 
+def question_to_dict(question):
+    res = obj_to_dict(question)
+    return res
+
+
 def answer_to_dict(answer):
     res = obj_to_dict(answer)
     return res

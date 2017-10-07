@@ -45,7 +45,7 @@ from .models import ChangeQuestionStatusAction
 from .models import ChangeAnswerStatusAction
 from .models import ReorderAnswerAction
 
-from .models import obj_to_dict
+from .models import question_to_dict
 from .models import answer_to_dict
 from .models import add_new_question
 from .models import add_new_youtube_answer
@@ -80,7 +80,7 @@ def send_object(obj):
 
 def update_and_send_question(question):
     question.save()
-    qdict = obj_to_dict(question)
+    qdict = question_to_dict(question)
     send_object({'type': 'UPDATE_QUESTION', 'question': qdict})
     return qdict
 
@@ -197,7 +197,7 @@ def update_answer_status(answer_id, status):
     if status == answer.status:
         return fail_dict('The same status')
     question = answer.question
-    qdict = obj_to_dict(question)
+    qdict = question_to_dict(question)
     approved_answers = Answer.objects.filter(question=question, status=APPROVED)
     if question.status != REJECTED:
         if status == APPROVED and not approved_answers.exists():
@@ -294,7 +294,7 @@ def check_moderator_perms_and_log(request):
 
 def new_question(author, text_str):
     q = add_new_question(text_str=text_str, author=author)
-    qdict = obj_to_dict(q)
+    qdict = question_to_dict(q)
     send_object({'type': 'NEW_QUESTION', 'question': qdict})
     return {'success': True, 'id': q.id}
 
