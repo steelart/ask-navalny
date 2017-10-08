@@ -29,6 +29,7 @@ import ReactSVG from 'react-svg'
 import { connect } from 'react-redux';
 
 import { APP_CONFIG } from './config.jsx';
+import { connectWebSocket } from './global-init.jsx';
 
 import { mainStore, resetModalMode, dispatchModalMode } from './main-reducer.jsx';
 
@@ -53,6 +54,10 @@ function login_actions(dispatch, data) {
     }});
     dispatch({type : 'SET_SELECTIONS', selections : data.selections});
     dispatch({type : 'SET_MODAL_MODE', modal_mode : null});
+
+    if (data.is_moderator && APP_CONFIG.web_sockets) {
+        connectWebSocket();
+    }
 }
 
 post_api('/api/check-logined', {}, (data) => {

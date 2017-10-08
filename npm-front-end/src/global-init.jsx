@@ -30,7 +30,7 @@ const $ = require('jquery');
 
 var needRefresh = false;
 
-function connectWebSocket() {
+export function connectWebSocket() {
     window.timerId = null;
     var webSocket = new WebSocket('ws://' + window.location.host + '/hello/world');
     webSocket.onopen = function() {
@@ -69,7 +69,3 @@ function connectWebSocket() {
 console.log(window.global_preload_data);
 mainStore.dispatch({ type : 'ADD_QUESTIONS', questions : window.global_preload_data.questions });
 
-$(document).ready(function(){
-    if (APP_CONFIG.web_sockets)
-        connectWebSocket();
-});

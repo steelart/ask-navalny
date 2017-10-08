@@ -23,18 +23,26 @@
 __author__ = 'Merkulov Alexey'
 
 import json
+
+from django.contrib.auth.models import User
+
 from channels.channel import Group
+from channels.sessions import channel_session
+from channels.auth import channel_session_user_from_http
 
+import inspect
 
+@channel_session_user_from_http
 def ws_connect(message):
-    obj = {'type': 'CONNECT_HANDSHAKE'}
-    message.reply_channel.send({'text': json.dumps(obj)})
-    Group('all').add(message.reply_channel)
-
+    if message.user.has_perm('askp.moderator_perm'):
+        obj = {'type': 'CONNECT_HANDSHAKE'}
+        message.reply_channel.send({'text': json.dumps(obj)})
+        Group('moderator').add(message.reply_channel)
+    #TODO: make sure to discard connection
 
 def ws_message(message):
     print('Now there should not be input messages!')
 
 
 def ws_disconnect(message):
-    Group('all').discard(message.reply_channel)
+    Group('moderator').discard(message.reply_channel)

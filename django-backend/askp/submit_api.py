@@ -76,7 +76,7 @@ def get_answer(answer_id):
 
 def send_object(obj):
     if COMMON_APP_CONFIG['web_sockets']:
-        Group('all').send({'text': json.dumps(obj)})
+        Group('moderator').send({'text': json.dumps(obj)})
 
 def update_and_send_question(question):
     question.save()
