@@ -174,13 +174,21 @@ def obj_to_dict(obj):
     return res
 
 
-def question_to_dict(question):
+def question_to_dict(question, is_moderator):
     res = obj_to_dict(question)
+    if not is_moderator:
+        del res['author']
+    if is_moderator and question.status == REJECTED:
+        res['reason'] = AnswerBanReason.objects.get(answer=question.id).ban_type
     return res
 
 
-def answer_to_dict(answer):
+def answer_to_dict(answer, is_moderator):
     res = obj_to_dict(answer)
+    if not is_moderator:
+        del res['author']
+    if is_moderator and answer.status == REJECTED:
+        res['reason'] = AnswerBanReason.objects.get(answer=answer.id).ban_type
     return res
 
 

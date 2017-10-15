@@ -78,27 +78,31 @@ def send_object(obj):
     if COMMON_APP_CONFIG['web_sockets']:
         Group('moderator').send({'text': json.dumps(obj)})
 
-def update_and_send_question(question):
+def update_and_send_question(question, is_moderator):
     question.save()
-    qdict = question_to_dict(question)
+    qdict = question_to_dict(question, True)
     send_object({'type': 'UPDATE_QUESTION', 'question': qdict})
+    if not is_moderator:
+        qdict = question_to_dict(question, False)
     return qdict
 
-def update_question(question_id, updater):
+def update_question(question_id, updater, is_moderator):
     question = get_question(question_id)
     res = updater(question)
     if res is not None and not res:
         return fail_dict('could not change question')
-    qdict = update_and_send_question(question)
+    qdict = update_and_send_question(question, is_moderator)
     return {'success': True, 'question': qdict}
 
-def update_and_send_answer(answer):
+def update_and_send_answer(answer, is_moderator):
     answer.save()
-    adict = answer_to_dict(answer)
+    adict = answer_to_dict(answer, True)
     send_object({'type': 'SET_ANSWER_DATA', 'answer': adict})
+    if not is_moderator:
+        adict = answer_to_dict(answer, False)
     return adict
 
-def update_answer(answer_id, updater):
+def update_answer(answer_id, updater, is_moderator):
     answer = get_answer(answer_id)
     res = updater(answer)
     if res is not None and not res:
@@ -141,7 +145,7 @@ def unban_auto_banned_if_needed(ban):
         for b in auto_banned:
             q = b.question
             q.status = UNDECIDED
-            qd = update_and_send_question(q)
+            qd = update_and_send_question(q, True)
             qdict[q.id] = qd
         auto_banned.delete()
         # unban autobanned answers:
@@ -151,7 +155,7 @@ def unban_auto_banned_if_needed(ban):
         for b in auto_banned:
             a = b.answer
             a.status = UNDECIDED
-            ad = update_and_send_answer(a)
+            ad = update_and_send_answer(a, True)
             adict[a.id] = ad
         auto_banned.delete()
     return rdict
@@ -168,7 +172,7 @@ def auto_ban_undecided(content, content_type):
             continue
         a.status = REJECTED
         set_ban_for_answer(a, AUTO_BAN)
-        ad = update_and_send_answer(a)
+        ad = update_and_send_answer(a, True)
         adict[a.id] = ad
     questions = Question.objects.filter(author=user, status=UNDECIDED)
     for q in questions:
@@ -176,7 +180,7 @@ def auto_ban_undecided(content, content_type):
             continue
         q.status = REJECTED
         set_ban_for_question(q, AUTO_BAN)
-        qd = update_and_send_question(q)
+        qd = update_and_send_question(q, True)
         qdict[q.id] = qd
     return rdict
 
@@ -197,17 +201,17 @@ def update_answer_status(answer_id, status):
     if status == answer.status:
         return fail_dict('The same status')
     question = answer.question
-    qdict = question_to_dict(question)
+    qdict = question_to_dict(question, True)
     approved_answers = Answer.objects.filter(question=question, status=APPROVED)
     if question.status != REJECTED:
         if status == APPROVED and not approved_answers.exists():
             # The first approved answer
             question.status = ANSWERED
-            qdict = update_and_send_question(question)
+            qdict = update_and_send_question(question, True)
         if status != APPROVED and old_status == APPROVED and approved_answers.count() == 1:
             # Removed only one answer so return question to APPROVED status
             question.status = APPROVED
-            qdict = update_and_send_question(question)
+            qdict = update_and_send_question(question, True)
     if status == APPROVED:
         count = approved_answers.count()
         answer.position = count + 1
@@ -231,13 +235,13 @@ def update_answer_status(answer_id, status):
         need_shift = approved_answers.filter(position__gt=answer.position)
         for a in need_shift:
             a.position -= 1
-            ad = update_and_send_answer(a)
+            ad = update_and_send_answer(a, True)
             adict[a.id] = ad
         answer.position = 0
     answer.status = status
     answer.save()
 
-    ad = update_and_send_answer(answer)
+    ad = update_and_send_answer(answer, True)
     adict[answer.id] = ad
 
     return {
@@ -265,17 +269,17 @@ def reorder_answer(answer_id, position):
         need_shift = all_answers.filter(position__gt=answer.position, position__lte=position)
         for a in need_shift:
             a.position -= 1
-            ad = update_and_send_answer(a)
+            ad = update_and_send_answer(a, True)
             adict[a.id] = ad
     else:
         need_shift = all_answers.filter(position__gte=position, position__lt=answer.position)
         for a in need_shift:
             a.position += 1
-            ad = update_and_send_answer(a)
+            ad = update_and_send_answer(a, True)
             adict[a.id] = ad
 
     answer.position = position
-    ad = update_and_send_answer(answer)
+    ad = update_and_send_answer(answer, True)
     adict[answer.id] = ad
 
     return {
@@ -294,13 +298,15 @@ def check_moderator_perms_and_log(request):
 
 def new_question(author, text_str):
     q = add_new_question(text_str=text_str, author=author)
-    qdict = question_to_dict(q)
+    is_moderator = author.has_perm('askp.moderator_perm')
+    qdict = question_to_dict(q, is_moderator)
     send_object({'type': 'NEW_QUESTION', 'question': qdict})
     return {'success': True, 'id': q.id}
 
 def new_youtube_answer(author, question_id, video_id, start, end):
     # TODO: add video validations (for existance and time)
     question = get_question(question_id)
+    is_moderator = author.has_perm('askp.moderator_perm')
 
     a = add_new_youtube_answer(
         author=author,
@@ -308,7 +314,7 @@ def new_youtube_answer(author, question_id, video_id, start, end):
         video_id=video_id,
         start=start,
         end=end)
-    adict = answer_to_dict(a)
+    adict = answer_to_dict(a, is_moderator)
     send_object(
         {'type': 'SET_ANSWER_DATA',
          'question_id': question_id,
@@ -316,6 +322,7 @@ def new_youtube_answer(author, question_id, video_id, start, end):
     return {'success': True, 'id': a.id}
 
 def vote_for_question(user, question_id):
+    is_moderator = user.has_perm('askp.moderator_perm')
     def updater(q):
         exists = QuestionVoteList.objects.filter(
             question=q, user=user).exists()
@@ -324,9 +331,10 @@ def vote_for_question(user, question_id):
         QuestionVoteList.objects.create(question=q, user=user, state=VOTED)
         q.votes_number += 1
         return True
-    return update_question(question_id, updater)
+    return update_question(question_id, updater, is_moderator)
 
 def complain_about_question(user, question_id):
+    is_moderator = user.has_perm('askp.moderator_perm')
     def updater(q):
         exists = QuestionVoteList.objects.filter(
             question=q, user=user).exists()
@@ -335,9 +343,10 @@ def complain_about_question(user, question_id):
         QuestionVoteList.objects.create(question=q, user=user, state=COMPLAIN)
         q.complains += 1
         return True
-    return update_question(question_id, updater)
+    return update_question(question_id, updater, is_moderator)
 
 def like_answer(user, answer_id):
+    is_moderator = user.has_perm('askp.moderator_perm')
     def updater(a):
         exists = AnswerVoteList.objects.filter(
             answer=a, user=user).exists()
@@ -350,9 +359,10 @@ def like_answer(user, answer_id):
             state=LIKE)
         a.like_number += 1
         return True
-    return update_answer(answer_id, updater)
+    return update_answer(answer_id, updater, is_moderator)
 
 def dislike_answer(user, answer_id):
+    is_moderator = user.has_perm('askp.moderator_perm')
     def updater(a):
         exists = AnswerVoteList.objects.filter(
             answer=a, user=user).exists()
@@ -365,11 +375,10 @@ def dislike_answer(user, answer_id):
             state=DISLIKE)
         a.dislike_number += 1
         return True
-    return update_answer(answer_id, updater)
+    return update_answer(answer_id, updater, is_moderator)
 
 
 def approve_question(question_id):
-    qdict = {}
     def updater(q):
         if q.status == REJECTED:
             ban = QuestionBanReason.objects.get(question=q)
@@ -380,21 +389,21 @@ def approve_question(question_id):
             q.status = ANSWERED
         else:
             q.status = APPROVED
-    return update_question(question_id, updater)
+    return update_question(question_id, updater, True)
 
 
 def ban_question(question_id):
     def updater(q):
         q.status = REJECTED
         set_ban_for_question(q, SOFT_BAN)
-    return update_question(question_id, updater)
+    return update_question(question_id, updater, True)
 
 
 def ban_question_and_user(question_id):
     def updater(q):
         q.status = REJECTED
         set_ban_for_question(q, HARD_BAN)
-    res = update_question(question_id, updater)
+    res = update_question(question_id, updater, True)
     question = get_question(question_id)
     auto_ban_undecided(question, 'question')
     return res

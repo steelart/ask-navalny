@@ -50,23 +50,25 @@ UPLOAD_QUESTIONS_COUNT = SERVER_CONFIG['upload_questions_count']
 def query_questions(request):
     pass_raise_dbg_filter_or_exception(request)
     numbers = request.META['QUERY_STRING'].split(',')
+    is_moderator = request.user.has_perm('askp.moderator_perm')
     res = []
     for qid in numbers:
         q = Question.objects.get(id=qid)
-        res.append(question_to_dict(q))
+        res.append(question_to_dict(q, is_moderator))
     return JsonResponse({'questions': res})
 
 
 
 def last_questions(request, list_type, start_id):
     pass_raise_dbg_filter_or_exception(request)
+    is_moderator = request.user.has_perm('askp.moderator_perm')
 
     start_filter = None
     if list_type == 'answered':
         #TODO: order by answer time
         start_filter = Question.objects.filter(status=ANSWERED)
     else:
-        if not request.user.has_perm('askp.moderator_perm'):
+        if not is_moderator:
             raise Http404('No permissions for ' + list_type)
     if list_type == 'all':
         start_filter = Question.objects.all()
@@ -94,13 +96,14 @@ def last_questions(request, list_type, start_id):
     ids = set()
     for q in from_filter.order_by('-id')[:UPLOAD_QUESTIONS_COUNT]:
         if q.id not in ids:
-            res.append(question_to_dict(q))
+            res.append(question_to_dict(q, is_moderator))
             ids.add(q.id)
     return JsonResponse({'questions': res})
 
 
 def sorted_questions(request, sort_type):
     pass_raise_dbg_filter_or_exception(request)
+    is_moderator = request.user.has_perm('askp.moderator_perm')
     query = None
     if sort_type == 'approved':
         query = Question.objects.filter(status=APPROVED)
@@ -118,7 +121,7 @@ def sorted_questions(request, sort_type):
     num = 0
     for q in query:
         if num < UPLOAD_QUESTIONS_COUNT:
-            qarr.append(question_to_dict(q))
+            qarr.append(question_to_dict(q, is_moderator))
         idarr.append(q.id)
         num = num + 1
     return JsonResponse({'questions': qarr, 'id_list': idarr})
@@ -130,15 +133,16 @@ def answers(request, question_id):
     adict = []
     query = Answer.objects.filter(question=question_id)
 
-    if not request.user.has_perm('askp.moderator_perm'):
+    is_moderator = request.user.has_perm('askp.moderator_perm')
+    if not is_moderator:
         query = query.filter(status=APPROVED)
 
     for a in query:
-        adict.append(answer_to_dict(a))
+        adict.append(answer_to_dict(a, is_moderator))
         # print(a.text_str)
     question = Question.objects.get(id=question_id)
     qdict = []
-    qdict.append(question_to_dict(question))
+    qdict.append(question_to_dict(question, is_moderator))
     return JsonResponse({'questions': qdict, 'answers': adict})
 
 
@@ -157,12 +161,13 @@ def moderator_actions(request, start_id):
 
 # TODO: Could be slow! Every time we return all found questions.
 def search_api(request):
+    is_moderator = request.user.has_perm('askp.moderator_perm')
     text = request.GET.get('text', '')
     if text == '':
         return JsonResponse({'success': False, 'diagnostic': 'text is empty!'})
     questions = Question.objects.filter(text_str__icontains=text)
     found = []
     for q in questions:
-        found.append(question_to_dict(q))
+        found.append(question_to_dict(q, is_moderator))
 
     return JsonResponse({'success': True, 'found': found})
