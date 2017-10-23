@@ -83,6 +83,7 @@ class Answer extends React.Component {
             <span>{data.submit_date}</span>
             { is_moderator && !approved && this.button('APPROVE_ANSWER', 'Одобрить ответ') }
             { is_moderator && !rejected && this.button('REJECT_ANSWER', 'Заблокировать ответ') }
+            { is_moderator && this.button('BAN_ANSWER_AND_AUTHOR', 'Забанить автора') }
             <YouTube
                 videoId={data.video_id}
                 opts={opts}

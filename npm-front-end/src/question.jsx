@@ -78,6 +78,7 @@ export class Question extends React.Component {
                         ? this.button('UNBAN_QUESTION', 'Разбанить')
                         : this.button('BAN_QUESTION', 'Забанить')
                     )}
+                    { is_moderator && this.button('BAN_QUESTION_AND_AUTHOR', 'Забанить автора') }
                 </div>
                 </div>
             </div>
