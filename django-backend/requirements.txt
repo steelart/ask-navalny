@@ -28,7 +28,7 @@ redis==2.10.5
 requests==2.18.3
 SecretStorage==2.3.1
 six==1.10.0
-Twisted==17.5.0
+Twisted==22.4.0
 txaio==2.8.1
 urllib3==1.22
 zope.interface==4.4.2
